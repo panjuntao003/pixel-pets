@@ -51,7 +51,7 @@ process.stdin.on("end", () => {
   }, () => {});
 
   req.on("error", () => {});
-  req.setTimeout(100, () => req.destroy());
+  req.setTimeout(1000, () => req.destroy());
   req.write(json);
   req.end();
 });

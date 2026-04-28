@@ -59,9 +59,9 @@ final class HookRegistrar {
     }
 
     func unregisterAll() {
-        unregister(configPath: "\(home)/.claude/settings.json", marker: "pixelpets")
-        unregister(configPath: "\(home)/.gemini/settings.json", marker: "pixelpets")
-        unregister(configPath: "\(home)/.codex/hooks.json", marker: "pixelpets")
+        unregister(configPath: "\(home)/.claude/settings.json", markers: ["pixelpets", "pixelpets-hook"])
+        unregister(configPath: "\(home)/.gemini/settings.json", markers: ["pixelpets", "gemini-hook"])
+        unregister(configPath: "\(home)/.codex/hooks.json", markers: ["pixelpets", "codex-hook"])
     }
 
     private func registerClaude() {
@@ -73,18 +73,20 @@ final class HookRegistrar {
         backup(path)
 
         let hookScript = bundledPath(name: "pixelpets-hook")
-        var hooks = json["hooks"] as? [[String: Any]] ?? []
+        var hooks = json["hooks"] as? [String: Any] ?? [:]
         let events = [
             "UserPromptSubmit", "PreToolUse", "PostToolUse", "PostToolUseFailure",
             "Stop", "StopFailure", "SubagentStart", "SubagentStop",
             "PermissionRequest", "SessionEnd", "PreCompact"
         ]
 
-        for event in events where !containsPixelPetsCommand(in: hooks, event: event) {
-            hooks.append([
-                "event": event,
-                "command": "\(nodePath) \"\(hookScript)\" \(event)"
-            ])
+        for event in events {
+            appendCommandHandler(
+                command: command(scriptPath: hookScript, event: event),
+                to: &hooks,
+                event: event,
+                marker: "pixelpets-hook"
+            )
         }
 
         json["hooks"] = hooks
@@ -100,11 +102,15 @@ final class HookRegistrar {
         backup(path)
 
         let hookScript = bundledPath(name: "gemini-hook")
-        let command = "\(nodePath) \"\(hookScript)\""
-        var hooks = json["hooks"] as? [[String: Any]] ?? []
+        let command = command(scriptPath: hookScript)
+        var hooks = json["hooks"] as? [String: Any] ?? [:]
+        let events = [
+            "SessionStart", "SessionEnd", "BeforeAgent", "BeforeTool",
+            "AfterTool", "AfterAgent", "PreCompress"
+        ]
 
-        if !hooks.contains(where: { ($0["command"] as? String)?.contains("pixelpets") == true }) {
-            hooks.append(["command": command])
+        for event in events {
+            appendCommandHandler(command: command, to: &hooks, event: event, marker: "gemini-hook")
         }
 
         json["hooks"] = hooks
@@ -121,51 +127,101 @@ final class HookRegistrar {
         let events = ["SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "Stop"]
 
         for event in events {
-            var list = json[event] as? [String] ?? []
-            let command = "\(nodePath) \"\(hookScript)\" \(event)"
-            if !list.contains(command) {
-                list.append(command)
-            }
-            json[event] = list
+            appendCommandHandler(
+                command: command(scriptPath: hookScript, event: event),
+                to: &json,
+                event: event,
+                marker: "codex-hook"
+            )
         }
 
         writeJSON(json, to: path)
     }
 
-    private func unregister(configPath: String, marker: String) {
+    private func unregister(configPath: String, markers: [String]) {
         guard var json = readJSON(configPath) else {
             return
         }
 
-        if var hooks = json["hooks"] as? [[String: Any]] {
-            hooks.removeAll { ($0["command"] as? String)?.contains(marker) == true }
+        if var hooks = json["hooks"] as? [String: Any] {
+            removeCommandHandlers(containingAnyOf: markers, from: &hooks)
             json["hooks"] = hooks
             writeJSON(json, to: configPath)
             return
         }
 
-        var changed = false
-        for key in json.keys {
-            guard var commands = json[key] as? [String] else {
+        removeCommandHandlers(containingAnyOf: markers, from: &json)
+        writeJSON(json, to: configPath)
+    }
+
+    private func appendCommandHandler(command: String, to hooks: inout [String: Any], event: String, marker: String) {
+        var groups = hooks[event] as? [[String: Any]] ?? []
+        guard !containsCommand(in: groups, marker: marker) else {
+            return
+        }
+
+        let handler: [String: Any] = [
+            "type": "command",
+            "command": command,
+            "timeout": 1000
+        ]
+
+        if let index = groups.firstIndex(where: { $0["matcher"] == nil || ($0["matcher"] as? String) == "*" }) {
+            var group = groups[index]
+            var handlers = group["hooks"] as? [[String: Any]] ?? []
+            handlers.append(handler)
+            group["hooks"] = handlers
+            groups[index] = group
+        } else {
+            groups.append(["hooks": [handler]])
+        }
+
+        hooks[event] = groups
+    }
+
+    private func removeCommandHandlers(containingAnyOf markers: [String], from hooks: inout [String: Any]) {
+        for key in hooks.keys {
+            guard var groups = hooks[key] as? [[String: Any]] else {
                 continue
             }
 
-            let originalCount = commands.count
-            commands.removeAll { $0.contains(marker) }
-            json[key] = commands
-            changed = changed || originalCount != commands.count
-        }
+            for index in groups.indices {
+                var group = groups[index]
+                guard var handlers = group["hooks"] as? [[String: Any]] else {
+                    continue
+                }
 
-        if changed {
-            writeJSON(json, to: configPath)
+                handlers.removeAll { handler in
+                    guard let command = handler["command"] as? String else {
+                        return false
+                    }
+                    return markers.contains { command.localizedCaseInsensitiveContains($0) }
+                }
+                group["hooks"] = handlers
+                groups[index] = group
+            }
+
+            hooks[key] = groups
         }
     }
 
-    private func containsPixelPetsCommand(in hooks: [[String: Any]], event: String) -> Bool {
-        hooks.contains {
-            ($0["event"] as? String) == event
-                && (($0["command"] as? String)?.contains("pixelpets") == true)
+    private func containsCommand(in groups: [[String: Any]], marker: String) -> Bool {
+        groups.contains { group in
+            let handlers = group["hooks"] as? [[String: Any]] ?? []
+            return handlers.contains { (($0["command"] as? String)?.localizedCaseInsensitiveContains(marker) == true) }
         }
+    }
+
+    private func command(scriptPath: String, event: String? = nil) -> String {
+        var parts = [shellQuote(nodePath), shellQuote(scriptPath)]
+        if let event {
+            parts.append(event)
+        }
+        return parts.joined(separator: " ")
+    }
+
+    private func shellQuote(_ value: String) -> String {
+        "'\(value.replacingOccurrences(of: "'", with: "'\\''"))'"
     }
 
     private func backup(_ path: String) {
@@ -200,7 +256,7 @@ final class HookRegistrar {
             return
         }
 
-        fm.createFile(atPath: path, contents: data)
+        try? data.write(to: URL(fileURLWithPath: path), options: .atomic)
     }
 
     private func ensureParentDirectoryExists(for path: String) {

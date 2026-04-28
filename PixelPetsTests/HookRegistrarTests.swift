@@ -31,36 +31,184 @@ final class HookRegistrarTests: XCTestCase {
         XCTAssertEqual(detections.first { $0.cli == .codex }?.detected, true)
     }
 
-    func test_registerClaudeBacksUpOnceAndAddsExpectedHookEvents() throws {
-        try createFile(".claude/settings.json", contents: #"{"hooks":[{"event":"Other","command":"echo keep"}]}"#)
+    func test_registerClaudePreservesNestedHooksAddsAllEventsIdempotentlyAndBacksUpOnce() throws {
+        try createFile(
+            ".claude/settings.json",
+            contents: """
+            {
+              "theme": "dark",
+              "hooks": {
+                "UserPromptSubmit": [
+                  {
+                    "matcher": "existing",
+                    "hooks": [
+                      { "type": "command", "command": "echo keep", "timeout": 42 }
+                    ]
+                  }
+                ]
+              }
+            }
+            """
+        )
         let registrar = HookRegistrar(home: tempHome.path)
-        registrar.setNodePath("/custom/node")
+        registrar.setNodePath("/Applications/Node Tools/node")
 
         registrar.register(cli: .claude)
-        try createFile(".claude/settings.json.pixelpets.bak", contents: "original backup")
+        let firstBackup = try readString(".claude/settings.json.pixelpets.bak")
         registrar.register(cli: .claude)
 
         let json = try readObject(".claude/settings.json")
-        let hooks = try XCTUnwrap(json["hooks"] as? [[String: Any]])
-        let commands = hooks.compactMap { $0["command"] as? String }
+        let hooks = try XCTUnwrap(json["hooks"] as? [String: Any])
+        let userPromptGroups = try eventGroups("UserPromptSubmit", in: hooks)
+        let userPromptCommands = commandHandlers(in: userPromptGroups).compactMap { $0["command"] as? String }
 
-        XCTAssertEqual(hooks.filter { ($0["command"] as? String)?.contains("pixelpets-hook") == true }.count, 11)
-        XCTAssertTrue(commands.contains("echo keep"))
-        XCTAssertTrue(commands.contains { $0 == #"/custom/node "pixelpets-hook" UserPromptSubmit"# })
-        XCTAssertEqual(try readString(".claude/settings.json.pixelpets.bak"), "original backup")
+        XCTAssertEqual(json["theme"] as? String, "dark")
+        XCTAssertTrue(userPromptCommands.contains("echo keep"))
+        XCTAssertEqual(userPromptCommands.filter { $0.contains("pixelpets-hook") }.count, 1)
+        XCTAssertTrue(userPromptCommands.contains("'/Applications/Node Tools/node' 'pixelpets-hook' UserPromptSubmit"))
+
+        for event in claudeEvents {
+            XCTAssertEqual(pixelPetsCommandCount(event: event, in: hooks), 1, event)
+        }
+        XCTAssertEqual(firstBackup, try readString(".claude/settings.json.pixelpets.bak"))
     }
 
-    func test_registerCodexCreatesHooksFileAndUnregisterRemovesPixelPetsCommands() throws {
-        try createDirectory(".codex")
+    func test_registerGeminiPreservesNestedHooksAndIsIdempotent() throws {
+        try createFile(
+            ".gemini/settings.json",
+            contents: """
+            {
+              "other": true,
+              "hooks": {
+                "BeforeTool": [
+                  {
+                    "hooks": [
+                      { "type": "command", "command": "echo gemini keep" }
+                    ]
+                  }
+                ]
+              }
+            }
+            """
+        )
+        let registrar = HookRegistrar(home: tempHome.path)
+
+        registrar.register(cli: .gemini)
+        registrar.register(cli: .gemini)
+
+        let json = try readObject(".gemini/settings.json")
+        let hooks = try XCTUnwrap(json["hooks"] as? [String: Any])
+        let beforeToolCommands = commandHandlers(in: try eventGroups("BeforeTool", in: hooks))
+            .compactMap { $0["command"] as? String }
+
+        XCTAssertEqual(json["other"] as? Bool, true)
+        XCTAssertTrue(beforeToolCommands.contains("echo gemini keep"))
+        XCTAssertEqual(beforeToolCommands.filter { $0.contains("gemini-hook") }.count, 1)
+    }
+
+    func test_registerCodexWritesNestedDefinitionsAndUnregisterRemovesOnlyPixelPetsHandlers() throws {
+        try createFile(
+            ".codex/hooks.json",
+            contents: """
+            {
+              "SessionStart": [
+                {
+                  "matcher": "startup",
+                  "hooks": [
+                    { "type": "command", "command": "echo codex keep" }
+                  ]
+                }
+              ]
+            }
+            """
+        )
         let registrar = HookRegistrar(home: tempHome.path)
 
         registrar.register(cli: .codex)
+
+        var json = try readObject(".codex/hooks.json")
+        var sessionCommands = commandHandlers(in: try eventGroups("SessionStart", in: json)).compactMap { $0["command"] as? String }
+        XCTAssertTrue(sessionCommands.contains("echo codex keep"))
+        XCTAssertEqual(sessionCommands.filter { $0.contains("codex-hook") }.count, 1)
+        XCTAssertNotNil(commandHandlers(in: try eventGroups("PreToolUse", in: json)).first { $0["type"] as? String == "command" })
+
         registrar.unregisterAll()
 
-        let json = try readObject(".codex/hooks.json")
-        XCTAssertEqual(json["SessionStart"] as? [String], [])
-        XCTAssertEqual(json["UserPromptSubmit"] as? [String], [])
-        XCTAssertTrue(FileManager.default.fileExists(atPath: tempHome.appendingPathComponent(".codex/hooks.json.pixelpets.bak").path) == false)
+        json = try readObject(".codex/hooks.json")
+        sessionCommands = commandHandlers(in: try eventGroups("SessionStart", in: json)).compactMap { $0["command"] as? String }
+        XCTAssertEqual(sessionCommands, ["echo codex keep"])
+        XCTAssertEqual(commandHandlers(in: try eventGroups("PreToolUse", in: json)).count, 0)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: tempHome.appendingPathComponent(".codex/hooks.json.pixelpets.bak").path))
+    }
+
+    func test_unregisterAllRemovesNestedPixelPetsHandlersAndPreservesUnrelatedCommands() throws {
+        try createFile(
+            ".codex/hooks.json",
+            contents: """
+            {
+              "SessionStart": [
+                {
+                  "matcher": "*",
+                  "hooks": [
+                    { "type": "command", "command": "echo keep" },
+                    { "type": "command", "command": "node pixelpets-hook SessionStart" }
+                  ]
+                }
+              ]
+            }
+            """
+        )
+        try createFile(
+            ".claude/settings.json",
+            contents: """
+            {
+              "hooks": {
+                "Stop": [
+                  {
+                    "hooks": [
+                      { "type": "command", "command": "echo keep claude" },
+                      { "type": "command", "command": "node pixelpets-hook Stop" }
+                    ]
+                  }
+                ]
+              }
+            }
+            """
+        )
+        try createFile(
+            ".gemini/settings.json",
+            contents: """
+            {
+              "hooks": {
+                "BeforeTool": [
+                  {
+                    "hooks": [
+                      { "type": "command", "command": "echo keep gemini" },
+                      { "type": "command", "command": "node gemini-hook" }
+                    ]
+                  }
+                ]
+              }
+            }
+            """
+        )
+        let registrar = HookRegistrar(home: tempHome.path)
+
+        registrar.unregisterAll()
+
+        let codex = try readObject(".codex/hooks.json")
+        let codexCommands = commandHandlers(in: try eventGroups("SessionStart", in: codex)).compactMap { $0["command"] as? String }
+        XCTAssertEqual(codexCommands, ["echo keep"])
+
+        let claude = try readObject(".claude/settings.json")
+        let claudeHooks = try XCTUnwrap(claude["hooks"] as? [String: Any])
+        let claudeCommands = commandHandlers(in: try eventGroups("Stop", in: claudeHooks)).compactMap { $0["command"] as? String }
+        XCTAssertEqual(claudeCommands, ["echo keep claude"])
+
+        let gemini = try readObject(".gemini/settings.json")
+        let geminiHooks = try XCTUnwrap(gemini["hooks"] as? [String: Any])
+        let geminiCommands = commandHandlers(in: try eventGroups("BeforeTool", in: geminiHooks)).compactMap { $0["command"] as? String }
+        XCTAssertEqual(geminiCommands, ["echo keep gemini"])
     }
 
     private func createDirectory(_ relativePath: String) throws {
@@ -83,5 +231,27 @@ final class HookRegistrarTests: XCTestCase {
 
     private func readString(_ relativePath: String) throws -> String {
         try String(contentsOf: tempHome.appendingPathComponent(relativePath), encoding: .utf8)
+    }
+
+    private var claudeEvents: [String] {
+        [
+            "UserPromptSubmit", "PreToolUse", "PostToolUse", "PostToolUseFailure",
+            "Stop", "StopFailure", "SubagentStart", "SubagentStop",
+            "PermissionRequest", "SessionEnd", "PreCompact"
+        ]
+    }
+
+    private func eventGroups(_ event: String, in hooks: [String: Any]) throws -> [[String: Any]] {
+        try XCTUnwrap(hooks[event] as? [[String: Any]], event)
+    }
+
+    private func commandHandlers(in groups: [[String: Any]]) -> [[String: Any]] {
+        groups.flatMap { ($0["hooks"] as? [[String: Any]]) ?? [] }
+    }
+
+    private func pixelPetsCommandCount(event: String, in hooks: [String: Any]) throws -> Int {
+        commandHandlers(in: try eventGroups(event, in: hooks))
+            .filter { (($0["command"] as? String)?.contains("pixelpets") == true) }
+            .count
     }
 }
