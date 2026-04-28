@@ -39,6 +39,7 @@
 		96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */; };
 		A28DC8662EDDF29DBAF20069 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */; };
+		AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */; };
 		B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */; };
 		B262D5655FECE5FBC8DCFE42 /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
 		B5B14046A8EFD2856BE8D446 /* codex-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = 9F56DC065FAE03A663C8383E /* codex-hook.js */; };
@@ -52,6 +53,7 @@
 		E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */; };
 		E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */; };
 		E47E29F5AF119F6055E983CD /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
+		E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
 		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 /* End PBXBuildFile section */
@@ -95,6 +97,7 @@
 		9276B97C5781060F8B436E4A /* PixelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelColor.swift; sourceTree = "<group>"; };
 		92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrar.swift; sourceTree = "<group>"; };
 		9394436749431BF36A637FED /* OpenCodeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParser.swift; sourceTree = "<group>"; };
+		99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClient.swift; sourceTree = "<group>"; };
 		99CE2F3CA0D291740976E7EA /* Accessory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessory.swift; sourceTree = "<group>"; };
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		9F56DC065FAE03A663C8383E /* codex-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "codex-hook.js"; sourceTree = "<group>"; };
@@ -111,6 +114,7 @@
 		E9B4482F5071602C678D496E /* pixelpets-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "pixelpets-hook.js"; sourceTree = "<group>"; };
 		ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParserTests.swift; sourceTree = "<group>"; };
 		F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetStateMachineTests.swift; sourceTree = "<group>"; };
+		F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClientTests.swift; sourceTree = "<group>"; };
 		FE22542ED2A510E28DA6DA7C /* gemini_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = gemini_sample.json; sourceTree = "<group>"; };
 		FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParserTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -159,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */,
+				99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */,
 				360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */,
 				1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */,
 				92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */,
@@ -174,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */,
+				F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */,
 				8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */,
 				45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */,
 				E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */,
@@ -381,6 +387,7 @@
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
 				AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */,
 				2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */,
+				AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */,
 				2A2317D0F005270C335D3798 /* CliCardView.swift in Sources */,
 				776B90A5D7870C311722EFF8 /* CodexLogParser.swift in Sources */,
 				BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */,
@@ -410,6 +417,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */,
+				E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */,
 				3A1349CB2AF4BF3BA081A6B5 /* CodexLogParserTests.swift in Sources */,
 				E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */,
 				DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */,
