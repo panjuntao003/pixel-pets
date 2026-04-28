@@ -62,6 +62,21 @@ final class CodexLogParserTests: XCTestCase {
         XCTAssertEqual(batch.cacheReadTokens, 3)
     }
 
+    func test_tokenCountWithBothLastAndTotalUsesLastUsageForEvent() throws {
+        let jsonl = """
+        {"timestamp":"2026-04-20T06:05:51.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":100,"cached_input_tokens":40,"output_tokens":50},"last_token_usage":{"input_tokens":12,"cached_input_tokens":3,"output_tokens":4}}}}
+        {"timestamp":"2026-04-20T06:05:52.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":130,"cached_input_tokens":55,"output_tokens":70}}}}
+        """
+        let tmp = try makeTempDirectory().appendingPathComponent("token-count-last-and-total.jsonl")
+        try jsonl.write(to: tmp, atomically: true, encoding: .utf8)
+
+        let batch = CodexLogParser().parse(filePath: tmp.path)
+
+        XCTAssertEqual(batch.inputTokens, 42)
+        XCTAssertEqual(batch.outputTokens, 24)
+        XCTAssertEqual(batch.cacheReadTokens, 18)
+    }
+
     func test_parsesTokenCountTotalUsageWhenLastUsageMissing() throws {
         let jsonl = """
         {"timestamp":"2026-04-20T06:05:51.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":21,"cached_input_tokens":8,"output_tokens":13}}}}
@@ -74,6 +89,23 @@ final class CodexLogParserTests: XCTestCase {
         XCTAssertEqual(batch.inputTokens, 21)
         XCTAssertEqual(batch.outputTokens, 13)
         XCTAssertEqual(batch.cacheReadTokens, 8)
+    }
+
+    func test_multipleTotalOnlyTokenCountEventsUsePositiveDeltas() throws {
+        let jsonl = """
+        {"timestamp":"2026-04-20T06:05:51.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":10,"cached_input_tokens":4,"output_tokens":5}}}}
+        {"timestamp":"2026-04-20T06:05:52.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":25,"cached_input_tokens":9,"output_tokens":12}}}}
+        {"timestamp":"2026-04-20T06:05:53.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":23,"cached_input_tokens":8,"output_tokens":10}}}}
+        {"timestamp":"2026-04-20T06:05:54.702Z","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":30,"cached_input_tokens":11,"output_tokens":20}}}}
+        """
+        let tmp = try makeTempDirectory().appendingPathComponent("token-count-total-deltas.jsonl")
+        try jsonl.write(to: tmp, atomically: true, encoding: .utf8)
+
+        let batch = CodexLogParser().parse(filePath: tmp.path)
+
+        XCTAssertEqual(batch.inputTokens, 32)
+        XCTAssertEqual(batch.outputTokens, 22)
+        XCTAssertEqual(batch.cacheReadTokens, 12)
     }
 
     func test_parseAllRecursivelyIncludesJSONLFiles() throws {

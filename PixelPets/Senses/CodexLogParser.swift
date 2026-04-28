@@ -1,6 +1,11 @@
 import Foundation
 
 final class CodexLogParser {
+    private enum UsageRecord {
+        case incremental([String: Any])
+        case tokenCount(last: [String: Any]?, total: [String: Any]?)
+    }
+
     private let basePath: String
     private let installedAt: Date
     private let newline = Data([0x0A])
@@ -40,6 +45,7 @@ final class CodexLogParser {
 
         var batch = TokenBatch()
         var buffer = Data()
+        var previousTokenCountTotal: TokenBatch?
 
         while true {
             let chunk = fileHandle.readData(ofLength: 64 * 1024)
@@ -48,36 +54,47 @@ final class CodexLogParser {
             }
 
             buffer.append(chunk)
-            consumeCompleteLines(from: &buffer, into: &batch)
+            consumeCompleteLines(from: &buffer, into: &batch, previousTokenCountTotal: &previousTokenCountTotal)
         }
 
         if !buffer.isEmpty {
-            accumulateLine(buffer, into: &batch)
+            accumulateLine(buffer, into: &batch, previousTokenCountTotal: &previousTokenCountTotal)
         }
 
         return batch
     }
 
-    private func consumeCompleteLines(from buffer: inout Data, into batch: inout TokenBatch) {
+    private func consumeCompleteLines(from buffer: inout Data, into batch: inout TokenBatch, previousTokenCountTotal: inout TokenBatch?) {
         while let range = buffer.range(of: newline) {
             let line = buffer[..<range.lowerBound]
-            accumulateLine(Data(line), into: &batch)
+            accumulateLine(Data(line), into: &batch, previousTokenCountTotal: &previousTokenCountTotal)
             buffer.removeSubrange(..<range.upperBound)
         }
     }
 
-    private func accumulateLine(_ line: Data, into batch: inout TokenBatch) {
-        guard let usage = usageObject(from: line) else {
+    private func accumulateLine(_ line: Data, into batch: inout TokenBatch, previousTokenCountTotal: inout TokenBatch?) {
+        guard let record = usageRecord(from: line) else {
             return
         }
 
-        batch.inputTokens += intValue(usage["input_tokens"])
-        batch.outputTokens += intValue(usage["output_tokens"])
-        batch.cacheReadTokens += cacheReadTokens(from: usage)
-        batch.cacheWriteTokens += cacheWriteTokens(from: usage)
+        switch record {
+        case let .incremental(usage):
+            batch.add(tokenBatch(from: usage))
+        case let .tokenCount(last, total):
+            if let last {
+                batch.add(tokenBatch(from: last))
+                if let total {
+                    previousTokenCountTotal = tokenBatch(from: total)
+                }
+            } else if let total {
+                let currentTotal = tokenBatch(from: total)
+                batch.add(delta(from: previousTokenCountTotal, to: currentTotal))
+                previousTokenCountTotal = currentTotal
+            }
+        }
     }
 
-    private func usageObject(from line: Data) -> [String: Any]? {
+    private func usageRecord(from line: Data) -> UsageRecord? {
         guard
             !line.isEmpty,
             let json = try? JSONSerialization.jsonObject(with: line) as? [String: Any]
@@ -97,7 +114,10 @@ final class CodexLogParser {
 
         switch json["type"] as? String {
         case "response_item":
-            return responseItemUsage(from: json)
+            guard let usage = responseItemUsage(from: json) else {
+                return nil
+            }
+            return .incremental(usage)
         case "event_msg":
             return tokenCountUsage(from: json)
         default:
@@ -124,7 +144,7 @@ final class CodexLogParser {
         return nil
     }
 
-    private func tokenCountUsage(from json: [String: Any]) -> [String: Any]? {
+    private func tokenCountUsage(from json: [String: Any]) -> UsageRecord? {
         guard
             let payload = json["payload"] as? [String: Any],
             payload["type"] as? String == "token_count",
@@ -133,20 +153,75 @@ final class CodexLogParser {
             return nil
         }
 
-        return (info["last_token_usage"] as? [String: Any]) ?? (info["total_token_usage"] as? [String: Any])
+        let last = info["last_token_usage"] as? [String: Any]
+        let total = info["total_token_usage"] as? [String: Any]
+        guard last != nil || total != nil else {
+            return nil
+        }
+
+        return .tokenCount(last: last, total: total)
+    }
+
+    private func tokenBatch(from usage: [String: Any]) -> TokenBatch {
+        TokenBatch(
+            inputTokens: intValue(usage["input_tokens"]),
+            outputTokens: intValue(usage["output_tokens"]),
+            cacheReadTokens: cacheReadTokens(from: usage),
+            cacheWriteTokens: cacheWriteTokens(from: usage)
+        )
+    }
+
+    private func delta(from previous: TokenBatch?, to current: TokenBatch) -> TokenBatch {
+        guard let previous else {
+            return current
+        }
+
+        return TokenBatch(
+            inputTokens: max(0, current.inputTokens - previous.inputTokens),
+            outputTokens: max(0, current.outputTokens - previous.outputTokens),
+            cacheReadTokens: max(0, current.cacheReadTokens - previous.cacheReadTokens),
+            cacheWriteTokens: max(0, current.cacheWriteTokens - previous.cacheWriteTokens)
+        )
     }
 
     private func cacheReadTokens(from usage: [String: Any]) -> Int {
-        let direct = intValue(usage["cache_read_input_tokens"])
-            + intValue(usage["cache_read_tokens"])
-            + intValue(usage["cached_input_tokens"])
-        let details = usage["input_token_details"] as? [String: Any]
-        let pluralDetails = usage["input_tokens_details"] as? [String: Any]
-        return direct + intValue(details?["cached_tokens"]) + intValue(pluralDetails?["cached_tokens"])
+        if let value = firstPositiveInt(
+            usage["cache_read_input_tokens"],
+            usage["cache_read_tokens"],
+            usage["cached_input_tokens"]
+        ) {
+            return value
+        }
+
+        if
+            let details = usage["input_token_details"] as? [String: Any],
+            let value = firstPositiveInt(details["cached_tokens"])
+        {
+            return value
+        }
+
+        if
+            let details = usage["input_tokens_details"] as? [String: Any],
+            let value = firstPositiveInt(details["cached_tokens"])
+        {
+            return value
+        }
+
+        return 0
     }
 
     private func cacheWriteTokens(from usage: [String: Any]) -> Int {
         intValue(usage["cache_creation_input_tokens"]) + intValue(usage["cache_write_input_tokens"])
+    }
+
+    private func firstPositiveInt(_ values: Any?...) -> Int? {
+        for value in values {
+            let int = intValue(value)
+            if int > 0 {
+                return int
+            }
+        }
+        return nil
     }
 
     private func date(from timestamp: String) -> Date? {
