@@ -95,7 +95,7 @@ final class HookServer {
         })
     }
 
-    private static func completeBody(in requestData: Data) -> Data? {
+    static func completeBody(in requestData: Data) -> Data? {
         let separator = Data("\r\n\r\n".utf8)
         guard let headerRange = requestData.range(of: separator) else {
             return nil
