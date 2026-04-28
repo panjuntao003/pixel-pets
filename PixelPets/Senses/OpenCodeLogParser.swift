@@ -86,9 +86,22 @@ final class OpenCodeLogParser {
                 .path
         }
 
-        return FileManager.default.homeDirectoryForCurrentUser
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        let macOSPath = home
             .appendingPathComponent("Library/Application Support/opencode/opencode.db")
             .path
+        let xdgPath = home
+            .appendingPathComponent(".local/share/opencode/opencode.db")
+            .path
+
+        if FileManager.default.fileExists(atPath: macOSPath) {
+            return macOSPath
+        }
+        if FileManager.default.fileExists(atPath: xdgPath) {
+            return xdgPath
+        }
+
+        return xdgPath
     }
 
     private func tableExists(_ tableName: String, in db: OpaquePointer) -> Bool {

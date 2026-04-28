@@ -80,8 +80,7 @@ final class CodexLogParser {
     private func usageObject(from line: Data) -> [String: Any]? {
         guard
             !line.isEmpty,
-            let json = try? JSONSerialization.jsonObject(with: line) as? [String: Any],
-            json["type"] as? String == "response_item"
+            let json = try? JSONSerialization.jsonObject(with: line) as? [String: Any]
         else {
             return nil
         }
@@ -96,6 +95,17 @@ final class CodexLogParser {
             }
         }
 
+        switch json["type"] as? String {
+        case "response_item":
+            return responseItemUsage(from: json)
+        case "event_msg":
+            return tokenCountUsage(from: json)
+        default:
+            return nil
+        }
+    }
+
+    private func responseItemUsage(from json: [String: Any]) -> [String: Any]? {
         if
             let response = json["response"] as? [String: Any],
             let usage = response["usage"] as? [String: Any]
@@ -114,8 +124,22 @@ final class CodexLogParser {
         return nil
     }
 
+    private func tokenCountUsage(from json: [String: Any]) -> [String: Any]? {
+        guard
+            let payload = json["payload"] as? [String: Any],
+            payload["type"] as? String == "token_count",
+            let info = payload["info"] as? [String: Any]
+        else {
+            return nil
+        }
+
+        return (info["last_token_usage"] as? [String: Any]) ?? (info["total_token_usage"] as? [String: Any])
+    }
+
     private func cacheReadTokens(from usage: [String: Any]) -> Int {
-        let direct = intValue(usage["cache_read_input_tokens"]) + intValue(usage["cache_read_tokens"])
+        let direct = intValue(usage["cache_read_input_tokens"])
+            + intValue(usage["cache_read_tokens"])
+            + intValue(usage["cached_input_tokens"])
         let details = usage["input_token_details"] as? [String: Any]
         let pluralDetails = usage["input_tokens_details"] as? [String: Any]
         return direct + intValue(details?["cached_tokens"]) + intValue(pluralDetails?["cached_tokens"])
