@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09513F16A1C36B664B105F4D /* GrowthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694A9609392B6FDBF6F795CD /* GrowthStore.swift */; };
+		09E5FF860E3846F111F29D64 /* GrowthEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E02B09537952D8CA58865A /* GrowthEngine.swift */; };
 		0A47824554C1429037C478C9 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52CBD94E5910ED06A425C3C /* PetViewModel.swift */; };
 		1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
@@ -44,6 +46,7 @@
 		BDB688527872D702C345F81D /* NodeGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DFC862F77574208340D87A /* NodeGate.swift */; };
 		C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */; };
 		C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */; };
+		DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */; };
 		DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */; };
 		E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */; };
 		E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */; };
@@ -76,6 +79,7 @@
 		43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
 		45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParserTests.swift; sourceTree = "<group>"; };
 		4EE0EC6058E905C89792375F /* FaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceProvider.swift; sourceTree = "<group>"; };
+		52E02B09537952D8CA58865A /* GrowthEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngine.swift; sourceTree = "<group>"; };
 		5374C17A55C4816597BD775D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5E565548CDE4528D76590E57 /* PixelPetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PixelPetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotRenderer.swift; sourceTree = "<group>"; };
@@ -83,6 +87,7 @@
 		6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParser.swift; sourceTree = "<group>"; };
 		683C1BB6357F9C9CD9E0C516 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
 		68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBatch.swift; sourceTree = "<group>"; };
+		694A9609392B6FDBF6F795CD /* GrowthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStore.swift; sourceTree = "<group>"; };
 		75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBarView.swift; sourceTree = "<group>"; };
 		8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParserTests.swift; sourceTree = "<group>"; };
 		902053947864E8D75FE02CFB /* HookServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookServerTests.swift; sourceTree = "<group>"; };
@@ -99,6 +104,7 @@
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5DFC862F77574208340D87A /* NodeGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGate.swift; sourceTree = "<group>"; };
 		CB85949D9BAB777DA9C22692 /* gemini-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gemini-hook.js"; sourceTree = "<group>"; };
+		E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngineTests.swift; sourceTree = "<group>"; };
 		E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookPermissionView.swift; sourceTree = "<group>"; };
 		E9B4482F5071602C678D496E /* pixelpets-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "pixelpets-hook.js"; sourceTree = "<group>"; };
 		ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParserTests.swift; sourceTree = "<group>"; };
@@ -168,6 +174,7 @@
 				FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */,
 				8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */,
 				45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */,
+				E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */,
 				1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */,
 				902053947864E8D75FE02CFB /* HookServerTests.swift */,
 				3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */,
@@ -206,6 +213,14 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		A120A2A98806D7B2BB6D61C9 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				694A9609392B6FDBF6F795CD /* GrowthStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
 		A5067EA44016A2BEFDCB0DF9 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
@@ -220,6 +235,7 @@
 		C026731DCF1F35203F029D8A /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				52E02B09537952D8CA58865A /* GrowthEngine.swift */,
 				0A72F4F208D51F2DA034981F /* PetStateMachine.swift */,
 			);
 			path = Core;
@@ -244,6 +260,7 @@
 				94FC4D103188E1E0AC04F6B4 /* App */,
 				C026731DCF1F35203F029D8A /* Core */,
 				D2E4610F8181F6BBADC411D1 /* Models */,
+				A120A2A98806D7B2BB6D61C9 /* Persistence */,
 				A5067EA44016A2BEFDCB0DF9 /* Renderer */,
 				5CBEA6F9648F63FD78CF801C /* Resources */,
 				6B088F6716F52147B827A396 /* Senses */,
@@ -365,6 +382,8 @@
 				776B90A5D7870C311722EFF8 /* CodexLogParser.swift in Sources */,
 				BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */,
 				B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */,
+				09E5FF860E3846F111F29D64 /* GrowthEngine.swift in Sources */,
+				09513F16A1C36B664B105F4D /* GrowthStore.swift in Sources */,
 				2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */,
 				8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */,
 				BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */,
@@ -390,6 +409,7 @@
 				5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */,
 				3A1349CB2AF4BF3BA081A6B5 /* CodexLogParserTests.swift in Sources */,
 				E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */,
+				DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */,
 				8AA227BCB4EAB6ABB811B135 /* HookRegistrarTests.swift in Sources */,
 				F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */,
 				3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */,
