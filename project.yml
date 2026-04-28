@@ -18,8 +18,8 @@ targets:
     deploymentTarget: "13.0"
     sources:
       - PixelPetsTests
-    resources:
-      - PixelPets/Resources/Fixtures
+      - path: PixelPets/Resources/Fixtures
+        buildPhase: resources
     dependencies:
       - target: PixelPets
     settings:

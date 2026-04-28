@@ -1,26 +1,9 @@
 import Foundation
 
-struct TokenBatch {
-    var inputTokens: Int = 0
-    var outputTokens: Int = 0
-    var cacheReadTokens: Int = 0
-    var cacheWriteTokens: Int = 0
-
-    var totalTokens: Int {
-        inputTokens + outputTokens
-    }
-
-    mutating func add(_ other: TokenBatch) {
-        inputTokens += other.inputTokens
-        outputTokens += other.outputTokens
-        cacheReadTokens += other.cacheReadTokens
-        cacheWriteTokens += other.cacheWriteTokens
-    }
-}
-
 final class ClaudeLogParser {
     private let basePath: String
     private let installedAt: Date
+    private let newline = Data([0x0A])
     private let iso8601Formatter = ISO8601DateFormatter()
     private let fractionalISO8601Formatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
@@ -47,36 +30,68 @@ final class ClaudeLogParser {
     }
 
     func parse(filePath: String) -> TokenBatch {
-        guard let contents = try? String(contentsOfFile: filePath, encoding: .utf8) else {
+        guard let fileHandle = FileHandle(forReadingAtPath: filePath) else {
             return TokenBatch()
+        }
+        defer {
+            fileHandle.closeFile()
         }
 
         var batch = TokenBatch()
-        for line in contents.split(whereSeparator: \.isNewline) {
-            guard let usage = usageObject(from: String(line)) else {
-                continue
+        var buffer = Data()
+
+        while true {
+            let chunk = fileHandle.readData(ofLength: 64 * 1024)
+            if chunk.isEmpty {
+                break
             }
 
-            batch.inputTokens += intValue(usage["input_tokens"])
-            batch.outputTokens += intValue(usage["output_tokens"])
-            batch.cacheReadTokens += intValue(usage["cache_read_input_tokens"])
-            batch.cacheWriteTokens += intValue(usage["cache_creation_input_tokens"])
+            buffer.append(chunk)
+            consumeCompleteLines(from: &buffer, into: &batch)
         }
+
+        if !buffer.isEmpty {
+            accumulateLine(buffer, into: &batch)
+        }
+
         return batch
     }
 
-    private func usageObject(from line: String) -> [String: Any]? {
+    private func consumeCompleteLines(from buffer: inout Data, into batch: inout TokenBatch) {
+        while let range = buffer.range(of: newline) {
+            let line = buffer[..<range.lowerBound]
+            accumulateLine(Data(line), into: &batch)
+            buffer.removeSubrange(..<range.upperBound)
+        }
+    }
+
+    private func accumulateLine(_ line: Data, into batch: inout TokenBatch) {
+        guard let usage = usageObject(from: line) else {
+            return
+        }
+
+        batch.inputTokens += intValue(usage["input_tokens"])
+        batch.outputTokens += intValue(usage["output_tokens"])
+        batch.cacheReadTokens += intValue(usage["cache_read_input_tokens"])
+        batch.cacheWriteTokens += intValue(usage["cache_creation_input_tokens"])
+    }
+
+    private func usageObject(from line: Data) -> [String: Any]? {
         guard
-            let data = line.data(using: .utf8),
-            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+            !line.isEmpty,
+            let json = try? JSONSerialization.jsonObject(with: line) as? [String: Any]
         else {
             return nil
         }
 
-        if let timestamp = json["timestamp"] as? String,
-           let date = date(from: timestamp),
-           date < installedAt {
-            return nil
+        if installedAt != .distantPast {
+            guard
+                let timestamp = json["timestamp"] as? String,
+                let date = date(from: timestamp),
+                date >= installedAt
+            else {
+                return nil
+            }
         }
 
         guard
@@ -95,6 +110,8 @@ final class ClaudeLogParser {
 
     private func intValue(_ value: Any?) -> Int {
         switch value {
+        case _ as Bool:
+            return 0
         case let int as Int:
             return int
         case let number as NSNumber:

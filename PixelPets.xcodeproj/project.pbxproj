@@ -11,6 +11,7 @@
 		0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52CBD94E5910ED06A425C3C /* PetViewModel.swift */; };
 		1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FA3634ADF305BDF917BF6B /* QuotaTier.swift */; };
+		2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */; };
 		241F67C9A786BACDFC92C2D4 /* Accessory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CE2F3CA0D291740976E7EA /* Accessory.swift */; };
 		2A2317D0F005270C335D3798 /* CliCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */; };
 		2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */; };
@@ -25,19 +26,24 @@
 		6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */; };
 		7EC3EBE2B508352497F79092 /* gemini-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = CB85949D9BAB777DA9C22692 /* gemini-hook.js */; };
 		8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */; };
+		8A264527F73DA7F2C5D35AF3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683C1BB6357F9C9CD9E0C516 /* PetState.swift */; };
 		8AA227BCB4EAB6ABB811B135 /* HookRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */; };
 		8AACAAC62F8149551BE9D596 /* PixelColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9276B97C5781060F8B436E4A /* PixelColor.swift */; };
 		96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */; };
+		A28DC8662EDDF29DBAF20069 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */; };
+		B262D5655FECE5FBC8DCFE42 /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
 		B5B14046A8EFD2856BE8D446 /* codex-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = 9F56DC065FAE03A663C8383E /* codex-hook.js */; };
 		BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E338061E37977B5F19E4C /* HookServer.swift */; };
 		BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0EC6058E905C89792375F /* FaceProvider.swift */; };
 		BDB688527872D702C345F81D /* NodeGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DFC862F77574208340D87A /* NodeGate.swift */; };
 		C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */; };
 		DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */; };
+		E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */; };
 		E47E29F5AF119F6055E983CD /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
+		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,7 +71,9 @@
 		5E565548CDE4528D76590E57 /* PixelPetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PixelPetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotRenderer.swift; sourceTree = "<group>"; };
 		60297808408A5939E6D93BD2 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParser.swift; sourceTree = "<group>"; };
 		683C1BB6357F9C9CD9E0C516 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
+		68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBatch.swift; sourceTree = "<group>"; };
 		75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBarView.swift; sourceTree = "<group>"; };
 		902053947864E8D75FE02CFB /* HookServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookServerTests.swift; sourceTree = "<group>"; };
 		9276B97C5781060F8B436E4A /* PixelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelColor.swift; sourceTree = "<group>"; };
@@ -130,9 +138,11 @@
 		6B088F6716F52147B827A396 /* Senses */ = {
 			isa = PBXGroup;
 			children = (
+				6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */,
 				92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */,
 				215E338061E37977B5F19E4C /* HookServer.swift */,
 				C5DFC862F77574208340D87A /* NodeGate.swift */,
+				68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */,
 			);
 			path = Senses;
 			sourceTree = "<group>";
@@ -232,6 +242,7 @@
 			buildConfigurationList = 559E9DFCCC5D7814DCA70FAB /* Build configuration list for PBXNativeTarget "PixelPetsTests" */;
 			buildPhases = (
 				F8A859AB40C3062B0FC1C0B5 /* Sources */,
+				620DEC02DC7AB72FA23E7D59 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -295,6 +306,17 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		620DEC02DC7AB72FA23E7D59 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B262D5655FECE5FBC8DCFE42 /* claude_sample.jsonl in Resources */,
+				FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */,
+				8A264527F73DA7F2C5D35AF3 /* gemini_sample.json in Resources */,
+				A28DC8662EDDF29DBAF20069 /* opencode_sample.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F01FA679A5B39BD11300D51B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -320,6 +342,7 @@
 				330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */,
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
 				AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */,
+				2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */,
 				2A2317D0F005270C335D3798 /* CliCardView.swift in Sources */,
 				BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */,
 				2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */,
@@ -335,6 +358,7 @@
 				31C5C8CEAECB30D7E951C812 /* PopoverView.swift in Sources */,
 				C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */,
 				210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */,
+				E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
