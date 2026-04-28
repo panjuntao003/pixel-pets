@@ -112,9 +112,10 @@ final class HookRegistrarTests: XCTestCase {
             contents: """
             {
               "hooks": [
-                { "event": "PreToolUse", "command": "echo keep pretool", "timeout": 8 },
+                { "event": "PreToolUse", "command": "echo keep pretool", "timeout": 8, "custom": "survives", "flag": true },
                 { "event": "Stop", "command": "node pixelpets-hook Stop" },
-                { "command": "echo keep unknown" }
+                { "command": "echo keep unknown" },
+                { "event": "Stop", "command": "echo pixelpets status" }
               ]
             }
             """
@@ -129,9 +130,14 @@ final class HookRegistrarTests: XCTestCase {
         let preToolCommands = preToolHandlers.compactMap { $0["command"] as? String }
 
         XCTAssertTrue(preToolCommands.contains("echo keep pretool"))
-        XCTAssertEqual(preToolHandlers.first { $0["command"] as? String == "echo keep pretool" }?["timeout"] as? Int, 8)
+        let preserved = preToolHandlers.first { $0["command"] as? String == "echo keep pretool" }
+        XCTAssertEqual(preserved?["timeout"] as? Int, 8)
+        XCTAssertEqual(preserved?["custom"] as? String, "survives")
+        XCTAssertEqual(preserved?["flag"] as? Bool, true)
+        XCTAssertEqual(preserved?["type"] as? String, "command")
         XCTAssertEqual(pixelPetsCommandCount(event: "Stop", in: hooks), 1)
         XCTAssertFalse(allCommands(in: hooks).contains("node pixelpets-hook Stop"))
+        XCTAssertTrue(commandHandlers(in: try eventGroups("Stop", in: hooks)).contains { $0["command"] as? String == "echo pixelpets status" })
         XCTAssertTrue(commandHandlers(in: try eventGroups("UserPromptSubmit", in: hooks)).contains { $0["command"] as? String == "echo keep unknown" })
     }
 
@@ -319,6 +325,7 @@ final class HookRegistrarTests: XCTestCase {
             {
               "hooks": [
                 { "event": "Stop", "command": "echo keep flat claude" },
+                { "event": "Stop", "command": "echo pixelpets status" },
                 { "event": "Stop", "command": "node pixelpets-hook Stop" }
               ]
             }
@@ -351,7 +358,7 @@ final class HookRegistrarTests: XCTestCase {
         registrar.unregisterAll()
 
         let claudeHooks = try XCTUnwrap(readObject(".claude/settings.json")["hooks"] as? [[String: Any]])
-        XCTAssertEqual(claudeHooks.compactMap { $0["command"] as? String }, ["echo keep flat claude"])
+        XCTAssertEqual(claudeHooks.compactMap { $0["command"] as? String }, ["echo keep flat claude", "echo pixelpets status"])
 
         let geminiHooks = try XCTUnwrap(readObject(".gemini/settings.json")["hooks"] as? [[String: Any]])
         XCTAssertEqual(geminiHooks.compactMap { $0["command"] as? String }, ["echo keep flat gemini"])
@@ -371,6 +378,20 @@ final class HookRegistrarTests: XCTestCase {
         let hooks = try XCTUnwrap(json["hooks"] as? [String: Any])
         let commands = commandHandlers(in: try eventGroups("UserPromptSubmit", in: hooks)).compactMap { $0["command"] as? String }
         XCTAssertTrue(commands.contains("'/Users/dev'\\''s tools/node' 'pixelpets-hook' UserPromptSubmit"))
+    }
+
+    func test_registeredHandlerTimeoutIsLongerThanScriptRequestTimeout() throws {
+        try createFile(".claude/settings.json", contents: #"{"hooks":{}}"#)
+        let registrar = HookRegistrar(home: tempHome.path)
+
+        registrar.register(cli: .claude)
+
+        let json = try readObject(".claude/settings.json")
+        let hooks = try XCTUnwrap(json["hooks"] as? [String: Any])
+        let handler = try XCTUnwrap(commandHandlers(in: try eventGroups("UserPromptSubmit", in: hooks)).first {
+            ($0["command"] as? String)?.contains("pixelpets-hook") == true
+        })
+        XCTAssertEqual(handler["timeout"] as? Int, 3000)
     }
 
     private func createDirectory(_ relativePath: String) throws {

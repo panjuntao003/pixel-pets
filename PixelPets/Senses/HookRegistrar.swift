@@ -59,9 +59,9 @@ final class HookRegistrar {
     }
 
     func unregisterAll() {
-        unregister(configPath: "\(home)/.claude/settings.json", markers: ["pixelpets", "pixelpets-hook"])
-        unregister(configPath: "\(home)/.gemini/settings.json", markers: ["pixelpets", "gemini-hook"])
-        unregister(configPath: "\(home)/.codex/hooks.json", markers: ["pixelpets", "codex-hook"])
+        unregister(configPath: "\(home)/.claude/settings.json", markers: ["pixelpets-hook"])
+        unregister(configPath: "\(home)/.gemini/settings.json", markers: ["gemini-hook"])
+        unregister(configPath: "\(home)/.codex/hooks.json", markers: ["codex-hook"])
     }
 
     private func registerClaude() {
@@ -73,7 +73,7 @@ final class HookRegistrar {
         backup(path)
 
         let hookScript = bundledPath(name: "pixelpets-hook")
-        guard var hooks = normalizedHookObject(from: json["hooks"], defaultEvent: "UserPromptSubmit", markers: ["pixelpets", "pixelpets-hook"]) else {
+        guard var hooks = normalizedHookObject(from: json["hooks"], defaultEvent: "UserPromptSubmit", markers: ["pixelpets-hook"]) else {
             return
         }
         let events = [
@@ -105,7 +105,7 @@ final class HookRegistrar {
 
         let hookScript = bundledPath(name: "gemini-hook")
         let command = command(scriptPath: hookScript)
-        guard var hooks = normalizedHookObject(from: json["hooks"], defaultEvent: "BeforeTool", markers: ["pixelpets", "gemini-hook"]) else {
+        guard var hooks = normalizedHookObject(from: json["hooks"], defaultEvent: "BeforeTool", markers: ["gemini-hook"]) else {
             return
         }
         let events = [
@@ -167,7 +167,7 @@ final class HookRegistrar {
 
     @discardableResult
     private func appendCommandHandler(command: String, to hooks: inout [String: Any], event: String, marker: String) -> Bool {
-        guard var groups = normalizedEventGroups(from: hooks[event], markers: ["pixelpets", marker]) else {
+        guard var groups = normalizedEventGroups(from: hooks[event], markers: [marker]) else {
             return false
         }
 
@@ -213,7 +213,7 @@ final class HookRegistrar {
                 hooks[key] = groups
             } else if var commands = hooks[key] as? [String] {
                 commands.removeAll { command in
-                    markers.contains { command.localizedCaseInsensitiveContains($0) }
+                    markers.contains { isPixelPetsCommand(command, marker: $0) }
                 }
                 hooks[key] = commands
             }
@@ -225,7 +225,7 @@ final class HookRegistrar {
             guard let command = handler["command"] as? String else {
                 return false
             }
-            return markers.contains { command.localizedCaseInsensitiveContains($0) }
+            return markers.contains { isPixelPetsCommand(command, marker: $0) }
         }
     }
 
@@ -234,14 +234,19 @@ final class HookRegistrar {
             guard let command = entry["command"] as? String else {
                 return false
             }
-            return markers.contains { command.localizedCaseInsensitiveContains($0) }
+            return markers.contains { isPixelPetsCommand(command, marker: $0) }
         }
     }
 
     private func containsCommand(in groups: [[String: Any]], marker: String) -> Bool {
         groups.contains { group in
             let handlers = group["hooks"] as? [[String: Any]] ?? []
-            return handlers.contains { (($0["command"] as? String)?.localizedCaseInsensitiveContains(marker) == true) }
+            return handlers.contains {
+                guard let command = $0["command"] as? String else {
+                    return false
+                }
+                return isPixelPetsCommand(command, marker: marker)
+            }
         }
     }
 
@@ -273,7 +278,7 @@ final class HookRegistrar {
         if let commands = value as? [String] {
             let handlers = commands
                 .filter { command in
-                    !markers.contains { command.localizedCaseInsensitiveContains($0) }
+                    !markers.contains { isPixelPetsCommand(command, marker: $0) }
                 }
                 .map { command in
                     ["type": "command", "command": command]
@@ -289,18 +294,15 @@ final class HookRegistrar {
 
         for entry in entries {
             guard let command = entry["command"] as? String,
-                  !markers.contains(where: { command.localizedCaseInsensitiveContains($0) }) else {
+                  !markers.contains(where: { isPixelPetsCommand(command, marker: $0) }) else {
                 continue
             }
 
             let event = entry["event"] as? String ?? defaultEvent
-            var handler: [String: Any] = [
-                "type": entry["type"] as? String ?? "command",
-                "command": command
-            ]
-            if let timeout = entry["timeout"] {
-                handler["timeout"] = timeout
-            }
+            var handler = entry
+            handler["type"] = handler["type"] ?? "command"
+            handler.removeValue(forKey: "event")
+            handler.removeValue(forKey: "matcher")
 
             var group: [String: Any] = ["hooks": [handler]]
             if let matcher = entry["matcher"] {
@@ -313,6 +315,10 @@ final class HookRegistrar {
         }
 
         return hooks
+    }
+
+    private func isPixelPetsCommand(_ command: String, marker: String) -> Bool {
+        command.localizedCaseInsensitiveContains(marker)
     }
 
     private func command(scriptPath: String, event: String? = nil) -> String {
