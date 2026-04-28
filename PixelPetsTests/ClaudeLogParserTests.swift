@@ -48,6 +48,55 @@ final class ClaudeLogParserTests: XCTestCase {
         XCTAssertEqual(batch.inputTokens, 0, "Entries before installedAt must be excluded")
     }
 
+    func test_streamingBoundaryParsesLineCrossingReadChunk() throws {
+        let padding = String(repeating: "a", count: 70_000)
+        let jsonl = "{\"type\":\"assistant\",\"padding\":\"\(padding)\",\"message\":{\"usage\":{\"input_tokens\":321,\"output_tokens\":654}}}\n"
+        let tmp = try makeTempDirectory().appendingPathComponent("boundary.jsonl")
+        try jsonl.write(to: tmp, atomically: true, encoding: .utf8)
+
+        let batch = ClaudeLogParser().parse(filePath: tmp.path)
+
+        XCTAssertEqual(batch.inputTokens, 321)
+        XCTAssertEqual(batch.outputTokens, 654)
+    }
+
+    func test_finalValidLineWithoutTrailingNewlineParses() throws {
+        let jsonl = "{\"type\":\"assistant\",\"message\":{\"usage\":{\"input_tokens\":77,\"output_tokens\":88}}}"
+        let tmp = try makeTempDirectory().appendingPathComponent("no-trailing-newline.jsonl")
+        try jsonl.write(to: tmp, atomically: true, encoding: .utf8)
+
+        let batch = ClaudeLogParser().parse(filePath: tmp.path)
+
+        XCTAssertEqual(batch.inputTokens, 77)
+        XCTAssertEqual(batch.outputTokens, 88)
+    }
+
+    func test_installedAtFilterIncludesEntriesAfterInstalledAt() throws {
+        let installedAt = Date(timeIntervalSince1970: 1_700_000_000)
+        let timestamp = ISO8601DateFormatter().string(from: installedAt.addingTimeInterval(60))
+        let jsonl = "{\"type\":\"assistant\",\"timestamp\":\"\(timestamp)\",\"message\":{\"usage\":{\"input_tokens\":44,\"output_tokens\":55}}}\n"
+        let tmp = try makeTempDirectory().appendingPathComponent("after-installed-at.jsonl")
+        try jsonl.write(to: tmp, atomically: true, encoding: .utf8)
+
+        let batch = ClaudeLogParser(installedAt: installedAt).parse(filePath: tmp.path)
+
+        XCTAssertEqual(batch.inputTokens, 44)
+        XCTAssertEqual(batch.outputTokens, 55)
+    }
+
+    func test_installedAtFilterIncludesEntriesEqualToInstalledAt() throws {
+        let installedAt = Date(timeIntervalSince1970: 1_700_000_000)
+        let timestamp = ISO8601DateFormatter().string(from: installedAt)
+        let jsonl = "{\"type\":\"assistant\",\"timestamp\":\"\(timestamp)\",\"message\":{\"usage\":{\"input_tokens\":66,\"output_tokens\":77}}}\n"
+        let tmp = try makeTempDirectory().appendingPathComponent("equal-installed-at.jsonl")
+        try jsonl.write(to: tmp, atomically: true, encoding: .utf8)
+
+        let batch = ClaudeLogParser(installedAt: installedAt).parse(filePath: tmp.path)
+
+        XCTAssertEqual(batch.inputTokens, 66)
+        XCTAssertEqual(batch.outputTokens, 77)
+    }
+
     func test_malformedLineIsSkippedWhileValidLinesCount() throws {
         let jsonl = """
         not-json
