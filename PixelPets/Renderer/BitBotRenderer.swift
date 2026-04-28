@@ -4,6 +4,7 @@ struct BitBotRenderer: View {
     @ObservedObject var viewModel: PetViewModel
     let size: CGFloat
     let frame: Int
+    var faceProvider: FaceProvider = BitBotFaceProvider()
 
     var body: some View {
         Canvas { ctx, sz in
@@ -66,7 +67,7 @@ struct BitBotRenderer: View {
         for y in 6..<10 { for x in 4..<12 {
             ctx.fillPixel(x: x, y: y, color: AgentPalette.screen, scale: scale)
         }}
-        BitBotFaceProvider().draw(in: ctx, state: viewModel.state, frame: frame, scale: scale)
+        faceProvider.draw(in: ctx, state: viewModel.state, frame: frame, scale: scale)
     }
 
     // Layer 5: Accessories
@@ -83,6 +84,6 @@ struct BitBotRenderer: View {
     private func drawFX(_ ctx: GraphicsContext, scale: CGFloat) { }
 
     private func isBody(x: Int, y: Int) -> Bool {
-        ![[0,0],[15,0],[0,15],[15,15]].contains([x,y])
+        !((x == 0 || x == 15) && (y == 0 || y == 15))
     }
 }
