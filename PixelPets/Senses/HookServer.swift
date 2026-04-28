@@ -31,30 +31,26 @@ final class HookServer {
     private func handle(_ connection: NWConnection) {
         connection.start(queue: .global(qos: .utility))
         connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, _, _ in
-            defer { connection.cancel() }
-
-            guard let data, let raw = String(data: data, encoding: .utf8) else {
-                return
-            }
-
-            let parts = raw.components(separatedBy: "\r\n\r\n")
-            guard parts.count >= 2 else {
-                return
-            }
-
-            let body = parts[1...].joined(separator: "\r\n\r\n")
-            if let jsonData = body.data(using: .utf8),
-               let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
-               let event = json["event"] as? String {
-                DispatchQueue.main.async {
-                    self?.onEvent?(event, json)
+            if let data, let raw = String(data: data, encoding: .utf8),
+               let bodyStart = raw.range(of: "\r\n\r\n") {
+                let body = String(raw[bodyStart.upperBound...])
+                if let jsonData = body.data(using: .utf8),
+                   let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
+                   let event = json["event"] as? String {
+                    DispatchQueue.main.async {
+                        self?.onEvent?(event, json)
+                    }
                 }
             }
 
-            let response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
-            connection.send(content: response.data(using: .utf8), completion: .contentProcessed { _ in
-                connection.cancel()
-            })
+            Self.sendOK(on: connection)
         }
+    }
+
+    private static func sendOK(on connection: NWConnection) {
+        let response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        connection.send(content: Data(response.utf8), completion: .contentProcessed { _ in
+            connection.cancel()
+        })
     }
 }
