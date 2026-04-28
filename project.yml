@@ -1,0 +1,24 @@
+name: PixelPets
+targets:
+  PixelPets:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - PixelPets
+    settings:
+      INFOPLIST_FILE: PixelPets/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: com.pixelpets.app
+      SWIFT_VERSION: "5.9"
+    resources:
+      - PixelPets/Resources
+  PixelPetsTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - PixelPetsTests
+    dependencies:
+      - target: PixelPets
+    settings:
+      SWIFT_VERSION: "5.9"
