@@ -17,11 +17,15 @@ struct PopoverView: View {
                 Text("累计 \(fmt(viewModel.totalLifetimeTokens)) tokens")
                     .font(.system(size: 9)).foregroundStyle(.secondary)
                 Spacer()
-                Button { } label: {
+                Button {
+                    // TODO: wire up
+                } label: {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }.buttonStyle(.plain).help("刷新配额")
-                Button { } label: {
+                Button {
+                    // TODO: wire up
+                } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 13)).foregroundStyle(.secondary)
                 }.buttonStyle(.plain)
@@ -30,6 +34,8 @@ struct PopoverView: View {
     }
 
     private func fmt(_ n: Int) -> String {
-        n >= 1_000_000 ? String(format: "%.1fM", Double(n)/1_000_000) : "\(n)"
+        if n >= 1_000_000 { return String(format: "%.1fM", Double(n)/1_000_000) }
+        if n >= 1_000     { return String(format: "%.0fK", Double(n)/1_000) }
+        return "\(n)"
     }
 }
