@@ -20,6 +20,7 @@
 		3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */; };
 		3E672EF39084377602CD91B2 /* PetDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007D866F945B461BCF4EA67E /* PetDisplayView.swift */; };
 		461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72F4F208D51F2DA034981F /* PetStateMachine.swift */; };
+		5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */; };
 		5F7D433973146C5AE5674233 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 		6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */; };
 		7EC3EBE2B508352497F79092 /* gemini-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = CB85949D9BAB777DA9C22692 /* gemini-hook.js */; };
@@ -83,6 +84,7 @@
 		E9B4482F5071602C678D496E /* pixelpets-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "pixelpets-hook.js"; sourceTree = "<group>"; };
 		F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetStateMachineTests.swift; sourceTree = "<group>"; };
 		FE22542ED2A510E28DA6DA7C /* gemini_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = gemini_sample.json; sourceTree = "<group>"; };
+		FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParserTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -138,6 +140,7 @@
 		8292F4952EBEB0F967FD2D62 /* PixelPetsTests */ = {
 			isa = PBXGroup;
 			children = (
+				FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */,
 				1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */,
 				902053947864E8D75FE02CFB /* HookServerTests.swift */,
 				3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */,
@@ -339,6 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */,
 				8AA227BCB4EAB6ABB811B135 /* HookRegistrarTests.swift in Sources */,
 				F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */,
 				3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */,
