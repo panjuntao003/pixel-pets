@@ -16,13 +16,26 @@ final class NodeGate {
         let pipe = Pipe()
         task.standardOutput = pipe
 
-        try? task.run()
-        task.waitUntilExit()
+        let didRun: Bool
+        do {
+            try task.run()
+            didRun = true
+        } catch {
+            didRun = false
+        }
+        if didRun {
+            task.waitUntilExit()
+        }
 
-        let found = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?
-            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let found: String
+        if didRun {
+            found = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?
+                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        } else {
+            found = ""
+        }
 
-        if !found.isEmpty {
+        if didRun, task.terminationStatus == 0, FileManager.default.isExecutableFile(atPath: found) {
             return .available(path: found)
         }
 
