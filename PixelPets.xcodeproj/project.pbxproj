@@ -28,6 +28,7 @@
 		BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0EC6058E905C89792375F /* FaceProvider.swift */; };
 		BDB688527872D702C345F81D /* NodeGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DFC862F77574208340D87A /* NodeGate.swift */; };
 		C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */; };
+		DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */; };
 		E47E29F5AF119F6055E983CD /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
 /* End PBXBuildFile section */
@@ -63,6 +64,7 @@
 		99CE2F3CA0D291740976E7EA /* Accessory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessory.swift; sourceTree = "<group>"; };
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClock.swift; sourceTree = "<group>"; };
+		B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelPetsApp.swift; sourceTree = "<group>"; };
 		B52CBD94E5910ED06A425C3C /* PetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewModel.swift; sourceTree = "<group>"; };
 		B6B161320AB8F459F62F9F48 /* AgentSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSkin.swift; sourceTree = "<group>"; };
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +141,14 @@
 			path = Fixtures;
 			sourceTree = "<group>";
 		};
+		94FC4D103188E1E0AC04F6B4 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
 		A5067EA44016A2BEFDCB0DF9 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				5374C17A55C4816597BD775D /* Info.plist */,
+				94FC4D103188E1E0AC04F6B4 /* App */,
 				C026731DCF1F35203F029D8A /* Core */,
 				D2E4610F8181F6BBADC411D1 /* Models */,
 				A5067EA44016A2BEFDCB0DF9 /* Renderer */,
@@ -286,6 +297,7 @@
 				461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */,
 				0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */,
 				8AACAAC62F8149551BE9D596 /* PixelColor.swift in Sources */,
+				DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */,
 				31C5C8CEAECB30D7E951C812 /* PopoverView.swift in Sources */,
 				C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */,
 				210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */,
