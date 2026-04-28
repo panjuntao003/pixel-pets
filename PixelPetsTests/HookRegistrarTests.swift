@@ -434,7 +434,14 @@ final class HookRegistrarTests: XCTestCase {
 
     private func pixelPetsCommandCount(event: String, in hooks: [String: Any]) throws -> Int {
         commandHandlers(in: try eventGroups(event, in: hooks))
-            .filter { (($0["command"] as? String)?.contains("pixelpets") == true) }
+            .filter { handler in
+                guard let command = handler["command"] as? String else {
+                    return false
+                }
+                return ["pixelpets-hook", "gemini-hook", "codex-hook"].contains {
+                    command.contains($0)
+                }
+            }
             .count
     }
 
