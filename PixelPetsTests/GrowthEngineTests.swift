@@ -18,6 +18,14 @@ final class GrowthEngineTests: XCTestCase {
         XCTAssertEqual(e.compute(totalTokens: 1_000_000).level, 2)
     }
 
+    func test_at5M_level3() {
+        XCTAssertEqual(e.compute(totalTokens: 5_000_000).level, 3)
+    }
+
+    func test_at20M_level4() {
+        XCTAssertEqual(e.compute(totalTokens: 20_000_000).level, 4)
+    }
+
     func test_at2M_battery() {
         XCTAssertTrue(e.compute(totalTokens: 2_000_000).accessories.contains(.battery))
     }
@@ -28,5 +36,20 @@ final class GrowthEngineTests: XCTestCase {
 
     func test_milestones_none_within_range() {
         XCTAssertTrue(e.newMilestones(from: 600_000, to: 900_000).isEmpty)
+    }
+
+    func test_milestones_multiple_in_one_jump() {
+        XCTAssertEqual(e.newMilestones(from: 400_000, to: 3_500_000), [.sprout, .battery, .headset])
+    }
+
+    func test_milestones_doesNotReemitOldTotalThreshold() {
+        XCTAssertEqual(e.newMilestones(from: 500_000, to: 2_000_000), [.battery])
+    }
+
+    func test_at20M_fullAccessoryOrdering() {
+        XCTAssertEqual(
+            e.compute(totalTokens: 20_000_000).accessories,
+            [.sprout, .battery, .headset, .minidrone, .jetpack, .halo, .codecloud, .cape, .antenna]
+        )
     }
 }
