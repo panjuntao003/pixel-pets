@@ -73,7 +73,9 @@ final class HookRegistrar {
         backup(path)
 
         let hookScript = bundledPath(name: "pixelpets-hook")
-        var hooks = json["hooks"] as? [String: Any] ?? [:]
+        guard var hooks = normalizedHookObject(from: json["hooks"], defaultEvent: "UserPromptSubmit", markers: ["pixelpets", "pixelpets-hook"]) else {
+            return
+        }
         let events = [
             "UserPromptSubmit", "PreToolUse", "PostToolUse", "PostToolUseFailure",
             "Stop", "StopFailure", "SubagentStart", "SubagentStop",
@@ -103,7 +105,9 @@ final class HookRegistrar {
 
         let hookScript = bundledPath(name: "gemini-hook")
         let command = command(scriptPath: hookScript)
-        var hooks = json["hooks"] as? [String: Any] ?? [:]
+        guard var hooks = normalizedHookObject(from: json["hooks"], defaultEvent: "BeforeTool", markers: ["pixelpets", "gemini-hook"]) else {
+            return
+        }
         let events = [
             "SessionStart", "SessionEnd", "BeforeAgent", "BeforeTool",
             "AfterTool", "AfterAgent", "PreCompress"
@@ -127,7 +131,7 @@ final class HookRegistrar {
         let events = ["SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "Stop"]
 
         for event in events {
-            appendCommandHandler(
+            _ = appendCommandHandler(
                 command: command(scriptPath: hookScript, event: event),
                 to: &json,
                 event: event,
@@ -150,20 +154,32 @@ final class HookRegistrar {
             return
         }
 
+        if var hooks = json["hooks"] as? [[String: Any]] {
+            removeFlatCommandEntries(containingAnyOf: markers, from: &hooks)
+            json["hooks"] = hooks
+            writeJSON(json, to: configPath)
+            return
+        }
+
         removeCommandHandlers(containingAnyOf: markers, from: &json)
         writeJSON(json, to: configPath)
     }
 
-    private func appendCommandHandler(command: String, to hooks: inout [String: Any], event: String, marker: String) {
-        var groups = hooks[event] as? [[String: Any]] ?? []
+    @discardableResult
+    private func appendCommandHandler(command: String, to hooks: inout [String: Any], event: String, marker: String) -> Bool {
+        guard var groups = normalizedEventGroups(from: hooks[event], markers: ["pixelpets", marker]) else {
+            return false
+        }
+
         guard !containsCommand(in: groups, marker: marker) else {
-            return
+            hooks[event] = groups
+            return true
         }
 
         let handler: [String: Any] = [
             "type": "command",
             "command": command,
-            "timeout": 1000
+            "timeout": 3000
         ]
 
         if let index = groups.firstIndex(where: { $0["matcher"] == nil || ($0["matcher"] as? String) == "*" }) {
@@ -177,31 +193,48 @@ final class HookRegistrar {
         }
 
         hooks[event] = groups
+        return true
     }
 
     private func removeCommandHandlers(containingAnyOf markers: [String], from hooks: inout [String: Any]) {
         for key in hooks.keys {
-            guard var groups = hooks[key] as? [[String: Any]] else {
-                continue
-            }
-
-            for index in groups.indices {
-                var group = groups[index]
-                guard var handlers = group["hooks"] as? [[String: Any]] else {
-                    continue
-                }
-
-                handlers.removeAll { handler in
-                    guard let command = handler["command"] as? String else {
-                        return false
+            if var groups = hooks[key] as? [[String: Any]] {
+                for index in groups.indices {
+                    var group = groups[index]
+                    guard var handlers = group["hooks"] as? [[String: Any]] else {
+                        continue
                     }
-                    return markers.contains { command.localizedCaseInsensitiveContains($0) }
-                }
-                group["hooks"] = handlers
-                groups[index] = group
-            }
 
-            hooks[key] = groups
+                    removeCommandHandlers(containingAnyOf: markers, from: &handlers)
+                    group["hooks"] = handlers
+                    groups[index] = group
+                }
+
+                hooks[key] = groups
+            } else if var commands = hooks[key] as? [String] {
+                commands.removeAll { command in
+                    markers.contains { command.localizedCaseInsensitiveContains($0) }
+                }
+                hooks[key] = commands
+            }
+        }
+    }
+
+    private func removeCommandHandlers(containingAnyOf markers: [String], from handlers: inout [[String: Any]]) {
+        handlers.removeAll { handler in
+            guard let command = handler["command"] as? String else {
+                return false
+            }
+            return markers.contains { command.localizedCaseInsensitiveContains($0) }
+        }
+    }
+
+    private func removeFlatCommandEntries(containingAnyOf markers: [String], from entries: inout [[String: Any]]) {
+        entries.removeAll { entry in
+            guard let command = entry["command"] as? String else {
+                return false
+            }
+            return markers.contains { command.localizedCaseInsensitiveContains($0) }
         }
     }
 
@@ -210,6 +243,76 @@ final class HookRegistrar {
             let handlers = group["hooks"] as? [[String: Any]] ?? []
             return handlers.contains { (($0["command"] as? String)?.localizedCaseInsensitiveContains(marker) == true) }
         }
+    }
+
+    private func normalizedHookObject(from value: Any?, defaultEvent: String, markers: [String]) -> [String: Any]? {
+        if value == nil {
+            return [:]
+        }
+
+        if let hooks = value as? [String: Any] {
+            return hooks
+        }
+
+        if let flatEntries = value as? [[String: Any]] {
+            return migrateFlatEntries(flatEntries, defaultEvent: defaultEvent, markers: markers)
+        }
+
+        return nil
+    }
+
+    private func normalizedEventGroups(from value: Any?, markers: [String]) -> [[String: Any]]? {
+        if value == nil {
+            return []
+        }
+
+        if let groups = value as? [[String: Any]] {
+            return groups
+        }
+
+        if let commands = value as? [String] {
+            let handlers = commands
+                .filter { command in
+                    !markers.contains { command.localizedCaseInsensitiveContains($0) }
+                }
+                .map { command in
+                    ["type": "command", "command": command]
+                }
+            return handlers.isEmpty ? [] : [["hooks": handlers]]
+        }
+
+        return nil
+    }
+
+    private func migrateFlatEntries(_ entries: [[String: Any]], defaultEvent: String, markers: [String]) -> [String: Any] {
+        var hooks: [String: Any] = [:]
+
+        for entry in entries {
+            guard let command = entry["command"] as? String,
+                  !markers.contains(where: { command.localizedCaseInsensitiveContains($0) }) else {
+                continue
+            }
+
+            let event = entry["event"] as? String ?? defaultEvent
+            var handler: [String: Any] = [
+                "type": entry["type"] as? String ?? "command",
+                "command": command
+            ]
+            if let timeout = entry["timeout"] {
+                handler["timeout"] = timeout
+            }
+
+            var group: [String: Any] = ["hooks": [handler]]
+            if let matcher = entry["matcher"] {
+                group["matcher"] = matcher
+            }
+
+            var groups = hooks[event] as? [[String: Any]] ?? []
+            groups.append(group)
+            hooks[event] = groups
+        }
+
+        return hooks
     }
 
     private func command(scriptPath: String, event: String? = nil) -> String {
