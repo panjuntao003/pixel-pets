@@ -55,6 +55,7 @@
 		B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */; };
 		B262D5655FECE5FBC8DCFE42 /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
 		B5B14046A8EFD2856BE8D446 /* codex-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = 9F56DC065FAE03A663C8383E /* codex-hook.js */; };
+		BA99E9516BC24CE665F0F641 /* HabitatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */; };
 		BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E338061E37977B5F19E4C /* HookServer.swift */; };
 		BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0EC6058E905C89792375F /* FaceProvider.swift */; };
 		BDB688527872D702C345F81D /* NodeGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DFC862F77574208340D87A /* NodeGate.swift */; };
@@ -101,6 +102,7 @@
 		43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
 		45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParserTests.swift; sourceTree = "<group>"; };
 		46A43FD451CF7A4BE88EBD8C /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatView.swift; sourceTree = "<group>"; };
 		4EE0EC6058E905C89792375F /* FaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceProvider.swift; sourceTree = "<group>"; };
 		52E02B09537952D8CA58865A /* GrowthEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngine.swift; sourceTree = "<group>"; };
 		5374C17A55C4816597BD775D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */,
+				4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */,
 				E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */,
 				007D866F945B461BCF4EA67E /* PetDisplayView.swift */,
 				60297808408A5939E6D93BD2 /* PopoverView.swift */,
@@ -455,6 +458,7 @@
 				09E5FF860E3846F111F29D64 /* GrowthEngine.swift in Sources */,
 				09513F16A1C36B664B105F4D /* GrowthStore.swift in Sources */,
 				3CB81B022879D759D093B98E /* HabitatScene.swift in Sources */,
+				BA99E9516BC24CE665F0F641 /* HabitatView.swift in Sources */,
 				2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */,
 				8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */,
 				BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */,

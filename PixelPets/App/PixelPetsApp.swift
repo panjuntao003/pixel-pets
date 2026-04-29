@@ -53,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                 onRefresh: coordinator.refresh,
                 onConfigureHooks: coordinator.registerDetectedHooks
             )
+            .environmentObject(coordinator.settingsStore)
         )
     }
 
