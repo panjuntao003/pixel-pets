@@ -23,8 +23,10 @@
 		33E804004A0614559589C180 /* AnimationClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FF5F498032037211B5C222 /* AnimationClockTests.swift */; };
 		38BD0015059AC48A6FD38792 /* pixelpets-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = E9B4482F5071602C678D496E /* pixelpets-hook.js */; };
 		3A1349CB2AF4BF3BA081A6B5 /* CodexLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */; };
+		3CB81B022879D759D093B98E /* HabitatScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */; };
 		3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */; };
 		3E672EF39084377602CD91B2 /* PetDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007D866F945B461BCF4EA67E /* PetDisplayView.swift */; };
+		407BBD34F90B5EB23C293446 /* SceneRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */; };
 		461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72F4F208D51F2DA034981F /* PetStateMachine.swift */; };
 		5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */; };
 		5F7D433973146C5AE5674233 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
@@ -110,6 +112,7 @@
 		9276B97C5781060F8B436E4A /* PixelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelColor.swift; sourceTree = "<group>"; };
 		92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrar.swift; sourceTree = "<group>"; };
 		9394436749431BF36A637FED /* OpenCodeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParser.swift; sourceTree = "<group>"; };
+		95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRegistryTests.swift; sourceTree = "<group>"; };
 		99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClient.swift; sourceTree = "<group>"; };
 		99CE2F3CA0D291740976E7EA /* Accessory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessory.swift; sourceTree = "<group>"; };
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
@@ -118,6 +121,7 @@
 		B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelPetsApp.swift; sourceTree = "<group>"; };
 		B52CBD94E5910ED06A425C3C /* PetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewModel.swift; sourceTree = "<group>"; };
 		B6B161320AB8F459F62F9F48 /* AgentSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSkin.swift; sourceTree = "<group>"; };
+		B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatScene.swift; sourceTree = "<group>"; };
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5DFC862F77574208340D87A /* NodeGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGate.swift; sourceTree = "<group>"; };
 		C5FF5F498032037211B5C222 /* AnimationClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClockTests.swift; sourceTree = "<group>"; };
@@ -210,6 +214,7 @@
 				3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */,
 				ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */,
 				F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */,
+				95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */,
 				61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */,
 			);
 			path = PixelPetsTests;
@@ -260,6 +265,7 @@
 				AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */,
 				5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */,
 				4EE0EC6058E905C89792375F /* FaceProvider.swift */,
+				B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */,
 				9276B97C5781060F8B436E4A /* PixelColor.swift */,
 			);
 			path = Renderer;
@@ -419,6 +425,7 @@
 				B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */,
 				09E5FF860E3846F111F29D64 /* GrowthEngine.swift in Sources */,
 				09513F16A1C36B664B105F4D /* GrowthStore.swift in Sources */,
+				3CB81B022879D759D093B98E /* HabitatScene.swift in Sources */,
 				2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */,
 				8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */,
 				BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */,
@@ -458,6 +465,7 @@
 				3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */,
 				C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */,
 				6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */,
+				407BBD34F90B5EB23C293446 /* SceneRegistryTests.swift in Sources */,
 				9529F0562B69CF5D49F8D038 /* SettingsStoreTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
