@@ -58,6 +58,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 | `PixelPets/Renderer/BitBotV2Renderer.swift` | 24×28 机器人渲染器 |
 | `PixelPets/Renderer/BitBotV2FaceProvider.swift` | 7 种状态表情（大屏） |
 | `PixelPets/UI/HabitatView.swift` | 场景容器：AnimationClock + 场景 + 机器人 + 圆点导航 |
+| `PixelPets/Renderer/BitBotStatusIconRenderer.swift` | 仅渲染 16×16 头部，用于菜单栏图标 |
 | `PixelPetsTests/SettingsStoreTests.swift` | SettingsStore 序列化/过滤测试 |
 | `PixelPetsTests/SceneRegistryTests.swift` | SceneRegistry 映射完整性测试 |
 
@@ -76,6 +77,35 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 | `PixelPets/UI/PetDisplayView.swift` | 删除此文件（被 HabitatView 取代） |
 | `PixelPets/Renderer/BitBotRenderer.swift` | 删除此文件（被 BitBotV2Renderer 取代） |
 | `project.yml` → `xcodegen generate` | 每个任务新增文件后执行，自动更新 pbxproj |
+
+---
+
+## Task 0: Dirty Worktree 基线提交
+
+**Files:** 所有现有未提交改动
+
+- [ ] **Step 1: 确认现有改动范围**
+
+  ```bash
+  git status --short
+  git diff --stat
+  ```
+  预期包含：ClaudeQuotaClient Gemini 三 tier 拆分、OpenCodeGoQuotaClient、AppCoordinator 改动、测试文件等。
+  **确认这些改动都是预期的已完成工作后再继续。**
+
+- [ ] **Step 2: 提交基线**
+
+  ```bash
+  git add -A
+  git commit -m "chore: baseline — pre-redesign state with Gemini 3-tier + OpenCodeGoQuotaClient"
+  ```
+
+- [ ] **Step 3: 确认 worktree 干净**
+
+  ```bash
+  git status
+  ```
+  预期：`nothing to commit, working tree clean`
 
 ---
 
@@ -155,6 +185,14 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
           let store2 = SettingsStore(directory: tempDir.path)
           XCTAssertTrue(store2.settings.hookPermissionAsked)
       }
+
+      func test_migratesUserDefaultsHookPermission() {
+          UserDefaults.standard.set(true, forKey: "hookPermissionAsked")
+          let migrated = SettingsStore(directory: tempDir.path)
+          XCTAssertTrue(migrated.settings.hookPermissionAsked)
+          XCTAssertFalse(UserDefaults.standard.bool(forKey: "hookPermissionAsked"),
+                         "old UserDefaults key should be cleared after migration")
+      }
   }
   ```
 
@@ -220,12 +258,20 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
           try? FileManager.default.createDirectory(
               atPath: directory, withIntermediateDirectories: true)
           self.path = (directory as NSString).appendingPathComponent("settings.json")
+          var loaded: AppSettings
           if let data = FileManager.default.contents(atPath: path),
              let s = try? JSONDecoder().decode(AppSettings.self, from: data) {
-              self.settings = s
+              loaded = s
           } else {
-              self.settings = AppSettings()
+              loaded = AppSettings()
           }
+          // 迁移旧 UserDefaults hookPermissionAsked → JSON（一次性）
+          let ud = UserDefaults.standard
+          if ud.bool(forKey: "hookPermissionAsked") {
+              loaded.hookPermissionAsked = true
+              ud.removeObject(forKey: "hookPermissionAsked")
+          }
+          self.settings = loaded
       }
 
       func update(_ block: (inout AppSettings) -> Void) {
@@ -436,6 +482,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 
   struct SettingsView: View {
       @EnvironmentObject private var settingsStore: SettingsStore
+      var onRegisterHooks: () -> Void = {}
 
       var body: some View {
           TabView {
@@ -443,7 +490,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
                   .tabItem { Label("通用", systemImage: "gearshape") }
               SceneSettingsTab()
                   .tabItem { Label("场景", systemImage: "sparkles") }
-              AdvancedSettingsTab()
+              AdvancedSettingsTab(onRegisterHooks: onRegisterHooks)
                   .tabItem { Label("高级", systemImage: "wrench.and.screwdriver") }
           }
           .environmentObject(settingsStore)
@@ -496,7 +543,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 
   private struct AdvancedSettingsTab: View {
       @EnvironmentObject private var store: SettingsStore
-
+      var onRegisterHooks: () -> Void = {}
       @State private var showResetAlert = false
 
       var body: some View {
@@ -510,7 +557,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
                   }
                   Text("端口固定为 15799，可变端口支持将在后续版本提供。")
                       .font(.caption).foregroundStyle(.secondary)
-                  Button("重新注册 Hook") { }  // 在 Task 8 中接入 AppCoordinator.registerDetectedHooks
+                  Button("重新注册 Hook", action: onRegisterHooks)
               }
               Section {
                   Button("重置所有设置", role: .destructive) { showResetAlert = true }
@@ -543,7 +590,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
   替换为：
   ```swift
   Settings {
-      SettingsView()
+      SettingsView(onRegisterHooks: appDelegate.coordinator.registerDetectedHooks)
           .environmentObject(appDelegate.coordinator.settingsStore)
   }
   ```
@@ -1564,18 +1611,279 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
   xcodegen generate
   ```
 
-- [ ] **Step 5: 物理删除旧文件**
+- [ ] **Step 8: 构建验证**
 
   ```bash
-  # PetDisplayView.swift 的 Xcode 引用在 Task 9 统一通过 xcodegen generate 移除
-  # 此处无需操作
+  xcodebuild -scheme PixelPets -destination "platform=macOS" build 2>&1 | tail -3
   ```
-- [ ] **Step 6: 构建验证**
+  预期：`** BUILD SUCCEEDED **`
+
+- [ ] **Step 9: 运行 SceneRegistry 测试**
 
   ```bash
-  xcodebuild -scheme PixelPets -destination "platform=macOS" build 2>&1 | grep -E "error:|BUILD"
+  xcodebuild -scheme PixelPetsTests -destination "platform=macOS" \
+    -only-testing:PixelPetsTests/SceneRegistryTests test 2>&1 | grep -E "passed|failed"
+  ```
+  预期：3 个测试全部 passed。
+
+- [ ] **Step 10: Commit**
+
+  ```bash
+  git add PixelPets/Renderer/Scenes/ \
+          PixelPets/Renderer/HabitatScene.swift \
+          PixelPets.xcodeproj/
+  git commit -m "feat: 4 isometric scenes — SpaceStation, CyberpunkLab, SciFiQuarters, Underwater"
+  ```
+
+---
+
+## Task 7: HabitatView（场景容器 + 机器人 + 圆点导航）
+
+**Files:**
+- Create: `PixelPets/UI/HabitatView.swift`
+- Modify: `PixelPets/UI/PopoverView.swift`
+- Modify: `PixelPets/App/PixelPetsApp.swift`
+
+- [ ] **Step 1: 创建 `PixelPets/UI/HabitatView.swift`**
+
+  ```swift
+  import SwiftUI
+
+  struct HabitatView: View {
+      @ObservedObject var viewModel: PetViewModel
+      @EnvironmentObject var settingsStore: SettingsStore
+      @State private var currentSceneID: SceneID = SceneID.allCases.randomElement()!
+
+      private var currentScene: any HabitatScene {
+          SceneRegistry.scene(for: currentSceneID)
+      }
+
+      var body: some View {
+          ZStack(alignment: .bottomTrailing) {
+              AnimationClock(fps: 30) { frame in
+                  SceneWithRobot(scene: currentScene, viewModel: viewModel, frame: frame)
+              }
+              SceneDotNav(
+                  scenes: SceneID.allCases,
+                  current: currentSceneID,
+                  onSelect: { switchScene(to: $0) }
+              )
+              .padding(.trailing, 8).padding(.bottom, 6)
+          }
+          .frame(height: 140)
+          .clipped()
+          .gesture(
+              DragGesture(minimumDistance: 30)
+                  .onEnded { value in
+                      if value.translation.width < -30 { cycleScene(forward: true) }
+                      else if value.translation.width > 30 { cycleScene(forward: false) }
+                  }
+          )
+          .onAppear { applyScenePreference() }
+          .onChange(of: settingsStore.settings.scenePreference) { _ in
+              // 设置变更时若锁定到具体场景则切换，随机则不变
+              if let id = settingsStore.settings.scenePreference.sceneID {
+                  withAnimation(.easeInOut(duration: 0.3)) { currentSceneID = id }
+              }
+          }
+      }
+
+      private func applyScenePreference() {
+          let pref = settingsStore.settings.scenePreference
+          if let id = pref.sceneID {
+              currentSceneID = id
+          } else {
+              // .random：每次打开 Popover 随机选一个
+              currentSceneID = SceneID.allCases.randomElement()!
+          }
+      }
+
+      private func switchScene(to id: SceneID) {
+          // 点圆点 = 临时覆盖，不写入 scenePreference
+          withAnimation(.easeInOut(duration: 0.3)) { currentSceneID = id }
+      }
+
+      private func cycleScene(forward: Bool) {
+          let all = SceneID.allCases
+          guard let idx = all.firstIndex(of: currentSceneID) else { return }
+          let next = forward
+              ? all[(idx + 1) % all.count]
+              : all[(idx + all.count - 1) % all.count]
+          withAnimation(.easeInOut(duration: 0.3)) { currentSceneID = next }
+      }
+  }
+
+  // MARK: - SceneWithRobot
+
+  private struct SceneWithRobot: View {
+      let scene: any HabitatScene
+      let viewModel: PetViewModel
+      let frame: Int
+
+      var body: some View {
+          GeometryReader { geo in
+              Canvas { ctx, size in
+                  scene.drawBackground(ctx, size: size, frame: frame)
+              }
+              let center = scene.robotCenter(for: viewModel.state, in: geo.size)
+              let floatOffset: CGFloat = scene.id == .underwater
+                  ? 3.0 * sin(Double(frame % 40) / 40 * .pi * 2)
+                  : 0
+              BitBotV2Renderer(
+                  skin: viewModel.activeSkin,
+                  state: viewModel.state,
+                  frame: frame,
+                  size: 60
+              )
+              .position(x: center.x, y: center.y + floatOffset)
+          }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+      }
+  }
+
+  // MARK: - SceneDotNav
+
+  private struct SceneDotNav: View {
+      let scenes: [SceneID]
+      let current: SceneID
+      let onSelect: (SceneID) -> Void
+
+      var body: some View {
+          HStack(spacing: 4) {
+              ForEach(scenes, id: \.self) { id in
+                  Circle()
+                      .fill(id == current ? Color.white : Color.white.opacity(0.35))
+                      .frame(width: id == current ? 7 : 5, height: id == current ? 7 : 5)
+                      .onTapGesture { onSelect(id) }
+              }
+          }
+          .padding(4)
+          .background(Color.black.opacity(0.3))
+          .clipShape(Capsule())
+      }
+  }
+  ```
+
+- [ ] **Step 2: 更新 `PopoverView.swift`**
+
+  完整替换 `PopoverView`：
+
+  ```swift
+  import SwiftUI
+
+  struct PopoverView: View {
+      @ObservedObject var viewModel: PetViewModel
+      @EnvironmentObject var settingsStore: SettingsStore
+      var onRefresh: () -> Void = {}
+      var onConfigureHooks: () -> Void = {}
+
+      var body: some View {
+          VStack(spacing: 0) {
+              HabitatView(viewModel: viewModel)
+                  .environmentObject(settingsStore)
+
+              // 场景到信息区过渡
+              Divider()
+              LinearGradient(
+                  colors: [Color(nsColor: .windowBackgroundColor).opacity(0),
+                           Color(nsColor: .windowBackgroundColor)],
+                  startPoint: .top, endPoint: .bottom
+              ).frame(height: 4)
+
+              ScrollView {
+                  if viewModel.visibleClis.isEmpty {
+                      EmptyStateView()
+                          .padding(20)
+                  } else {
+                      VStack(spacing: 8) {
+                          ForEach(viewModel.visibleClis) { info in
+                              CliCardView(info: info)
+                          }
+                      }.padding(12)
+                  }
+              }
+
+              Divider()
+
+              HStack {
+                  Text("累计 \(fmt(viewModel.totalLifetimeTokens)) tokens")
+                      .font(.system(size: 9)).foregroundStyle(.secondary)
+                  Spacer()
+                  Button { onRefresh() } label: {
+                      Image(systemName: "arrow.clockwise")
+                          .font(.system(size: 12)).foregroundStyle(.secondary)
+                  }.buttonStyle(.plain).help("刷新配额")
+                  Button { openSettings() } label: {
+                      Image(systemName: "gearshape")
+                          .font(.system(size: 13)).foregroundStyle(.secondary)
+                  }.buttonStyle(.plain).help("设置")
+              }.padding(.horizontal, 12).padding(.vertical, 8)
+          }
+          .frame(width: 360)
+      }
+
+      private func openSettings() {
+          NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+      }
+
+      private func fmt(_ n: Int) -> String {
+          if n >= 1_000_000 { return String(format: "%.1fM", Double(n)/1_000_000) }
+          if n >= 1_000     { return String(format: "%.0fK", Double(n)/1_000) }
+          return "\(n)"
+      }
+  }
+
+  private struct EmptyStateView: View {
+      var body: some View {
+          VStack(spacing: 12) {
+              Image(systemName: "powerplug.portrait")
+                  .font(.system(size: 32)).foregroundStyle(.secondary)
+              Text("所有终端已休眠").font(.system(size: 13, weight: .medium))
+              Text("在设置中启用至少一个 CLI")
+                  .font(.system(size: 11)).foregroundStyle(.secondary)
+              Button("打开设置") {
+                  NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+              }
+              .buttonStyle(.borderedProminent).controlSize(.small)
+          }
+          .frame(maxWidth: .infinity)
+      }
+  }
+  ```
+
+- [ ] **Step 3: 更新 `PixelPetsApp.swift` 传递 `settingsStore`**
+
+  `AppDelegate.setupPopover()` 中更新：
+  ```swift
+  popover.contentViewController = NSHostingController(
+      rootView: PopoverView(
+          viewModel: coordinator.viewModel,
+          onRefresh: coordinator.refresh,
+          onConfigureHooks: coordinator.registerDetectedHooks
+      )
+      .environmentObject(coordinator.settingsStore)
+  )
+  ```
+
+- [ ] **Step 4: 重新生成 Xcode project**
+
+  ```bash
+  xcodegen generate
+  ```
+
+- [ ] **Step 5: 构建验证**
+
+  ```bash
+  xcodebuild -scheme PixelPets -destination "platform=macOS" build 2>&1 | tail -3
   ```
   预期：`** BUILD SUCCEEDED **`，无 error。
+
+- [ ] **Step 6: 运行完整测试**
+
+  ```bash
+  xcodebuild -scheme PixelPetsTests -destination "platform=macOS" test 2>&1 | tail -3
+  ```
+  预期：`** TEST SUCCEEDED **`
 
 - [ ] **Step 7: Commit**
 
@@ -1733,12 +2041,87 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 ## Task 9: 菜单栏图标更新 + 最终清理
 
 **Files:**
+- Create: `PixelPets/Renderer/BitBotStatusIconRenderer.swift`
 - Modify: `PixelPets/App/PixelPetsApp.swift` (图标渲染)
 - Delete: `PixelPets/Renderer/BitBotRenderer.swift` (从 Xcode 移除)
 - Delete: `PixelPets/UI/PetDisplayView.swift` (从 Xcode 移除)
 - Run: `xcodegen generate` (after deleting old files)
 
-- [ ] **Step 1: 更新菜单栏图标渲染**
+- [ ] **Step 1: 创建 `PixelPets/Renderer/BitBotStatusIconRenderer.swift`**
+
+  只渲染机器人头部（16×16 对应 24×18 子网格），避免全身缩放糊图：
+
+  ```swift
+  import SwiftUI
+
+  /// 菜单栏专用：只渲染 BitBot v2 的头部正面（16×16 pt）
+  struct BitBotStatusIconRenderer: View {
+      let skin: AgentSkin
+      let state: PetState
+      let size: CGFloat
+
+      private let faceProvider = BitBotV2FaceProvider()
+
+      // 头部占 24×28 网格的前 18 行（含天线 + 头部 + 屏幕）
+      private let gridW = 24, gridH = 18
+
+      var body: some View {
+          Canvas { ctx, sz in
+              let scale = sz.width / CGFloat(gridW)
+              drawHead(ctx, scale: scale)
+              drawFace(ctx, scale: scale)
+          }
+          .frame(width: size, height: size)
+      }
+
+      private func drawHead(_ ctx: GraphicsContext, scale: CGFloat) {
+          let body   = AgentPalette.bodyColor(for: skin)
+          let light  = AgentPalette.lightColor(for: skin)
+          let ant    = AgentPalette.antenna
+          let black  = Color.black
+
+          // 天线
+          for y in 4...6 {
+              ctx.fillPixel(x: 0,  y: y, color: ant, scale: scale)
+              ctx.fillPixel(x: 1,  y: y, color: ant, scale: scale)
+              ctx.fillPixel(x: 22, y: y, color: ant, scale: scale)
+              ctx.fillPixel(x: 23, y: y, color: ant, scale: scale)
+          }
+          // 头部填充
+          for y in 1...17 { for x in 2...21 {
+              ctx.fillPixel(x: x, y: y, color: body, scale: scale)
+          }}
+          // 轮廓
+          for x in 2...21 {
+              ctx.fillPixel(x: x, y: 0,  color: black, scale: scale)
+              ctx.fillPixel(x: x, y: 17, color: black, scale: scale)
+          }
+          for y in 1...17 {
+              ctx.fillPixel(x: 2,  y: y, color: black, scale: scale)
+              ctx.fillPixel(x: 21, y: y, color: black, scale: scale)
+          }
+          // 高光
+          for (x, y) in [(3,2),(4,2),(3,3)] {
+              ctx.fillPixel(x: x, y: y, color: light, scale: scale)
+          }
+          // 屏幕边框
+          for x in 3...20 {
+              ctx.fillPixel(x: x, y: 3,  color: black, scale: scale)
+              ctx.fillPixel(x: x, y: 15, color: black, scale: scale)
+          }
+          for y in 4...14 {
+              ctx.fillPixel(x: 3,  y: y, color: black, scale: scale)
+              ctx.fillPixel(x: 20, y: y, color: black, scale: scale)
+          }
+      }
+
+      private func drawFace(_ ctx: GraphicsContext, scale: CGFloat) {
+          faceProvider.draw(in: ctx, state: state, frame: 0, scale: scale)
+      }
+  }
+  ```
+
+- [ ] **Step 2: 更新菜单栏图标渲染**
 
   在 `AppDelegate` 的 `setupStatusItem()` 方法中，将：
   ```swift
@@ -1895,7 +2278,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 | enabledCLIs opt-out 语义 | Task 1 + Task 2 |
 | visibleClis 过滤 + 空状态 UI | Task 2 + Task 7 |
 | SettingsView 三 Tab | Task 3 |
-| hookPort 修改存储（手动重注册） | Task 3 |
+| hookPort 保留字段 + Settings 只读展示（本期不生效） | Task 3 |
 | ScenePreference 枚举 + SceneRegistry 工厂 | Task 4 |
 | BitBot v2（24×28，大屏，7状态） | Task 5 |
 | AgentPalette v2（4皮肤颜色） | Task 4 |
