@@ -9,6 +9,22 @@ struct CliQuotaInfo: Identifiable {
     var planBadge: String = ""
     var isDetected: Bool = false
 
+    init(
+        id: AgentSkin,
+        fetchResult: QuotaFetchResult = .unavailable("未检测到"),
+        todayTokens: Int = 0,
+        weekTokens: Int = 0,
+        planBadge: String = "",
+        isDetected: Bool = false
+    ) {
+        self.id = id
+        self.fetchResult = fetchResult
+        self.todayTokens = todayTokens
+        self.weekTokens = weekTokens
+        self.planBadge = planBadge
+        self.isDetected = isDetected
+    }
+
     var tiers: [QuotaTier] {
         switch fetchResult {
         case .success(let t), .estimated(let t): return t
@@ -37,7 +53,11 @@ final class PetViewModel: ObservableObject {
     @Published var totalLifetimeTokens: Int = 0
     @Published var hooksAvailable: Bool = false   // false if node missing
 
-    var visibleClis: [CliQuotaInfo] { cliInfos.filter(\.isDetected) }
+    var enabledCLIFilter: ((CliQuotaInfo) -> Bool) = { _ in true }
+
+    var visibleClis: [CliQuotaInfo] {
+        cliInfos.filter { $0.isDetected && enabledCLIFilter($0) }
+    }
 
     static func mock() -> PetViewModel {
         let vm = PetViewModel()

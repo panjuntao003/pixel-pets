@@ -35,6 +35,7 @@
 		78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F506134FD22F7BB13B9BE497 /* OpenCodeGoQuotaClient.swift */; };
 		7EC3EBE2B508352497F79092 /* gemini-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = CB85949D9BAB777DA9C22692 /* gemini-hook.js */; };
 		8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */; };
+		88BAB168E89E08DCBED3B6DB /* EnabledCLIsFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A6FA8C940C21A855BDD013 /* EnabledCLIsFilterTests.swift */; };
 		8A264527F73DA7F2C5D35AF3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683C1BB6357F9C9CD9E0C516 /* PetState.swift */; };
 		8AA227BCB4EAB6ABB811B135 /* HookRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */; };
@@ -82,6 +83,7 @@
 		215E338061E37977B5F19E4C /* HookServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookServer.swift; sourceTree = "<group>"; };
 		27FA3634ADF305BDF917BF6B /* QuotaTier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaTier.swift; sourceTree = "<group>"; };
 		34939660747858E47D81A896 /* opencode_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = opencode_sample.json; sourceTree = "<group>"; };
+		34A6FA8C940C21A855BDD013 /* EnabledCLIsFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnabledCLIsFilterTests.swift; sourceTree = "<group>"; };
 		360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParser.swift; sourceTree = "<group>"; };
 		3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CliCardView.swift; sourceTree = "<group>"; };
 		3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGateTests.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */,
 				F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */,
 				8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */,
+				34A6FA8C940C21A855BDD013 /* EnabledCLIsFilterTests.swift */,
 				45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */,
 				E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */,
 				E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */,
@@ -442,6 +445,7 @@
 				5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */,
 				E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */,
 				3A1349CB2AF4BF3BA081A6B5 /* CodexLogParserTests.swift in Sources */,
+				88BAB168E89E08DCBED3B6DB /* EnabledCLIsFilterTests.swift in Sources */,
 				E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */,
 				DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */,
 				6086C0743523B0F6A28BC8C0 /* GrowthStoreTests.swift in Sources */,

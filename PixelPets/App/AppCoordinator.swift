@@ -21,6 +21,7 @@ final class AppCoordinator: ObservableObject {
     private var logPollTimer: Timer?
     private var quotaTimer: Timer?
     private var evolutionTimer: Timer?
+    private var cancellables: Set<AnyCancellable> = []
 
     @Published var hookPermissionOptions: [CLIHookOption] = []
     @Published private(set) var shouldShowHookPermission = false
@@ -30,6 +31,14 @@ final class AppCoordinator: ObservableObject {
         hasStarted = true
 
         ensureInstalledAt()
+        viewModel.enabledCLIFilter = { [weak self] info in
+            self?.settingsStore.settings.isEnabled(info.id) ?? true
+        }
+        settingsStore.$settings
+            .sink { [weak self] _ in
+                self?.viewModel.objectWillChange.send()
+            }
+            .store(in: &cancellables)
         restoreGrowth()
         refreshDetectedCLIs()
         configureHooksIfPossible()
