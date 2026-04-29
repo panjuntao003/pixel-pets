@@ -26,6 +26,7 @@
 		3CB81B022879D759D093B98E /* HabitatScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */; };
 		3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */; };
 		3E672EF39084377602CD91B2 /* PetDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007D866F945B461BCF4EA67E /* PetDisplayView.swift */; };
+		3F00AB7AC7A60B40AAA98D5D /* BitBotV2FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */; };
 		407BBD34F90B5EB23C293446 /* SceneRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */; };
 		461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72F4F208D51F2DA034981F /* PetStateMachine.swift */; };
 		5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */; };
@@ -57,6 +58,7 @@
 		C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */; };
 		C74BC198CDC94ACA6DB7191E /* AppCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */; };
 		C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */; };
+		CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */; };
 		DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */; };
 		DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */; };
 		E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */; };
@@ -83,6 +85,7 @@
 		0A72F4F208D51F2DA034981F /* PetStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetStateMachine.swift; sourceTree = "<group>"; };
 		1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParser.swift; sourceTree = "<group>"; };
 		1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrarTests.swift; sourceTree = "<group>"; };
+		1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotV2FaceProvider.swift; sourceTree = "<group>"; };
 		215E338061E37977B5F19E4C /* HookServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookServer.swift; sourceTree = "<group>"; };
 		27FA3634ADF305BDF917BF6B /* QuotaTier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaTier.swift; sourceTree = "<group>"; };
 		34939660747858E47D81A896 /* opencode_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = opencode_sample.json; sourceTree = "<group>"; };
@@ -107,6 +110,7 @@
 		694A9609392B6FDBF6F795CD /* GrowthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStore.swift; sourceTree = "<group>"; };
 		75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBarView.swift; sourceTree = "<group>"; };
 		8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorTests.swift; sourceTree = "<group>"; };
+		8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotV2Renderer.swift; sourceTree = "<group>"; };
 		8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParserTests.swift; sourceTree = "<group>"; };
 		902053947864E8D75FE02CFB /* HookServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookServerTests.swift; sourceTree = "<group>"; };
 		9276B97C5781060F8B436E4A /* PixelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelColor.swift; sourceTree = "<group>"; };
@@ -264,6 +268,8 @@
 			children = (
 				AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */,
 				5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */,
+				1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */,
+				8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */,
 				4EE0EC6058E905C89792375F /* FaceProvider.swift */,
 				B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */,
 				9276B97C5781060F8B436E4A /* PixelColor.swift */,
@@ -417,6 +423,8 @@
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
 				0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */,
 				AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */,
+				3F00AB7AC7A60B40AAA98D5D /* BitBotV2FaceProvider.swift in Sources */,
+				CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */,
 				2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */,
 				AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */,
 				2A2317D0F005270C335D3798 /* CliCardView.swift in Sources */,
