@@ -12,6 +12,7 @@
 		0A47824554C1429037C478C9 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCD7BA48B79CE99162BB7A5 /* AppCoordinator.swift */; };
 		0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52CBD94E5910ED06A425C3C /* PetViewModel.swift */; };
+		0E383E81F08707D6ACF8E643 /* BitBotStatusIconRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */; };
 		1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FA3634ADF305BDF917BF6B /* QuotaTier.swift */; };
 		2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */; };
@@ -26,7 +27,6 @@
 		3A1349CB2AF4BF3BA081A6B5 /* CodexLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */; };
 		3CB81B022879D759D093B98E /* HabitatScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */; };
 		3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */; };
-		3E672EF39084377602CD91B2 /* PetDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007D866F945B461BCF4EA67E /* PetDisplayView.swift */; };
 		3F00AB7AC7A60B40AAA98D5D /* BitBotV2FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */; };
 		407BBD34F90B5EB23C293446 /* SceneRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */; };
 		461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72F4F208D51F2DA034981F /* PetStateMachine.swift */; };
@@ -50,7 +50,6 @@
 		9529F0562B69CF5D49F8D038 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */; };
 		96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */; };
 		A28DC8662EDDF29DBAF20069 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
-		AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */; };
 		AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */; };
 		B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */; };
 		B262D5655FECE5FBC8DCFE42 /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
@@ -86,7 +85,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		007D866F945B461BCF4EA67E /* PetDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetDisplayView.swift; sourceTree = "<group>"; };
 		0A72F4F208D51F2DA034981F /* PetStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetStateMachine.swift; sourceTree = "<group>"; };
 		1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParser.swift; sourceTree = "<group>"; };
 		1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrarTests.swift; sourceTree = "<group>"; };
@@ -107,7 +105,6 @@
 		52E02B09537952D8CA58865A /* GrowthEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngine.swift; sourceTree = "<group>"; };
 		5374C17A55C4816597BD775D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5E565548CDE4528D76590E57 /* PixelPetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PixelPetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotRenderer.swift; sourceTree = "<group>"; };
 		60297808408A5939E6D93BD2 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
 		61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
 		6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParser.swift; sourceTree = "<group>"; };
@@ -137,6 +134,7 @@
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5DFC862F77574208340D87A /* NodeGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGate.swift; sourceTree = "<group>"; };
 		C5FF5F498032037211B5C222 /* AnimationClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClockTests.swift; sourceTree = "<group>"; };
+		C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotStatusIconRenderer.swift; sourceTree = "<group>"; };
 		CB85949D9BAB777DA9C22692 /* gemini-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gemini-hook.js"; sourceTree = "<group>"; };
 		E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngineTests.swift; sourceTree = "<group>"; };
 		E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStoreTests.swift; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */,
 				4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */,
 				E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */,
-				007D866F945B461BCF4EA67E /* PetDisplayView.swift */,
 				60297808408A5939E6D93BD2 /* PopoverView.swift */,
 				75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */,
 				3B859207199EFB8D83B9A1C7 /* SettingsView.swift */,
@@ -278,7 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */,
-				5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */,
+				C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */,
 				1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */,
 				8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */,
 				4EE0EC6058E905C89792375F /* FaceProvider.swift */,
@@ -445,7 +442,7 @@
 				330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */,
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
 				0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */,
-				AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */,
+				0E383E81F08707D6ACF8E643 /* BitBotStatusIconRenderer.swift in Sources */,
 				3F00AB7AC7A60B40AAA98D5D /* BitBotV2FaceProvider.swift in Sources */,
 				CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */,
 				2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */,
@@ -465,7 +462,6 @@
 				BDB688527872D702C345F81D /* NodeGate.swift in Sources */,
 				78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */,
 				66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */,
-				3E672EF39084377602CD91B2 /* PetDisplayView.swift in Sources */,
 				8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */,
 				461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */,
 				0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */,

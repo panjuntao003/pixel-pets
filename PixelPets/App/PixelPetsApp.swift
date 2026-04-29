@@ -28,6 +28,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         setupPopover()
         bindHookPermissionPrompt()
         coordinator.start()
+        coordinator.viewModel.$state
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                self?.statusItem?.button?.image = self?.makeStatusIcon(state: state)
+            }
+            .store(in: &cancellables)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -36,11 +42,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     private func setupStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        item.button?.image = NSImage(systemSymbolName: "pawprint.fill", accessibilityDescription: "PixelPets")
+        item.button?.image = makeStatusIcon(state: coordinator.viewModel.state)
         item.button?.imagePosition = .imageOnly
         item.button?.target = self
         item.button?.action = #selector(togglePopover)
         statusItem = item
+    }
+
+    private func makeStatusIcon(state: PetState) -> NSImage {
+        let renderer = ImageRenderer(
+            content: BitBotStatusIconRenderer(
+                skin: coordinator.viewModel.activeSkin,
+                state: state,
+                size: 16
+            )
+        )
+        renderer.scale = NSScreen.main?.backingScaleFactor ?? 2.0
+        guard let cgImage = renderer.cgImage else {
+            return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "PixelPets")!
+        }
+
+        let image = NSImage(cgImage: cgImage, size: NSSize(width: 16, height: 16))
+        image.isTemplate = false
+        return image
     }
 
     private func setupPopover() {
