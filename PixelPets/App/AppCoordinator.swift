@@ -458,17 +458,3 @@ enum QuotaMonitor {
     }
 
 }
-
-final class SettingsStore {
-    private let defaults: UserDefaults
-    private let hookPermissionAskedKey = "hookPermissionAsked"
-
-    init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
-    }
-
-    var hookPermissionAsked: Bool {
-        get { defaults.bool(forKey: hookPermissionAskedKey) }
-        set { defaults.set(newValue, forKey: hookPermissionAskedKey) }
-    }
-}
