@@ -188,10 +188,14 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 
       func test_migratesUserDefaultsHookPermission() {
           UserDefaults.standard.set(true, forKey: "hookPermissionAsked")
-          let migrated = SettingsStore(directory: tempDir.path)
-          XCTAssertTrue(migrated.settings.hookPermissionAsked)
+          // 首次初始化触发迁移
+          _ = SettingsStore(directory: tempDir.path)
           XCTAssertFalse(UserDefaults.standard.bool(forKey: "hookPermissionAsked"),
                          "old UserDefaults key should be cleared after migration")
+          // 重新加载磁盘，确认迁移值持久化
+          let store2 = SettingsStore(directory: tempDir.path)
+          XCTAssertTrue(store2.settings.hookPermissionAsked,
+                        "migrated value should survive process restart")
       }
   }
   ```
@@ -267,11 +271,19 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
           }
           // 迁移旧 UserDefaults hookPermissionAsked → JSON（一次性）
           let ud = UserDefaults.standard
+          var needsSave = false
           if ud.bool(forKey: "hookPermissionAsked") {
               loaded.hookPermissionAsked = true
               ud.removeObject(forKey: "hookPermissionAsked")
+              needsSave = true
           }
           self.settings = loaded
+          if needsSave {
+              // 立即写盘，确保进程退出后迁移值不丢失
+              if let data = try? JSONEncoder().encode(loaded) {
+                  FileManager.default.createFile(atPath: self.path, contents: data)
+              }
+          }
       }
 
       func update(_ block: (inout AppSettings) -> Void) {
@@ -314,7 +326,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
   xcodebuild -scheme PixelPetsTests -destination "platform=macOS" \
     -only-testing:PixelPetsTests/SettingsStoreTests test 2>&1 | grep -E "passed|failed|SUCCEEDED|FAILED"
   ```
-  预期：`SettingsStoreTests` 8 个测试全部 passed，其他套件也不受影响。
+  预期：`SettingsStoreTests` 9 个测试全部 passed，其他套件也不受影响。
 
 - [ ] **Step 7: Commit**
 
@@ -1769,6 +1781,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
   完整替换 `PopoverView`：
 
   ```swift
+  import AppKit
   import SwiftUI
 
   struct PopoverView: View {
@@ -2123,14 +2136,11 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
 
 - [ ] **Step 2: 更新菜单栏图标渲染**
 
-  在 `AppDelegate` 的 `setupStatusItem()` 方法中，将：
-  ```swift
-  item.button?.image = NSImage(systemSymbolName: "pawprint.fill", accessibilityDescription: "PixelPets")
-  ```
-  替换为：
+  在 `AppDelegate` 中做三处修改：
+
+  **① 新增 `makeStatusIcon` 方法**（在 `AppDelegate` class body 内，与其他方法并列，不要放进 `setupStatusItem` 内部）：
   ```swift
   private func makeStatusIcon(state: PetState) -> NSImage {
-      // 只渲染头部（16×16），不使用全身 BitBotV2Renderer 以避免压缩糊图
       let renderer = ImageRenderer(content:
           BitBotStatusIconRenderer(
               skin: coordinator.viewModel.activeSkin,
@@ -2143,17 +2153,17 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
           return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "PixelPets")!
       }
       let img = NSImage(cgImage: cgImage, size: NSSize(width: 16, height: 16))
-      img.isTemplate = false  // 保留彩色状态，不用 template
+      img.isTemplate = false
       return img
   }
   ```
 
-  同时在 `statusItem` 初始化后：
+  **② 在 `setupStatusItem()` 中替换图标设置行**（将原来的 `item.button?.image = NSImage(systemSymbolName:...)` 替换为）：
   ```swift
   item.button?.image = makeStatusIcon(state: coordinator.viewModel.state)
   ```
 
-  添加状态变化监听（Combine）：
+  **③ 在 `applicationDidFinishLaunching` 中追加状态监听**（在 `coordinator.start()` 之后）：
   ```swift
   coordinator.viewModel.$state
       .receive(on: RunLoop.main)
@@ -2163,7 +2173,7 @@ BitBotV2FaceProvider 按此映射实现，**不新增 PetState 值，不改 PetS
       .store(in: &cancellables)
   ```
 
-- [ ] **Step 2: 删除旧文件并重新生成 Xcode project**
+- [ ] **Step 3: 删除旧文件并重新生成 Xcode project**
 
   ```bash
   rm PixelPets/Renderer/BitBotRenderer.swift
