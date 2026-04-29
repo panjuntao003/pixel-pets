@@ -14,7 +14,7 @@ final class AppCoordinator: ObservableObject {
     private let codexQuotaClient = CodexQuotaClient()
     private let geminiQuotaClient = GeminiQuotaClient()
     private let openCodeGoQuotaClient = OpenCodeGoQuotaClient()
-    private let settingsStore = SettingsStore()
+    let settingsStore = SettingsStore()
     private lazy var logPoller = LogPoller(growthStore: growthStore)
 
     private var hasStarted = false

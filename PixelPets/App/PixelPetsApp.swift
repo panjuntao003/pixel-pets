@@ -8,14 +8,15 @@ struct PixelPetsApp: App {
 
     var body: some Scene {
         Settings {
-            EmptyView()
+            SettingsView(onRegisterHooks: appDelegate.coordinator.registerDetectedHooks)
+                .environmentObject(appDelegate.coordinator.settingsStore)
         }
     }
 }
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
-    private let coordinator = AppCoordinator()
+    let coordinator = AppCoordinator()
     private let popover = NSPopover()
     private var statusItem: NSStatusItem?
     private var hookPermissionWindow: NSWindow?

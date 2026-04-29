@@ -63,6 +63,7 @@
 		E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
 		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
+		FC62D0F5E33D85215EBA23A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B859207199EFB8D83B9A1C7 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		34A6FA8C940C21A855BDD013 /* EnabledCLIsFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnabledCLIsFilterTests.swift; sourceTree = "<group>"; };
 		360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParser.swift; sourceTree = "<group>"; };
 		3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CliCardView.swift; sourceTree = "<group>"; };
+		3B859207199EFB8D83B9A1C7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGateTests.swift; sourceTree = "<group>"; };
 		43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
 		45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParserTests.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				007D866F945B461BCF4EA67E /* PetDisplayView.swift */,
 				60297808408A5939E6D93BD2 /* PopoverView.swift */,
 				75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */,
+				3B859207199EFB8D83B9A1C7 /* SettingsView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -432,6 +435,7 @@
 				C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */,
 				210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */,
 				905F301E04A93DDFA4B47B29 /* SettingsStore.swift in Sources */,
+				FC62D0F5E33D85215EBA23A4 /* SettingsView.swift in Sources */,
 				E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
