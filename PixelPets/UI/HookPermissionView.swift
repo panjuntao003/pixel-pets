@@ -5,6 +5,7 @@ struct CLIHookOption: Identifiable {
     let configPath: String
     var enabled: Bool = true
     var detected: Bool
+    var canRegister: Bool = true
 }
 
 struct HookPermissionView: View {
@@ -22,7 +23,7 @@ struct HookPermissionView: View {
                 .foregroundStyle(.secondary)
 
             ForEach($options) { $option in
-                if option.detected {
+                if option.detected && option.canRegister {
                     HStack {
                         Toggle("", isOn: $option.enabled)
                             .labelsHidden()

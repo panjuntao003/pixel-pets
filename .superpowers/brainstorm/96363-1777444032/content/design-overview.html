@@ -1,0 +1,124 @@
+<h2>PixelPets 完整设计大纲</h2>
+<p class="subtitle">汇总所有决定好的设计内容，请确认后我们进入最后一个问题。</p>
+
+<div class="section">
+  <h3>🤖 机器人形象</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+    <div style="padding:12px;background:#f9f9f9;border-radius:8px;border:1px solid #e0e0e0">
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px">造型（Style A 大屏版）</div>
+      <ul style="font-size:11px;color:#555;margin:0;padding-left:16px;line-height:1.8">
+        <li>方形头部，侧边双天线（蓝色）</li>
+        <li>大屏幕占满脸部，可显示完整表情</li>
+        <li>矮胖体型，短腿，有双臂</li>
+        <li>像素风格（16×16 基础单元，×3 放大显示）</li>
+      </ul>
+    </div>
+    <div style="padding:12px;background:#f9f9f9;border-radius:8px;border:1px solid #e0e0e0">
+      <div style="font-size:12px;font-weight:600;margin-bottom:6px">四种 AI 工具皮肤</div>
+      <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;background:#d4884a;border-radius:2px"></div>Claude — 橙棕色机身</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;background:#2d4a3e;border-radius:2px"></div>OpenCode — 深绿黑色机身</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;background:#4a7abf;border-radius:2px"></div>Gemini — 蓝色渐变机身</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;background:#c8c8c8;border-radius:2px"></div>Codex — 银白色机身</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🎭 机器人状态 × 动作</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+    <div style="padding:10px;background:#e8f4e8;border-radius:8px;border:1px solid #aad4aa">
+      <div style="font-size:11px;font-weight:700;color:#2d7d2d">🖥️ Working</div>
+      <div style="font-size:10px;color:#555;margin-top:4px">坐在全息终端前，双眼绿色闪烁，手臂前伸打字，屏幕滚动代码</div>
+    </div>
+    <div style="padding:10px;background:#e8f0ff;border-radius:8px;border:1px solid #aabfff">
+      <div style="font-size:11px;font-weight:700;color:#1a4da8">💭 Thinking</div>
+      <div style="font-size:10px;color:#555;margin-top:4px">站立，头部微微倾斜，屏幕显示旋转省略号，偶尔眨眼</div>
+    </div>
+    <div style="padding:10px;background:#fff8e8;border-radius:8px;border:1px solid #ffd080">
+      <div style="font-size:11px;font-weight:700;color:#a06000">😊 Idle</div>
+      <div style="font-size:10px;color:#555;margin-top:4px">靠窗/沙发放松，黄色笑眼，偶尔左右摇晃，看向舷窗</div>
+    </div>
+    <div style="padding:10px;background:#ffe8e8;border-radius:8px;border:1px solid #ffaaaa">
+      <div style="font-size:11px;font-weight:700;color:#cc0000">🔋 Exhausted</div>
+      <div style="font-size:10px;color:#555;margin-top:4px">躺入充电舱/休眠舱，屏幕变暗显示"—  —"，Z Z Z 气泡飘出</div>
+    </div>
+    <div style="padding:10px;background:#fff0ff;border-radius:8px;border:1px solid #ddaaff">
+      <div style="font-size:11px;font-weight:700;color:#8800cc">🎉 Celebrating</div>
+      <div style="font-size:10px;color:#555;margin-top:4px">升级/里程碑时：跳起来，屏幕显示"★ ★ ★"，撒星星特效</div>
+    </div>
+    <div style="padding:10px;background:#f0f0f0;border-radius:8px;border:1px solid #ccc">
+      <div style="font-size:11px;font-weight:700;color:#555">😴 Sleep</div>
+      <div style="font-size:10px;color:#555;margin-top:4px">长时间无活动，站立闭眼，微微左右晃，屏幕暗淡</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🌍 可切换场景（全部保留）</h3>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px">
+    <div style="padding:10px;background:#0a0a1a;border-radius:8px;border:1px solid #2a4a6a">
+      <div style="font-size:11px;font-weight:700;color:#5dade2">🚀 太空站</div>
+      <div style="font-size:10px;color:#7a9ab8;margin-top:3px">深空背景、全息终端、圆形舷窗（星球视野）、星光闪烁</div>
+    </div>
+    <div style="padding:10px;background:#0d0010;border-radius:8px;border:1px solid #440044">
+      <div style="font-size:11px;font-weight:700;color:#ff00ff">⚡ 赛博朋克实验室</div>
+      <div style="font-size:10px;color:#aa88bb;margin-top:3px">霓虹紫/青色、服务器机架、地板反光、全息投影</div>
+    </div>
+    <div style="padding:10px;background:#0a1520;border-radius:8px;border:1px solid #2a4a6a">
+      <div style="font-size:11px;font-weight:700;color:#00aaff">🛸 星际生活舱</div>
+      <div style="font-size:10px;color:#6a8aaa;margin-top:3px">干净白蓝、全景星云舷窗、充电站、休眠舱</div>
+    </div>
+    <div style="padding:10px;background:#0a1a30;border-radius:8px;border:1px solid #1a4a6a">
+      <div style="font-size:11px;font-weight:700;color:#4ecdc4">🌊 像素水族箱</div>
+      <div style="font-size:10px;color:#6a9aaa;margin-top:3px">像素珊瑚/海草、气泡上升、小鱼游过、水下光效</div>
+    </div>
+    <div style="padding:10px;background:#1a1220;border-radius:8px;border:1px solid #3a2a4a">
+      <div style="font-size:11px;font-weight:700;color:#9b59b6">🌌 星云实验室</div>
+      <div style="font-size:10px;color:#8a7a9a;margin-top:3px">紫色星云背景、悬浮实验台、量子粒子飘动（待设计）</div>
+    </div>
+    <div style="padding:10px;background:#0f1f0f;border-radius:8px;border:1px solid #1a3a1a">
+      <div style="font-size:11px;font-weight:700;color:#2ecc71">🌿 生态穹顶</div>
+      <div style="font-size:10px;color:#5a8a5a;margin-top:3px">玻璃穹顶、植物像素、自然光、机器人浇花（待设计）</div>
+    </div>
+  </div>
+  <div style="font-size:10px;color:#aaa;margin-top:8px;font-style:italic">前 4 个优先实现，后 2 个作为后续扩展。</div>
+</div>
+
+<div class="section">
+  <h3>🖼️ 弹窗整体布局</h3>
+  <div style="display:flex;gap:12px;margin-top:10px">
+    <div style="flex:1;padding:12px;background:#f9f9f9;border-radius:8px;border:1px solid #e0e0e0;font-size:11px;color:#555;line-height:1.8">
+      <div style="font-weight:600;margin-bottom:6px;color:#333">顶部场景区 ~140px</div>
+      等距像素场景 + 机器人动画<br>
+      右下角小圆点切换场景<br>
+      左上角当前 AI 工具名 badge
+    </div>
+    <div style="flex:1;padding:12px;background:#f9f9f9;border-radius:8px;border:1px solid #e0e0e0;font-size:11px;color:#555;line-height:1.8">
+      <div style="font-weight:600;margin-bottom:6px;color:#333">中部信息区（滚动）</div>
+      macOS 原生白色风格<br>
+      每个 CLI 一张卡片<br>
+      进度条 + token 统计
+    </div>
+    <div style="flex:1;padding:12px;background:#f9f9f9;border-radius:8px;border:1px solid #e0e0e0;font-size:11px;color:#555;line-height:1.8">
+      <div style="font-weight:600;margin-bottom:6px;color:#333">底部工具栏</div>
+      累计 token 统计<br>
+      刷新按钮<br>
+      设置按钮（齿轮）
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>⚙️ 设置功能</h3>
+  <div style="padding:12px;background:#f9f9f9;border-radius:8px;border:1px solid #e0e0e0;font-size:11px;color:#555;line-height:2">
+    • 每个 CLI 独立开关（Claude / Gemini / Codex / OpenCode）<br>
+    • Hook 端口配置（默认 15799）<br>
+    • 场景偏好设置（固定某个场景 or 随机）<br>
+    • 重新注册 Hook 按钮<br>
+    • macOS 原生 Settings 窗口（Cmd+, 可打开）
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:16px;font-size:13px">以上是目前所有决定的内容。确认没问题后，我去写完整设计文档，然后制定实现计划。</p>

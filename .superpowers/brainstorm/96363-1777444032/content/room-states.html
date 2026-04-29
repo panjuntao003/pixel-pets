@@ -1,0 +1,204 @@
+<h2>房间场景 × 状态叙事</h2>
+<p class="subtitle">机器人 A（大屏显脸版）在不同额度状态下的房间场景。360×120px，不影响下方信息区。</p>
+
+<div class="section">
+  <h3 style="margin-bottom:12px">三种核心状态</h3>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+
+    <!-- State 1: Working -->
+    <div style="border:2px solid #007aff;border-radius:10px;overflow:hidden">
+      <div style="position:relative;height:120px;background:linear-gradient(180deg,#2c3e50 0%,#1a252f 100%);overflow:hidden">
+        <!-- Room walls -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:35px;background:#5d4e37"></div>
+        <!-- Desk -->
+        <div style="position:absolute;bottom:35px;right:20px;width:70px;height:8px;background:#8B6914"></div>
+        <div style="position:absolute;bottom:35px;right:20px;width:4px;height:22px;background:#7d5e10"></div>
+        <div style="position:absolute;bottom:35px;right:86px;width:4px;height:22px;background:#7d5e10"></div>
+        <!-- Monitor on desk -->
+        <div style="position:absolute;bottom:43px;right:35px;width:22px;height:16px;background:#222;border-radius:2px"></div>
+        <div style="position:absolute;bottom:44px;right:36px;width:20px;height:14px;background:#00ff88;opacity:0.7"></div>
+        <!-- Desk lamp glow -->
+        <div style="position:absolute;bottom:43px;right:22px;width:8px;height:12px;background:#ffd700;opacity:0.4;border-radius:50% 50% 0 0"></div>
+        <!-- Bookshelf left -->
+        <div style="position:absolute;bottom:35px;left:10px;width:30px;height:50px;background:#6b4c2a"></div>
+        <div style="position:absolute;bottom:55px;left:11px;width:28px;height:3px;background:#8B6914"></div>
+        <div style="position:absolute;bottom:70px;left:11px;width:28px;height:3px;background:#8B6914"></div>
+        <!-- Window -->
+        <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);width:50px;height:35px;background:#1a3a5c;border:2px solid #5a4a3a"></div>
+        <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);width:46px;height:31px;background:linear-gradient(180deg,#0d2137,#1a3a5c);opacity:0.8"></div>
+        <!-- Stars in window -->
+        <div style="position:absolute;top:14px;left:calc(50% - 12px);width:2px;height:2px;background:white;border-radius:50%"></div>
+        <div style="position:absolute;top:18px;left:calc(50% + 8px);width:2px;height:2px;background:white;border-radius:50%"></div>
+
+        <!-- Robot at desk - WORKING -->
+        <div style="position:absolute;bottom:43px;right:52px">
+          <svg width="28" height="36" viewBox="0 0 14 18" style="image-rendering:pixelated">
+            <!-- side antenna -->
+            <rect x="0" y="5" width="2" height="2" fill="#5dade2"/>
+            <rect x="12" y="5" width="2" height="2" fill="#5dade2"/>
+            <!-- head -->
+            <rect x="2" y="1" width="10" height="9" fill="#d4c5a9" rx="1"/>
+            <!-- big screen -->
+            <rect x="3" y="2" width="8" height="7" fill="#1a1a2e"/>
+            <!-- focused eyes (working) -->
+            <rect x="4" y="4" width="2" height="2" fill="#00ff88"/>
+            <rect x="8" y="4" width="2" height="2" fill="#00ff88"/>
+            <!-- concentration lines on screen -->
+            <rect x="4" y="7" width="6" height="1" fill="#00ff88" opacity="0.5"/>
+            <!-- body leaning forward -->
+            <rect x="3" y="10" width="8" height="6" fill="#c4b49a"/>
+            <!-- arms reaching forward -->
+            <rect x="1" y="11" width="2" height="3" fill="#b8a88a"/>
+            <rect x="11" y="11" width="2" height="3" fill="#b8a88a"/>
+            <!-- legs sitting -->
+            <rect x="4" y="16" width="2" height="2" fill="#b8a88a"/>
+            <rect x="8" y="16" width="2" height="2" fill="#b8a88a"/>
+          </svg>
+        </div>
+        <!-- Label -->
+        <div style="position:absolute;top:4px;left:4px;background:#007aff;color:white;font-size:8px;padding:1px 5px;border-radius:8px;font-family:monospace">WORKING</div>
+      </div>
+      <div style="padding:8px 10px;background:#f5f5f7">
+        <div style="font-size:11px;font-weight:600;color:#333">🖥️ 坐在电脑前</div>
+        <div style="font-size:9px;color:#888;margin-top:2px">AI 工具使用中，屏幕闪烁绿色代码</div>
+      </div>
+    </div>
+
+    <!-- State 2: Idle / Relaxing -->
+    <div style="border:2px solid #34c759;border-radius:10px;overflow:hidden">
+      <div style="position:relative;height:120px;background:linear-gradient(180deg,#f9e4c8 0%,#f0d0a0 100%);overflow:hidden">
+        <!-- Floor -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:35px;background:#c4956a"></div>
+        <!-- Sofa -->
+        <div style="position:absolute;bottom:35px;left:20px;width:100px;height:30px;background:#7c6b9e;border-radius:4px 4px 0 0"></div>
+        <div style="position:absolute;bottom:50px;left:20px;width:8px;height:20px;background:#6a5a8c;border-radius:4px 4px 0 0"></div>
+        <div style="position:absolute;bottom:50px;right:240px;width:8px;height:20px;background:#6a5a8c;border-radius:4px 4px 0 0"></div>
+        <!-- Sofa cushion -->
+        <div style="position:absolute;bottom:46px;left:28px;width:84px;height:12px;background:#9880b8;border-radius:2px"></div>
+        <!-- TV stand right -->
+        <div style="position:absolute;bottom:35px;right:15px;width:55px;height:45px;background:#8B6914"></div>
+        <div style="position:absolute;bottom:57px;right:16px;width:53px;height:23px;background:#111;border-radius:2px"></div>
+        <div style="position:absolute;bottom:58px;right:17px;width:51px;height:21px;background:#1a1a4e"></div>
+        <!-- TV show colors -->
+        <div style="position:absolute;bottom:60px;right:18px;width:25px;height:17px;background:#ff6b6b;opacity:0.5;border-radius:1px"></div>
+        <div style="position:absolute;bottom:60px;right:43px;width:25px;height:17px;background:#4ecdc4;opacity:0.5;border-radius:1px"></div>
+        <!-- Window with daylight -->
+        <div style="position:absolute;top:5px;left:50%;transform:translateX(-50%);width:55px;height:38px;background:#a8d8f0;border:2px solid #c4956a"></div>
+        <div style="position:absolute;top:5px;left:50%;transform:translateX(-50%);width:1px;height:38px;background:#c4956a"></div>
+        <!-- Plant -->
+        <div style="position:absolute;bottom:35px;left:130px;width:6px;height:14px;background:#6b8e23"></div>
+        <div style="position:absolute;bottom:46px;left:126px;width:14px;height:12px;background:#228B22;border-radius:50%"></div>
+
+        <!-- Robot sitting on sofa - RELAXING -->
+        <div style="position:absolute;bottom:57px;left:52px">
+          <svg width="28" height="32" viewBox="0 0 14 16" style="image-rendering:pixelated">
+            <!-- side antenna -->
+            <rect x="0" y="4" width="2" height="2" fill="#5dade2"/>
+            <rect x="12" y="4" width="2" height="2" fill="#5dade2"/>
+            <!-- head -->
+            <rect x="2" y="0" width="10" height="9" fill="#d4c5a9" rx="1"/>
+            <!-- big screen - happy face -->
+            <rect x="3" y="1" width="8" height="7" fill="#1a1a2e"/>
+            <!-- happy eyes -->
+            <rect x="4" y="3" width="2" height="2" fill="#ffd700"/>
+            <rect x="8" y="3" width="2" height="2" fill="#ffd700"/>
+            <!-- smile -->
+            <rect x="5" y="6" width="4" height="1" fill="#ffd700"/>
+            <rect x="4" y="5" width="1" height="1" fill="#ffd700"/>
+            <rect x="9" y="5" width="1" height="1" fill="#ffd700"/>
+            <!-- body relaxed -->
+            <rect x="3" y="9" width="8" height="5" fill="#c4b49a"/>
+            <!-- legs dangling -->
+            <rect x="4" y="14" width="2" height="2" fill="#b8a88a"/>
+            <rect x="8" y="14" width="2" height="2" fill="#b8a88a"/>
+          </svg>
+        </div>
+        <div style="position:absolute;top:4px;left:4px;background:#34c759;color:white;font-size:8px;padding:1px 5px;border-radius:8px;font-family:monospace">IDLE</div>
+      </div>
+      <div style="padding:8px 10px;background:#f5f5f7">
+        <div style="font-size:11px;font-weight:600;color:#333">🛋️ 坐在沙发上</div>
+        <div style="font-size:9px;color:#888;margin-top:2px">有额度但闲置，笑眼看电视</div>
+      </div>
+    </div>
+
+    <!-- State 3: Quota Exhausted -->
+    <div style="border:2px solid #ff3b30;border-radius:10px;overflow:hidden">
+      <div style="position:relative;height:120px;background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%);overflow:hidden">
+        <!-- Floor/carpet -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:35px;background:#2c2c4e"></div>
+        <!-- Bed -->
+        <div style="position:absolute;bottom:35px;left:15px;width:120px;height:28px;background:#4a4a6e;border-radius:4px 4px 0 0"></div>
+        <!-- Pillow -->
+        <div style="position:absolute;bottom:56px;left:18px;width:25px;height:12px;background:#e8e0c8;border-radius:3px"></div>
+        <!-- Blanket -->
+        <div style="position:absolute;bottom:35px;left:15px;width:120px;height:22px;background:#5a3a6e;border-radius:0"></div>
+        <div style="position:absolute;bottom:54px;left:15px;width:70px;height:5px;background:#6a4a7e;border-radius:2px 2px 0 0"></div>
+        <!-- Moon outside window -->
+        <div style="position:absolute;top:8px;right:20px;width:40px;height:32px;background:#0d1b2a;border:2px solid #3a3a5e"></div>
+        <div style="position:absolute;top:13px;right:32px;width:14px;height:14px;background:#ffd700;border-radius:50%;opacity:0.7"></div>
+        <!-- Stars -->
+        <div style="position:absolute;top:6px;left:30px;width:2px;height:2px;background:#aaa;border-radius:50%"></div>
+        <div style="position:absolute;top:12px;left:60px;width:2px;height:2px;background:#aaa;border-radius:50%"></div>
+        <div style="position:absolute;top:5px;left:80px;width:1px;height:1px;background:#888;border-radius:50%"></div>
+        <!-- Nightstand -->
+        <div style="position:absolute;bottom:35px;left:140px;width:20px;height:22px;background:#3a2a1e"></div>
+        <!-- Alarm clock on nightstand -->
+        <div style="position:absolute;bottom:57px;left:143px;width:12px;height:10px;background:#cc0000;border-radius:2px"></div>
+        <div style="position:absolute;bottom:58px;left:145px;width:8px;height:7px;background:#ff6666;border-radius:1px"></div>
+
+        <!-- Robot sleeping in bed -->
+        <div style="position:absolute;bottom:56px;left:20px">
+          <svg width="52" height="20" viewBox="0 0 26 10" style="image-rendering:pixelated">
+            <!-- body lying down -->
+            <rect x="0" y="3" width="16" height="7" fill="#c4b49a"/>
+            <!-- head -->
+            <rect x="16" y="0" width="10" height="9" fill="#d4c5a9" rx="1"/>
+            <!-- side antenna (pointing sideways when lying) -->
+            <rect x="25" y="3" width="1" height="2" fill="#5dade2"/>
+            <!-- big screen - sleeping face (X_X or zzz eyes) -->
+            <rect x="17" y="1" width="8" height="7" fill="#1a1a2e"/>
+            <!-- sleeping eyes (closed) -->
+            <rect x="18" y="3" width="2" height="1" fill="#aaa"/>
+            <rect x="23" y="3" width="2" height="1" fill="#aaa"/>
+            <!-- zzz -->
+            <rect x="18" y="5" width="6" height="1" fill="#666"/>
+          </svg>
+        </div>
+        <!-- ZZZ bubbles -->
+        <div style="position:absolute;bottom:72px;left:60px;color:white;font-size:9px;opacity:0.6;font-family:monospace">z</div>
+        <div style="position:absolute;bottom:79px;left:66px;color:white;font-size:11px;opacity:0.5;font-family:monospace">z</div>
+        <div style="position:absolute;bottom:87px;left:74px;color:white;font-size:13px;opacity:0.4;font-family:monospace">Z</div>
+
+        <div style="position:absolute;top:4px;left:4px;background:#ff3b30;color:white;font-size:8px;padding:1px 5px;border-radius:8px;font-family:monospace">EXHAUSTED</div>
+      </div>
+      <div style="padding:8px 10px;background:#f5f5f7">
+        <div style="font-size:11px;font-weight:600;color:#333">🛏️ 躺在床上</div>
+        <div style="font-size:9px;color:#888;margin-top:2px">额度耗尽，机器人累到睡着，Z Z Z</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top:16px">
+  <h3 style="margin-bottom:10px">场景视角选择</h3>
+  <div class="options">
+    <div class="option" data-choice="side" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>侧视图（2D横版）</h3>
+        <p>像上面预览的效果，横向展示房间，360×120px 比例最自然。实现相对简单，像素风格统一。</p>
+      </div>
+    </div>
+    <div class="option" data-choice="iso" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>等距视图（伪 3D）</h3>
+        <p>像你图片里的等距小房间，有立体感和纵深。视觉更惊艳，但 120px 高度偏紧，开发工作量较大。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:8px">上方是状态概念，下方选场景视角方案。也可以说"侧视图 + 再多一个场景（户外/水下）用于切换"这类想法。</p>

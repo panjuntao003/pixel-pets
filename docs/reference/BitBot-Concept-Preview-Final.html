@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PixelPets - Bit-Bot 终极定稿版 (12-State / Pixel-Perfect)</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: rgba(30, 30, 30, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #FFFFFF;
+            --text-dim: #888888;
+            --border-color: rgba(255, 255, 255, 0.1);
+            
+            /* Agent Colors — 最终定稿 */
+            --claude-color: #D97757;
+            --gemini-grad: conic-gradient(#EA4335, #FBBC05, #34A853, #4285F4, #EA4335);
+            --codex-grad: linear-gradient(135deg, #7851FB, #2853FF);
+            --opencode-color: #000000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- macOS Popover UI --- */
+        .popover {
+            width: 360px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 顶部展示区 */
+        .pet-display {
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .pet-stage {
+            width: 64px;
+            height: 64px;
+            image-rendering: pixelated;
+            transform: scale(3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .agent-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        /* CLI 卡片区 */
+        .content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cli-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cli-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .plan-badge {
+            font-size: 9px;
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #aaa;
+        }
+
+        .quota-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .quota-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .quota-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-container {
+            height: 6px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-bar {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .bar-claude { background: var(--claude-color); width: 33%; }
+        .bar-warning { background: #FBBC05; width: 88%; }
+
+        .token-stats {
+            font-size: 10px;
+            color: var(--text-dim);
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            padding-top: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer {
+            padding: 8px 12px;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .settings-btn {
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .settings-btn:hover { opacity: 1; }
+
+        /* --- Bit-Bot SVG 像素层 --- */
+        svg {
+            width: 16px;
+            height: 16px;
+            shape-rendering: crispEdges;
+        }
+
+        /* 呼吸动画：纯像素阶梯位移 */
+        .breathe {
+            animation: breathe 3s steps(1) infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-1px); }
+        }
+
+        /* ========== 12 状态动画系统 ========== */
+
+        /* 1. Idle — 已由 .breathe 覆盖，额外眨眼在 JS 中 */
+
+        /* 2. Thinking — 高频微颤 + 扫描线 + 天线信号 */
+        .is-thinking .breathe {
+            animation: vibrate 0.1s steps(1) infinite;
+        }
+        @keyframes vibrate {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(1px, 0); }
+        }
+
+        .scan-line {
+            display: none;
+            fill: #000;
+            opacity: 0.3;
+            animation: scan 1s steps(6) infinite;
+        }
+        .is-thinking .scan-line,
+        .is-searching .scan-line {
+            display: block;
+        }
+        @keyframes scan {
+            from { transform: translateY(0); }
+            to { transform: translateY(6px); }
+        }
+
+        .antenna-top {
+            transition: fill 0.2s;
+        }
+        .is-thinking .antenna-top {
+            animation: signal 0.2s steps(1) infinite;
+        }
+        @keyframes signal {
+            0% { transform: translateX(0); fill: #f00; }
+            50% { transform: translateX(1px); fill: #0f0; }
+        }
+
+        /* 3. Typing — 机械敲击感 */
+        .is-typing .breathe {
+            animation: typing-tap 0.15s steps(1) infinite;
+        }
+        @keyframes typing-tap {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(1px); }
+        }
+
+        /* 4. Juggling — 左右摇摆 */
+        .is-juggling .breathe {
+            animation: juggling 0.4s steps(1) infinite;
+        }
+        @keyframes juggling {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(2px); }
+        }
+
+        /* 5. Conducting — 缩放波动 */
+        .is-conducting .breathe {
+            animation: conducting 0.6s steps(1) infinite;
+        }
+        @keyframes conducting {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* 6. Success — 旋转 + 礼花 FX */
+        .is-success .bot-container {
+            animation: success-spin 0.6s steps(4) 1;
+        }
+        @keyframes success-spin {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(90deg); }
+            50% { transform: rotate(180deg); }
+            75% { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .fx-confetti {
+            display: none;
+            fill: #FFD700;
+        }
+        .is-success .fx-confetti {
+            display: block;
+            animation: confetti-fall 1s steps(4) 1 forwards;
+        }
+        @keyframes confetti-fall {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(8px); }
+        }
+
+        /* 7. Error — 剧烈抖动 + 红色 */
+        .is-error .bot-skin { fill: #EA4335 !important; }
+        .is-error .breathe {
+            animation: shake 0.2s steps(1) infinite;
+        }
+        @keyframes shake {
+            0% { transform: translate(-1px, 0); }
+            50% { transform: translate(1px, 0); }
+        }
+
+        /* 8. Sleeping — Zzz 粒子 + 呼吸变慢 */
+        .is-sleeping .breathe {
+            animation: breathe 5s steps(1) infinite;
+        }
+        .fx-zzz {
+            display: none;
+            font-size: 2px;
+            fill: #FFF;
+            opacity: 0.6;
+        }
+        .is-sleeping .fx-zzz {
+            display: block;
+            animation: zzz 3s linear infinite;
+        }
+        @keyframes zzz {
+            0% { transform: translate(12px, 8px); opacity: 0; }
+            50% { transform: translate(14px, 4px); opacity: 0.6; }
+            100% { transform: translate(16px, 0px); opacity: 0; }
+        }
+
+        /* 9. Auth — 无辜歪头 + 警告呼吸 */
+        .is-auth .bot-container {
+            animation: tilt 2s ease-in-out infinite;
+        }
+        @keyframes tilt {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(5deg); }
+        }
+        .is-auth .breathe {
+            animation: auth-pulse 2s steps(1) infinite;
+        }
+        @keyframes auth-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 10. Fast — 拖影效果 */
+        .is-fast .breathe {
+            animation: fast-dash 0.08s steps(1) infinite;
+        }
+        @keyframes fast-dash {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(2px); }
+        }
+        .fx-trail {
+            display: none;
+            fill: #FF8C00;
+            opacity: 0.5;
+        }
+        .is-fast .fx-trail {
+            display: block;
+        }
+
+        /* 11. Searching — 雷达扫描（横向） */
+        .is-searching .breathe {
+            animation: search-pan 1s steps(1) infinite;
+        }
+        @keyframes search-pan {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(1px); }
+        }
+
+        /* 12. Evolving — 全屏闪烁 */
+        .is-evolving .bot-container {
+            animation: evolve-flash 0.3s steps(1) infinite;
+        }
+        @keyframes evolve-flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* --- 12 种表情显隐控制 --- */
+        .face-group { display: none; }
+        .is-idle       .face-idle       { display: block; }
+        .is-thinking   .face-thinking   { display: block; }
+        .is-typing     .face-typing     { display: block; }
+        .is-juggling   .face-juggling   { display: block; }
+        .is-conducting .face-conducting { display: block; }
+        .is-success    .face-success    { display: block; }
+        .is-error      .face-error      { display: block; }
+        .is-sleeping   .face-sleeping   { display: block; }
+        .is-auth       .face-auth       { display: block; }
+        .is-fast       .face-fast       { display: block; }
+        .is-searching  .face-searching  { display: block; }
+        .is-evolving   .face-evolving   { display: block; }
+
+        /* --- 原型控制面板 --- */
+        .controls {
+            margin-top: 40px;
+            background: #222;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            gap: 20px;
+            border: 1px solid #444;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 11px; color: #666; font-weight: bold; }
+        select { background: #000; color: #FFF; border: 1px solid #444; padding: 5px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="popover" id="main-panel">
+        <div class="pet-display">
+            <div class="pet-stage" id="stage">
+                <div class="bot-container breathe" id="bot-wrap">
+                    <svg viewBox="0 0 16 16">
+                        <defs>
+                            <linearGradient id="codex-grad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#7851FB" />
+                                <stop offset="100%" stop-color="#2853FF" />
+                            </linearGradient>
+                            <linearGradient id="gemini-grad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#EA4335" />
+                                <stop offset="33%" stop-color="#FBBC05" />
+                                <stop offset="66%" stop-color="#34A853" />
+                                <stop offset="100%" stop-color="#4285F4" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Layer: Skin (基础填充，可被 JS 换色) -->
+                        <rect class="bot-skin" id="bot-skin" x="2" y="5" width="12" height="10" fill="#D97757" />
+
+                        <!-- Layer: Shading (3D 体积感) -->
+                        <path d="M2 5h12v1H3V5zm0 1h1v8h-1V6z" fill="#FFF" fill-opacity="0.2" />
+                        <path d="M3 14h11v1H2v-1zm11-9h1v10h-1V5z" fill="#000" fill-opacity="0.2" />
+
+                        <!-- Layer: Body (1px 纯黑轮廓，去四角实现圆润感) -->
+                        <path d="M3 4h10v1H3zm-1 1h1v10H2zm12 0h1v10h-1zm-11 10h10v1H3z" fill="#000" />
+                        
+                        <!-- Layer: Face (屏幕与表情) -->
+                        <rect x="4" y="7" width="8" height="6" fill="#FFF" />
+                        <path d="M4 7h8v6H4V7zm1 1v4h6V8H5z" fill="#000" />
+                        
+                        <!-- 扫描线 (Thinking / Searching 时显示) -->
+                        <rect class="scan-line" x="5" y="8" width="6" height="1" />
+
+                        <!-- 12 种表情定义 -->
+                        <g id="face-content">
+                            <!-- 1. Idle [ . . ] -->
+                            <g class="face-group face-idle" id="face-idle">
+                                <rect x="6" y="9" width="1" height="1" fill="#000" />
+                                <rect x="9" y="9" width="1" height="1" fill="#000" />
+                            </g>
+
+                            <!-- 2. Thinking [ - - ] -->
+                            <g class="face-group face-thinking">
+                                <rect x="6" y="10" width="2" height="1" fill="#000" />
+                                <rect x="9" y="10" width="2" height="1" fill="#000" />
+                            </g>
+
+                            <!-- 3. Typing [ >>> ] -->
+                            <g class="face-group face-typing">
+                                <text x="5" y="11" font-family="monospace" font-size="3px" fill="#000" font-weight="bold">>>></text>
+                            </g>
+
+                            <!-- 4. Juggling [ ■ 掉落 ] -->
+                            <g class="face-group face-juggling">
+                                <rect x="5" y="8" width="1" height="1" fill="#000" />
+                                <rect x="6" y="9" width="1" height="1" fill="#000" />
+                                <rect x="9" y="10" width="1" height="1" fill="#000" />
+                            </g>
+
+                            <!-- 5. Conducting [ ♪ ] -->
+                            <g class="face-group face-conducting">
+                                <text x="6" y="11" font-family="monospace" font-size="3px" fill="#000">♪</text>
+                            </g>
+
+                            <!-- 6. Success [ ^▽^ ] -->
+                            <g class="face-group face-success">
+                                <rect x="6" y="8" width="1" height="1" fill="#000" />
+                                <rect x="9" y="8" width="1" height="1" fill="#000" />
+                                <rect x="7" y="10" width="2" height="1" fill="#000" />
+                            </g>
+
+                            <!-- 7. Error [ X X ] -->
+                            <g class="face-group face-error">
+                                <text x="5.5" y="11" font-family="monospace" font-size="4px" fill="#000" font-weight="bold">X X</text>
+                            </g>
+
+                            <!-- 8. Sleeping [ _ _ ] -->
+                            <g class="face-group face-sleeping">
+                                <rect x="6" y="10" width="2" height="1" fill="#000" opacity="0.3"/>
+                                <rect x="9" y="10" width="2" height="1" fill="#000" opacity="0.3"/>
+                            </g>
+
+                            <!-- 9. Auth [ 🔒 ] 简化为 @ -->
+                            <g class="face-group face-auth">
+                                <text x="6" y="11" font-family="monospace" font-size="3px" fill="#000" font-weight="bold">@</text>
+                            </g>
+
+                            <!-- 10. Fast [ o o ] -->
+                            <g class="face-group face-fast">
+                                <rect x="6" y="9" width="1" height="1" fill="#000" />
+                                <rect x="7" y="9" width="1" height="1" fill="#000" />
+                                <rect x="9" y="9" width="1" height="1" fill="#000" />
+                                <rect x="10" y="9" width="1" height="1" fill="#000" />
+                            </g>
+
+                            <!-- 11. Searching [ ◉ ◉ ] -->
+                            <g class="face-group face-searching">
+                                <rect x="6" y="9" width="1" height="1" fill="#000" />
+                                <rect x="6" y="10" width="1" height="1" fill="#000" />
+                                <rect x="9" y="9" width="1" height="1" fill="#000" />
+                                <rect x="9" y="10" width="1" height="1" fill="#000" />
+                            </g>
+
+                            <!-- 12. Evolving [ = = ] -->
+                            <g class="face-group face-evolving">
+                                <rect x="6" y="9" width="2" height="1" fill="#000" />
+                                <rect x="9" y="9" width="2" height="1" fill="#000" />
+                            </g>
+                        </g>
+
+                        <!-- Layer: Accessories (天线) -->
+                        <rect x="7" y="2" width="1" height="3" fill="#000" />
+                        <rect class="antenna-top" x="6" y="1" width="3" height="1" fill="#000" />
+
+                        <!-- Layer: FX (粒子特效) -->
+                        <text class="fx-zzz" x="0" y="0">Z</text>
+                        <rect class="fx-confetti" x="1" y="2" width="1" height="1" />
+                        <rect class="fx-confetti" x="13" y="3" width="1" height="1" />
+                        <rect class="fx-trail" x="0" y="5" width="1" height="10" />
+                    </svg>
+                </div>
+            </div>
+            <div class="agent-label" id="agent-type-label">CLAUDE / 热血程序员</div>
+        </div>
+
+        <div class="content">
+            <!-- Claude Card -->
+            <div class="cli-card">
+                <div class="card-header">
+                    <span class="cli-name">Claude Code</span>
+                    <span class="plan-badge">PRO</span>
+                </div>
+                <div class="quota-grid">
+                    <div class="quota-item">
+                        <div class="quota-label">
+                            <span>Current</span>
+                            <span style="color:#666">1h 22m</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar bar-claude" id="bar-current"></div>
+                        </div>
+                    </div>
+                    <div class="quota-item">
+                        <div class="quota-label">
+                            <span>Weekly</span>
+                            <span style="color:#666">Sun</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar bar-claude" style="width: 45%; opacity: 0.6;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="token-stats">
+                    <span>今日 2.3M tokens</span>
+                    <span>本周 8.1M</span>
+                </div>
+            </div>
+
+            <!-- OpenCode Card -->
+            <div class="cli-card">
+                <div class="card-header">
+                    <span class="cli-name">OpenCode Go</span>
+                    <span class="plan-badge" style="color:#00FF00; border:1px solid #00FF00;">GO</span>
+                </div>
+                <div class="quota-grid">
+                    <div class="quota-item" style="grid-column: span 2;">
+                        <div class="quota-label">
+                            <span>Rolling Usage</span>
+                            <span style="color:#EA4335">CRITICAL / 15m</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar bar-warning"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="token-stats">
+                    <span>今日 1.1M tokens</span>
+                    <span>本周 4.2M</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="settings-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- 原型控制面板：支持 12 状态切换 -->
+    <div class="controls">
+        <div class="control-group">
+            <label>AGENT_SKIN</label>
+            <select id="skin-select">
+                <option value="claude">Claude (Terracotta)</option>
+                <option value="gemini">Gemini (Rainbow)</option>
+                <option value="codex">Codex (Blue-Purple)</option>
+                <option value="opencode">OpenCode (Black-White)</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label>CORE_STATE (12-State)</label>
+            <select id="state-select">
+                <option value="idle">01 IDLE</option>
+                <option value="thinking">02 THINKING</option>
+                <option value="typing">03 TYPING</option>
+                <option value="juggling">04 JUGGLING</option>
+                <option value="conducting">05 CONDUCTING</option>
+                <option value="success">06 SUCCESS</option>
+                <option value="error">07 ERROR</option>
+                <option value="sleeping">08 SLEEPING</option>
+                <option value="auth">09 AUTH</option>
+                <option value="fast">10 FAST</option>
+                <option value="searching">11 SEARCHING</option>
+                <option value="evolving">12 EVOLVING</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const skinSelect = document.getElementById('skin-select');
+        const stateSelect = document.getElementById('state-select');
+        const botSkin = document.getElementById('bot-skin');
+        const stage = document.getElementById('stage');
+        const agentLabel = document.getElementById('agent-type-label');
+        const progressBar = document.getElementById('bar-current');
+
+        const skins = {
+            claude:   { color: '#D97757', label: 'CLAUDE / 热血程序员' },
+            gemini:   { color: 'url(#gemini-grad)', label: 'GEMINI / 赛博法师' },
+            codex:    { color: 'url(#codex-grad)', label: 'CODEX / 冷酷分析师' },
+            opencode: { color: '#000000', label: 'OPENCODE / 暗网黑客' }
+        };
+
+        skinSelect.addEventListener('change', (e) => {
+            const s = skins[e.target.value];
+            botSkin.setAttribute('fill', s.color);
+            agentLabel.innerText = s.label;
+            // 进度条颜色跟随皮肤
+            if (e.target.value === 'gemini') {
+                progressBar.style.background = 'linear-gradient(90deg, #EA4335, #FBBC05, #34A853, #4285F4)';
+            } else if (e.target.value === 'codex') {
+                progressBar.style.background = 'linear-gradient(90deg, #7851FB, #2853FF)';
+            } else if (e.target.value === 'opencode') {
+                progressBar.style.background = '#444444';
+            } else {
+                progressBar.style.background = s.color;
+            }
+        });
+
+        stateSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            // 重置所有状态类
+            stage.className = 'pet-stage is-' + val;
+            
+            // 特定状态的进度条联动（演示用）
+            if (val === 'thinking') {
+                progressBar.style.width = '35%';
+            } else if (val === 'sleeping') {
+                progressBar.style.width = '5%';
+                progressBar.style.opacity = '0.3';
+            } else if (val === 'error') {
+                progressBar.style.width = '90%';
+                progressBar.style.background = '#EA4335';
+            } else {
+                progressBar.style.width = '33%';
+                progressBar.style.opacity = '1';
+                // 恢复皮肤色
+                skinSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // 随机眨眼：仅 Idle 状态
+        setInterval(() => {
+            if (stateSelect.value === 'idle') {
+                const eyes = document.querySelector('.face-idle');
+                if (eyes) {
+                    eyes.style.opacity = '0';
+                    setTimeout(() => eyes.style.opacity = '1', 100);
+                }
+            }
+        }, 4000);
+    </script>
+</body>
+</html>

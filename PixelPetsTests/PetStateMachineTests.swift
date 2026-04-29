@@ -21,4 +21,32 @@ final class PetStateMachineTests: XCTestCase {
         m.applyQuotaRecommendation(.sleeping)
         XCTAssertEqual(m.currentState, .thinking)  // hook wins
     }
+
+    func test_quotaMonitorRecommendsSleepingWhenDetectedQuotaIsFull() {
+        let infos = [
+            CliQuotaInfo(
+                id: .claude,
+                fetchResult: .success([
+                    QuotaTier(id: "five_hour", utilization: 1.0, resetsAt: nil, isEstimated: false)
+                ]),
+                isDetected: true
+            )
+        ]
+
+        XCTAssertEqual(QuotaMonitor.recommendation(for: infos), .sleeping)
+    }
+
+    func test_quotaMonitorIgnoresUndetectedFullQuota() {
+        let infos = [
+            CliQuotaInfo(
+                id: .claude,
+                fetchResult: .success([
+                    QuotaTier(id: "five_hour", utilization: 1.0, resetsAt: nil, isEstimated: false)
+                ]),
+                isDetected: false
+            )
+        ]
+
+        XCTAssertEqual(QuotaMonitor.recommendation(for: infos), .idle)
+    }
 }

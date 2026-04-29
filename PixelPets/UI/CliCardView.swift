@@ -3,8 +3,14 @@ import SwiftUI
 struct CliCardView: View {
     let info: CliQuotaInfo
 
-    private var sessionTier: QuotaTier? { info.tiers.first { $0.id == "five_hour" || $0.id == "rolling" } }
-    private var weeklyTier: QuotaTier?  { info.tiers.first { $0.id == "seven_day" || $0.id == "weekly" } }
+    private var displayedTiers: [QuotaTier] {
+        let prioritized = [
+            info.tiers.first { $0.id == "five_hour" || $0.id == "rolling" || $0.id == "daily" },
+            info.tiers.first { $0.id == "seven_day" || $0.id == "weekly" }
+        ].compactMap { $0 }
+
+        return prioritized.isEmpty ? Array(info.tiers.prefix(2)) : prioritized
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -20,12 +26,13 @@ struct CliCardView: View {
             }
 
             if info.isUnavailable {
-                Text("未连接 · 无法读取配额")
+                Text(info.unavailableReason ?? "未连接 · 无法读取配额")
                     .font(.system(size: 10)).foregroundStyle(.secondary)
             } else {
                 HStack(alignment: .top, spacing: 12) {
-                    if let s = sessionTier { QuotaBarView(tier: s).frame(maxWidth: .infinity) }
-                    if let w = weeklyTier  { QuotaBarView(tier: w).frame(maxWidth: .infinity) }
+                    ForEach(displayedTiers) { tier in
+                        QuotaBarView(tier: tier).frame(maxWidth: .infinity)
+                    }
                 }
             }
 

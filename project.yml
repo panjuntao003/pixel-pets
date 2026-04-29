@@ -23,4 +23,6 @@ targets:
     dependencies:
       - target: PixelPets
     settings:
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.pixelpets.app.tests
       SWIFT_VERSION: "5.9"

@@ -80,13 +80,18 @@ final class GrowthStore {
     }
 
     func saveCursor(path: String, mtime: Double) {
-        guard let statement = prepare("INSERT OR REPLACE INTO log_cursor(path, mtime) VALUES(?, ?)") else {
+        saveCursor(path: path, mtime: mtime, totalTokens: loadCursorTokenTotal(path: path))
+    }
+
+    func saveCursor(path: String, mtime: Double, totalTokens: Int) {
+        guard let statement = prepare("INSERT OR REPLACE INTO log_cursor(path, mtime, total_tokens) VALUES(?, ?, ?)") else {
             return
         }
         defer { sqlite3_finalize(statement) }
 
         sqlite3_bind_text(statement, 1, path, -1, growthStoreSQLiteTransient)
         sqlite3_bind_double(statement, 2, mtime)
+        sqlite3_bind_int(statement, 3, Int32(totalTokens))
         guard sqlite3_step(statement) == SQLITE_DONE else {
             recordError("Failed to save cursor: \(sqliteErrorMessage())")
             return
@@ -110,6 +115,23 @@ final class GrowthStore {
         return sqlite3_column_double(statement, 0)
     }
 
+    func loadCursorTokenTotal(path: String) -> Int {
+        guard let statement = prepare("SELECT total_tokens FROM log_cursor WHERE path=?") else {
+            return 0
+        }
+        defer { sqlite3_finalize(statement) }
+
+        sqlite3_bind_text(statement, 1, path, -1, growthStoreSQLiteTransient)
+        let result = sqlite3_step(statement)
+        guard result == SQLITE_ROW else {
+            if result != SQLITE_DONE {
+                recordError("Failed to load cursor token total: \(sqliteErrorMessage())")
+            }
+            return 0
+        }
+        return Int(sqlite3_column_int(statement, 0))
+    }
+
     private static func defaultDBPath() -> String {
         URL(fileURLWithPath: NSHomeDirectory())
             .appendingPathComponent(".pixelpets")
@@ -123,12 +145,44 @@ final class GrowthStore {
             recordError("Failed to create kv table: \(sqliteErrorMessage())")
             return
         }
-        guard sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS log_cursor (path TEXT PRIMARY KEY, mtime REAL NOT NULL DEFAULT 0)", nil, nil, nil) == SQLITE_OK else {
+        guard sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS log_cursor (path TEXT PRIMARY KEY, mtime REAL NOT NULL DEFAULT 0, total_tokens INTEGER NOT NULL DEFAULT 0)", nil, nil, nil) == SQLITE_OK else {
             recordError("Failed to create log_cursor table: \(sqliteErrorMessage())")
             return
         }
+        addColumnIfNeeded(table: "log_cursor", column: "total_tokens", definition: "INTEGER NOT NULL DEFAULT 0")
         isAvailable = true
         lastError = nil
+    }
+
+    private func addColumnIfNeeded(table: String, column: String, definition: String) {
+        guard !columnExists(column, table: table) else {
+            return
+        }
+
+        let escapedTable = table.replacingOccurrences(of: "\"", with: "\"\"")
+        let escapedColumn = column.replacingOccurrences(of: "\"", with: "\"\"")
+        guard sqlite3_exec(db, "ALTER TABLE \"\(escapedTable)\" ADD COLUMN \"\(escapedColumn)\" \(definition)", nil, nil, nil) == SQLITE_OK else {
+            recordError("Failed to migrate \(table).\(column): \(sqliteErrorMessage())")
+            return
+        }
+    }
+
+    private func columnExists(_ column: String, table: String) -> Bool {
+        guard let statement = prepare("PRAGMA table_info('\(table.replacingOccurrences(of: "'", with: "''"))')") else {
+            return false
+        }
+        defer { sqlite3_finalize(statement) }
+
+        while sqlite3_step(statement) == SQLITE_ROW {
+            guard let text = sqlite3_column_text(statement, 1) else {
+                continue
+            }
+
+            if String(cString: text) == column {
+                return true
+            }
+        }
+        return false
     }
 
     private func setKV(_ key: String, _ value: String) {

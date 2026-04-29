@@ -144,12 +144,15 @@ final class OpenCodeLogParser {
 
     private static func intValue(_ value: Any?) -> Int {
         switch value {
-        case _ as Bool:
-            return 0
+        case let number as NSNumber:
+            if CFGetTypeID(number) == CFBooleanGetTypeID() {
+                return 0
+            }
+            return number.intValue
         case let int as Int:
             return int
-        case let number as NSNumber:
-            return number.intValue
+        case _ as Bool:
+            return 0
         default:
             return 0
         }

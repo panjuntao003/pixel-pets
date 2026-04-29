@@ -1,0 +1,9 @@
+{"type":"server-started","port":62464,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:62464","screen_dir":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content","state_dir":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/state"}
+{"type":"screen-added","file":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content/visual-style.html"}
+{"type":"screen-added","file":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content/robot-in-scene.html"}
+{"type":"screen-added","file":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content/room-states.html"}
+{"source":"user-event","type":"click","text":"B\n      \n        等距视图（伪 3D）\n        像你图片里的等距小房间，有立体感和纵深。视觉更惊艳，但 120px 高度偏紧，开发工作量较大。","choice":"iso","id":null,"timestamp":1777444980695}
+{"type":"screen-added","file":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content/scifi-themes.html"}
+{"type":"screen-added","file":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content/design-overview.html"}
+{"type":"screen-added","file":"/Users/panjuntao/Developer/pixel-pets/.superpowers/brainstorm/96363-1777444032/content/waiting.html"}
+{"type":"server-stopped","reason":"idle timeout"}

@@ -10,6 +10,9 @@
 		09513F16A1C36B664B105F4D /* GrowthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 694A9609392B6FDBF6F795CD /* GrowthStore.swift */; };
 		09E5FF860E3846F111F29D64 /* GrowthEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52E02B09537952D8CA58865A /* GrowthEngine.swift */; };
 		0A47824554C1429037C478C9 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
+		AC0000000000000000000001 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000002 /* AppCoordinator.swift */; };
+		AC0000000000000000000003 /* AnimationClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000004 /* AnimationClockTests.swift */; };
+		AC0000000000000000000005 /* AppCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000006 /* AppCoordinatorTests.swift */; };
 		0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52CBD94E5910ED06A425C3C /* PetViewModel.swift */; };
 		1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FA3634ADF305BDF917BF6B /* QuotaTier.swift */; };
@@ -40,6 +43,7 @@
 		A28DC8662EDDF29DBAF20069 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F4A3B84E2090C0CF1386DF2 /* BitBotRenderer.swift */; };
 		AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */; };
+		AE0001000000000000000001 /* OpenCodeGoQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0001000000000000000002 /* OpenCodeGoQuotaClient.swift */; };
 		B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */; };
 		B262D5655FECE5FBC8DCFE42 /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
 		B5B14046A8EFD2856BE8D446 /* codex-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = 9F56DC065FAE03A663C8383E /* codex-hook.js */; };
@@ -98,9 +102,13 @@
 		92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrar.swift; sourceTree = "<group>"; };
 		9394436749431BF36A637FED /* OpenCodeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParser.swift; sourceTree = "<group>"; };
 		99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClient.swift; sourceTree = "<group>"; };
+		AE0001000000000000000002 /* OpenCodeGoQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeGoQuotaClient.swift; sourceTree = "<group>"; };
 		99CE2F3CA0D291740976E7EA /* Accessory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessory.swift; sourceTree = "<group>"; };
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		9F56DC065FAE03A663C8383E /* codex-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "codex-hook.js"; sourceTree = "<group>"; };
+		AC0000000000000000000002 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		AC0000000000000000000004 /* AnimationClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClockTests.swift; sourceTree = "<group>"; };
+		AC0000000000000000000006 /* AppCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorTests.swift; sourceTree = "<group>"; };
 		AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClock.swift; sourceTree = "<group>"; };
 		B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelPetsApp.swift; sourceTree = "<group>"; };
 		B52CBD94E5910ED06A425C3C /* PetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewModel.swift; sourceTree = "<group>"; };
@@ -170,6 +178,7 @@
 				215E338061E37977B5F19E4C /* HookServer.swift */,
 				C5DFC862F77574208340D87A /* NodeGate.swift */,
 				9394436749431BF36A637FED /* OpenCodeLogParser.swift */,
+				AE0001000000000000000002 /* OpenCodeGoQuotaClient.swift */,
 				68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */,
 			);
 			path = Senses;
@@ -178,6 +187,8 @@
 		8292F4952EBEB0F967FD2D62 /* PixelPetsTests */ = {
 			isa = PBXGroup;
 			children = (
+				AC0000000000000000000006 /* AppCoordinatorTests.swift */,
+				AC0000000000000000000004 /* AnimationClockTests.swift */,
 				FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */,
 				F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */,
 				8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */,
@@ -217,6 +228,7 @@
 		94FC4D103188E1E0AC04F6B4 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				AC0000000000000000000002 /* AppCoordinator.swift */,
 				B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */,
 			);
 			path = App;
@@ -385,6 +397,7 @@
 				241F67C9A786BACDFC92C2D4 /* Accessory.swift in Sources */,
 				330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */,
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
+				AC0000000000000000000001 /* AppCoordinator.swift in Sources */,
 				AB3685DB978DF56AD2A655E6 /* BitBotRenderer.swift in Sources */,
 				2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */,
 				AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */,
@@ -399,6 +412,7 @@
 				BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */,
 				BDB688527872D702C345F81D /* NodeGate.swift in Sources */,
 				66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */,
+				AE0001000000000000000001 /* OpenCodeGoQuotaClient.swift in Sources */,
 				3E672EF39084377602CD91B2 /* PetDisplayView.swift in Sources */,
 				8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */,
 				461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */,
@@ -416,6 +430,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC0000000000000000000005 /* AppCoordinatorTests.swift in Sources */,
+				AC0000000000000000000003 /* AnimationClockTests.swift in Sources */,
 				5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */,
 				E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */,
 				3A1349CB2AF4BF3BA081A6B5 /* CodexLogParserTests.swift in Sources */,
@@ -446,12 +462,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pixelpets.app.tests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PixelPets.app/Contents/MacOS/PixelPets";
@@ -525,12 +543,14 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pixelpets.app.tests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PixelPets.app/Contents/MacOS/PixelPets";

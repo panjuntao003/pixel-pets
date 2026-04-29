@@ -44,6 +44,13 @@ final class GrowthStoreTests: XCTestCase {
         XCTAssertEqual(GrowthStore(dbPath: path).loadCursor(path: "/tmp/pixelpets.log"), 123.456, accuracy: 0.001)
     }
 
+    func test_saveReopenLoadCursorTokenTotal() throws {
+        let path = try makeDBPath()
+        GrowthStore(dbPath: path).saveCursor(path: "/tmp/pixelpets.log", mtime: 123.456, totalTokens: 789)
+
+        XCTAssertEqual(GrowthStore(dbPath: path).loadCursorTokenTotal(path: "/tmp/pixelpets.log"), 789)
+    }
+
     func test_badPathMarksStoreUnavailable() throws {
         let directory = try makeTempDirectory()
         let store = GrowthStore(dbPath: directory.path)

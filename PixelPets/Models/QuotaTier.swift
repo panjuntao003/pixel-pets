@@ -19,6 +19,10 @@ struct QuotaTier: Identifiable {
         case "five_hour":            return "Current session"
         case "rolling":              return "Rolling"
         case "seven_day", "weekly":  return "Weekly"
+        case "daily":                return "Daily"
+        case "pro":                  return "Pro"
+        case "flash":                return "Flash"
+        case "flash_lite":           return "Flash Lite"
         default:                     return id
         }
     }

@@ -27,6 +27,7 @@ process.stdin.on("end", () => {
   }
 
   const json = JSON.stringify({
+    agent: "codex",
     event,
     session_id: payload.session_id || "default",
     tool_name: payload.tool_name

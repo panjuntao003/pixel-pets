@@ -15,6 +15,7 @@ process.stdin.on("end", () => {
   } catch {}
 
   const json = JSON.stringify({
+    agent: "claude",
     event,
     session_id: payload.session_id || "default",
     tool_name: payload.tool_name,

@@ -20,6 +20,7 @@ final class HookRegistrarTests: XCTestCase {
     func test_detectAllUsesConfiguredHomeAndReportsExistingConfigs() throws {
         try createFile(".claude/settings.json", contents: "{}")
         try createDirectory(".codex")
+        try createFile(".config/opencode/opencode.json", contents: "{}")
 
         let detections = HookRegistrar(home: tempHome.path).detectAll()
 
@@ -29,6 +30,8 @@ final class HookRegistrarTests: XCTestCase {
         XCTAssertEqual(detections.first { $0.cli == .claude }?.detected, true)
         XCTAssertEqual(detections.first { $0.cli == .gemini }?.detected, false)
         XCTAssertEqual(detections.first { $0.cli == .codex }?.detected, true)
+        XCTAssertEqual(detections.first { $0.cli == .opencode }?.detected, true)
+        XCTAssertEqual(detections.first { $0.cli == .opencode }?.canRegister, false)
     }
 
     func test_registerClaudePreservesNestedHooksAddsAllEventsIdempotentlyAndBacksUpOnce() throws {
@@ -65,10 +68,14 @@ final class HookRegistrarTests: XCTestCase {
         XCTAssertEqual(json["theme"] as? String, "dark")
         XCTAssertTrue(userPromptCommands.contains("echo keep"))
         XCTAssertEqual(userPromptCommands.filter { $0.contains("pixelpets-hook") }.count, 1)
-        XCTAssertTrue(userPromptCommands.contains("'/Applications/Node Tools/node' 'pixelpets-hook' UserPromptSubmit"))
+        XCTAssertTrue(userPromptCommands.contains {
+            $0.contains("'/Applications/Node Tools/node'") &&
+            $0.contains("pixelpets-hook") &&
+            $0.hasSuffix(" UserPromptSubmit")
+        })
 
         for event in claudeEvents {
-            XCTAssertEqual(pixelPetsCommandCount(event: event, in: hooks), 1, event)
+            XCTAssertEqual(try pixelPetsCommandCount(event: event, in: hooks), 1, event)
         }
         XCTAssertEqual(firstBackup, try readString(".claude/settings.json.pixelpets.bak"))
     }
@@ -135,7 +142,7 @@ final class HookRegistrarTests: XCTestCase {
         XCTAssertEqual(preserved?["custom"] as? String, "survives")
         XCTAssertEqual(preserved?["flag"] as? Bool, true)
         XCTAssertEqual(preserved?["type"] as? String, "command")
-        XCTAssertEqual(pixelPetsCommandCount(event: "Stop", in: hooks), 1)
+        XCTAssertEqual(try pixelPetsCommandCount(event: "Stop", in: hooks), 1)
         XCTAssertFalse(allCommands(in: hooks).contains("node pixelpets-hook Stop"))
         XCTAssertTrue(commandHandlers(in: try eventGroups("Stop", in: hooks)).contains { $0["command"] as? String == "echo pixelpets status" })
         XCTAssertTrue(commandHandlers(in: try eventGroups("UserPromptSubmit", in: hooks)).contains { $0["command"] as? String == "echo keep unknown" })
@@ -377,7 +384,11 @@ final class HookRegistrarTests: XCTestCase {
         let json = try readObject(".claude/settings.json")
         let hooks = try XCTUnwrap(json["hooks"] as? [String: Any])
         let commands = commandHandlers(in: try eventGroups("UserPromptSubmit", in: hooks)).compactMap { $0["command"] as? String }
-        XCTAssertTrue(commands.contains("'/Users/dev'\\''s tools/node' 'pixelpets-hook' UserPromptSubmit"))
+        XCTAssertTrue(commands.contains {
+            $0.contains("'/Users/dev'\\''s tools/node'") &&
+            $0.contains("pixelpets-hook") &&
+            $0.hasSuffix(" UserPromptSubmit")
+        })
     }
 
     func test_registeredHandlerTimeoutIsLongerThanScriptRequestTimeout() throws {

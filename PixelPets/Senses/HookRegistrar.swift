@@ -4,6 +4,7 @@ struct HookRegistration {
     let cli: AgentSkin
     let configPath: String
     var detected: Bool
+    var canRegister: Bool = true
 }
 
 final class HookRegistrar {
@@ -40,7 +41,8 @@ final class HookRegistrar {
             HookRegistration(
                 cli: .opencode,
                 configPath: "\(home)/.config/opencode/opencode.json",
-                detected: fm.fileExists(atPath: "\(home)/.config/opencode/opencode.json")
+                detected: fm.fileExists(atPath: "\(home)/.config/opencode/opencode.json"),
+                canRegister: false
             )
         ]
     }
@@ -61,7 +63,7 @@ final class HookRegistrar {
     func unregisterAll() {
         unregister(configPath: "\(home)/.claude/settings.json", markers: ["pixelpets-hook"])
         unregister(configPath: "\(home)/.gemini/settings.json", markers: ["gemini-hook"])
-        unregister(configPath: "\(home)/.codex/hooks.json", markers: ["codex-hook"])
+        unregister(configPath: "\(home)/.codex/hooks.json", markers: ["codex-hook", "pixelpets-hook"])
     }
 
     private func registerClaude() {

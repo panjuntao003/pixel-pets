@@ -19,6 +19,13 @@ struct CliQuotaInfo: Identifiable {
         if case .unavailable = fetchResult { return true }
         return false
     }
+
+    var unavailableReason: String? {
+        if case .unavailable(let reason) = fetchResult {
+            return reason
+        }
+        return nil
+    }
 }
 
 final class PetViewModel: ObservableObject {

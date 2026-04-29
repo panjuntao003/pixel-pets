@@ -35,6 +35,7 @@ process.stdin.on("end", () => {
   }
 
   const json = JSON.stringify({
+    agent: "gemini",
     event,
     session_id: payload.session_id || "default"
   });

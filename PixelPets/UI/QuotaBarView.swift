@@ -23,10 +23,10 @@ struct QuotaBarView: View {
                     ZStack(alignment: .leading) {
                         Capsule().fill(Color.secondary.opacity(0.2)).frame(height: 5)
                         Capsule().fill(barColor)
-                            .frame(width: geo.size.width * min(tier.utilization, 1.0), height: 5)
+                            .frame(width: geo.size.width * min(tier.remaining, 1.0), height: 5)
                     }
                 }.frame(height: 5)
-                Text("\(Int(tier.utilization * 100))%")
+                Text("\(Int(tier.remaining * 100))%")
                     .font(.system(size: 9, weight: .semibold))
                     .foregroundStyle(.secondary).frame(width: 26, alignment: .trailing)
             }
