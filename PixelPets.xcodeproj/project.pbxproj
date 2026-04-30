@@ -13,12 +13,14 @@
 		0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCD7BA48B79CE99162BB7A5 /* AppCoordinator.swift */; };
 		0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52CBD94E5910ED06A425C3C /* PetViewModel.swift */; };
 		0E383E81F08707D6ACF8E643 /* BitBotStatusIconRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */; };
+		16EA9521CDA030620DE6A419 /* MapTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4491D293E3F6BA5DFEEEC2A4 /* MapTab.swift */; };
 		1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FA3634ADF305BDF917BF6B /* QuotaTier.swift */; };
 		2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */; };
 		241F67C9A786BACDFC92C2D4 /* Accessory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CE2F3CA0D291740976E7EA /* Accessory.swift */; };
 		2A2317D0F005270C335D3798 /* CliCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */; };
 		2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */; };
+		2C4870A406DE2E3C7E4E1528 /* SysTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DBD5FB294FA4BE66E36A2 /* SysTab.swift */; };
 		31C5C8CEAECB30D7E951C812 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60297808408A5939E6D93BD2 /* PopoverView.swift */; };
 		31D3D0833FEE73E24684A1BC /* UnderwaterScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB459746E7968D5048831CB /* UnderwaterScene.swift */; };
 		330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B161320AB8F459F62F9F48 /* AgentSkin.swift */; };
@@ -30,12 +32,14 @@
 		3F00AB7AC7A60B40AAA98D5D /* BitBotV2FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */; };
 		407BBD34F90B5EB23C293446 /* SceneRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */; };
 		461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72F4F208D51F2DA034981F /* PetStateMachine.swift */; };
+		4EED8D9ABB2C68C7D053BE62 /* LoadoutTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4DB44E1B953463E26A0C87 /* LoadoutTab.swift */; };
 		4F9D695DFFE0DF0F2BC37A1D /* SciFiQuartersScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90061AD910EF29CA768D68F4 /* SciFiQuartersScene.swift */; };
 		56CFA5EE01D3CF64A550CEC9 /* CyberpunkLabScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B7C7ACDA1D8E6F97737825 /* CyberpunkLabScene.swift */; };
 		5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */; };
 		5F7D433973146C5AE5674233 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 		6086C0743523B0F6A28BC8C0 /* GrowthStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */; };
 		66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9394436749431BF36A637FED /* OpenCodeLogParser.swift */; };
+		67408F393CF1F241A056E447 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C77F49A948472204AEFDF7E /* GameSettingsView.swift */; };
 		6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */; };
 		776B90A5D7870C311722EFF8 /* CodexLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */; };
 		78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F506134FD22F7BB13B9BE497 /* OpenCodeGoQuotaClient.swift */; };
@@ -62,6 +66,7 @@
 		C57516B8AF4E3C9438DA9264 /* SpaceStationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADD1FCEA57D688F94D5126B /* SpaceStationScene.swift */; };
 		C74BC198CDC94ACA6DB7191E /* AppCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */; };
 		C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */; };
+		CAB8B886E33493A8717256B0 /* UnitTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93816F676209A8B72617BD27 /* UnitTab.swift */; };
 		CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */; };
 		DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */; };
 		DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */; };
@@ -71,7 +76,6 @@
 		E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
 		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
-		FC62D0F5E33D85215EBA23A4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B859207199EFB8D83B9A1C7 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,9 +99,9 @@
 		34A6FA8C940C21A855BDD013 /* EnabledCLIsFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnabledCLIsFilterTests.swift; sourceTree = "<group>"; };
 		360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParser.swift; sourceTree = "<group>"; };
 		3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CliCardView.swift; sourceTree = "<group>"; };
-		3B859207199EFB8D83B9A1C7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGateTests.swift; sourceTree = "<group>"; };
 		43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
+		4491D293E3F6BA5DFEEEC2A4 /* MapTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTab.swift; sourceTree = "<group>"; };
 		45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParserTests.swift; sourceTree = "<group>"; };
 		46A43FD451CF7A4BE88EBD8C /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatView.swift; sourceTree = "<group>"; };
@@ -113,6 +117,7 @@
 		694A9609392B6FDBF6F795CD /* GrowthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStore.swift; sourceTree = "<group>"; };
 		6ADD1FCEA57D688F94D5126B /* SpaceStationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStationScene.swift; sourceTree = "<group>"; };
 		75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBarView.swift; sourceTree = "<group>"; };
+		7C77F49A948472204AEFDF7E /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
 		8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorTests.swift; sourceTree = "<group>"; };
 		8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotV2Renderer.swift; sourceTree = "<group>"; };
 		8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParserTests.swift; sourceTree = "<group>"; };
@@ -120,6 +125,7 @@
 		902053947864E8D75FE02CFB /* HookServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookServerTests.swift; sourceTree = "<group>"; };
 		9276B97C5781060F8B436E4A /* PixelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelColor.swift; sourceTree = "<group>"; };
 		92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrar.swift; sourceTree = "<group>"; };
+		93816F676209A8B72617BD27 /* UnitTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTab.swift; sourceTree = "<group>"; };
 		9394436749431BF36A637FED /* OpenCodeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParser.swift; sourceTree = "<group>"; };
 		95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRegistryTests.swift; sourceTree = "<group>"; };
 		99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClient.swift; sourceTree = "<group>"; };
@@ -136,6 +142,7 @@
 		C5FF5F498032037211B5C222 /* AnimationClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClockTests.swift; sourceTree = "<group>"; };
 		C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotStatusIconRenderer.swift; sourceTree = "<group>"; };
 		CB85949D9BAB777DA9C22692 /* gemini-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gemini-hook.js"; sourceTree = "<group>"; };
+		D11DBD5FB294FA4BE66E36A2 /* SysTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysTab.swift; sourceTree = "<group>"; };
 		E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngineTests.swift; sourceTree = "<group>"; };
 		E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStoreTests.swift; sourceTree = "<group>"; };
 		E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookPermissionView.swift; sourceTree = "<group>"; };
@@ -146,6 +153,7 @@
 		F5B7C7ACDA1D8E6F97737825 /* CyberpunkLabScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyberpunkLabScene.swift; sourceTree = "<group>"; };
 		F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetStateMachineTests.swift; sourceTree = "<group>"; };
 		F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClientTests.swift; sourceTree = "<group>"; };
+		FB4DB44E1B953463E26A0C87 /* LoadoutTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadoutTab.swift; sourceTree = "<group>"; };
 		FBB459746E7968D5048831CB /* UnderwaterScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnderwaterScene.swift; sourceTree = "<group>"; };
 		FE22542ED2A510E28DA6DA7C /* gemini_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = gemini_sample.json; sourceTree = "<group>"; };
 		FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParserTests.swift; sourceTree = "<group>"; };
@@ -160,7 +168,7 @@
 				E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */,
 				60297808408A5939E6D93BD2 /* PopoverView.swift */,
 				75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */,
-				3B859207199EFB8D83B9A1C7 /* SettingsView.swift */,
+				BF5A76CD75700858B284AA0D /* Settings */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -295,6 +303,18 @@
 				FBB459746E7968D5048831CB /* UnderwaterScene.swift */,
 			);
 			path = Scenes;
+			sourceTree = "<group>";
+		};
+		BF5A76CD75700858B284AA0D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				7C77F49A948472204AEFDF7E /* GameSettingsView.swift */,
+				FB4DB44E1B953463E26A0C87 /* LoadoutTab.swift */,
+				4491D293E3F6BA5DFEEEC2A4 /* MapTab.swift */,
+				D11DBD5FB294FA4BE66E36A2 /* SysTab.swift */,
+				93816F676209A8B72617BD27 /* UnitTab.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		C026731DCF1F35203F029D8A /* Core */ = {
@@ -451,6 +471,7 @@
 				776B90A5D7870C311722EFF8 /* CodexLogParser.swift in Sources */,
 				56CFA5EE01D3CF64A550CEC9 /* CyberpunkLabScene.swift in Sources */,
 				BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */,
+				67408F393CF1F241A056E447 /* GameSettingsView.swift in Sources */,
 				B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */,
 				09E5FF860E3846F111F29D64 /* GrowthEngine.swift in Sources */,
 				09513F16A1C36B664B105F4D /* GrowthStore.swift in Sources */,
@@ -459,6 +480,8 @@
 				2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */,
 				8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */,
 				BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */,
+				4EED8D9ABB2C68C7D053BE62 /* LoadoutTab.swift in Sources */,
+				16EA9521CDA030620DE6A419 /* MapTab.swift in Sources */,
 				BDB688527872D702C345F81D /* NodeGate.swift in Sources */,
 				78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */,
 				66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */,
@@ -472,10 +495,11 @@
 				210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */,
 				4F9D695DFFE0DF0F2BC37A1D /* SciFiQuartersScene.swift in Sources */,
 				905F301E04A93DDFA4B47B29 /* SettingsStore.swift in Sources */,
-				FC62D0F5E33D85215EBA23A4 /* SettingsView.swift in Sources */,
 				C57516B8AF4E3C9438DA9264 /* SpaceStationScene.swift in Sources */,
+				2C4870A406DE2E3C7E4E1528 /* SysTab.swift in Sources */,
 				E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */,
 				31D3D0833FEE73E24684A1BC /* UnderwaterScene.swift in Sources */,
+				CAB8B886E33493A8717256B0 /* UnitTab.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
