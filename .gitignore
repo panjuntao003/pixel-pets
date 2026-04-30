@@ -2,3 +2,4 @@
 *.xcuserdatad
 build/
 DerivedData/
+.worktrees/
