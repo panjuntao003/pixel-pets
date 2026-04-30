@@ -37,6 +37,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                 self?.statusItem?.button?.image = self?.makeStatusIcon(state: state)
             }
             .store(in: &cancellables)
+        coordinator.viewModel.$activeSkin
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.statusItem?.button?.image = self.makeStatusIcon(state: self.coordinator.viewModel.state)
+            }
+            .store(in: &cancellables)
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

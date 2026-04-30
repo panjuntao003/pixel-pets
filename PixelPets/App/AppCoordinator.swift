@@ -111,7 +111,10 @@ final class AppCoordinator: ObservableObject {
         stateMachine.handle(event, payload)
         viewModel.state = stateMachine.currentState
 
-        if let agent = payload["agent"] as? String, let skin = AgentSkin(rawValue: agent) {
+        if settingsStore.settings.skinOverride == nil,
+           let agent = payload["agent"] as? String,
+           let skin = AgentSkin(rawValue: agent),
+           settingsStore.settings.isEnabled(skin) {
             viewModel.activeSkin = skin
         }
 
@@ -161,6 +164,43 @@ final class AppCoordinator: ObservableObject {
         for registration in hookRegistrar.detectAll() {
             setDetected(registration.detected, for: registration.cli)
         }
+        validateSkinOverride()
+    }
+
+    private func validateSkinOverride() {
+        guard let override = settingsStore.settings.skinOverride else {
+            return
+        }
+
+        guard let skin = AgentSkin(rawValue: override),
+              isDetectedAndEnabled(skin) else {
+            settingsStore.update {
+                $0.skinOverride = nil
+            }
+            viewModel.activeSkin = fallbackActiveSkin()
+            return
+        }
+
+        viewModel.activeSkin = skin
+    }
+
+    private func fallbackActiveSkin() -> AgentSkin {
+        if isDetectedAndEnabled(viewModel.activeSkin) {
+            return viewModel.activeSkin
+        }
+
+        if let detectedSkin = viewModel.cliInfos.first(where: { info in
+            info.isDetected && settingsStore.settings.isEnabled(info.id)
+        })?.id {
+            return detectedSkin
+        }
+
+        return AgentSkin.allCases.first(where: { settingsStore.settings.isEnabled($0) }) ?? .claude
+    }
+
+    private func isDetectedAndEnabled(_ skin: AgentSkin) -> Bool {
+        settingsStore.settings.isEnabled(skin)
+            && viewModel.cliInfos.first(where: { $0.id == skin })?.isDetected == true
     }
 
     private func configureHooksIfPossible(register: Bool = false) {
