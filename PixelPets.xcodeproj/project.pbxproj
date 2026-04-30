@@ -63,6 +63,7 @@
 		BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0EC6058E905C89792375F /* FaceProvider.swift */; };
 		BDB688527872D702C345F81D /* NodeGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DFC862F77574208340D87A /* NodeGate.swift */; };
 		C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */; };
+		C29BF54B3853312815EA2616 /* AccessorySlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524322FEDC96502C39BC210C /* AccessorySlotTests.swift */; };
 		C57516B8AF4E3C9438DA9264 /* SpaceStationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADD1FCEA57D688F94D5126B /* SpaceStationScene.swift */; };
 		C74BC198CDC94ACA6DB7191E /* AppCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */; };
 		C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */; };
@@ -106,6 +107,7 @@
 		46A43FD451CF7A4BE88EBD8C /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatView.swift; sourceTree = "<group>"; };
 		4EE0EC6058E905C89792375F /* FaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceProvider.swift; sourceTree = "<group>"; };
+		524322FEDC96502C39BC210C /* AccessorySlotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessorySlotTests.swift; sourceTree = "<group>"; };
 		52E02B09537952D8CA58865A /* GrowthEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngine.swift; sourceTree = "<group>"; };
 		5374C17A55C4816597BD775D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5E565548CDE4528D76590E57 /* PixelPetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PixelPetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,6 +222,7 @@
 		8292F4952EBEB0F967FD2D62 /* PixelPetsTests */ = {
 			isa = PBXGroup;
 			children = (
+				524322FEDC96502C39BC210C /* AccessorySlotTests.swift */,
 				C5FF5F498032037211B5C222 /* AnimationClockTests.swift */,
 				8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */,
 				FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */,
@@ -507,6 +510,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C29BF54B3853312815EA2616 /* AccessorySlotTests.swift in Sources */,
 				33E804004A0614559589C180 /* AnimationClockTests.swift in Sources */,
 				C74BC198CDC94ACA6DB7191E /* AppCoordinatorTests.swift in Sources */,
 				5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */,
