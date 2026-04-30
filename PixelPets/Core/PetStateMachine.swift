@@ -3,10 +3,14 @@ import Foundation
 final class PetStateMachine {
     private(set) var currentState: PetState = .idle
     private(set) var activeSubagentCount: Int = 0
+    private(set) var lastActiveAgent: AgentSkin?
     private var lastHookEvent: Date?
 
     func handle(_ event: String, _ payload: [String: Any]) {
         lastHookEvent = Date()
+        if let agent = payload["agent"] as? String, let skin = AgentSkin(rawValue: agent) {
+            lastActiveAgent = skin
+        }
         switch event {
         case "UserPromptSubmit": transition(.thinking)
         case "PreToolUse":

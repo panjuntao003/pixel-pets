@@ -6,6 +6,7 @@ final class PetStateMachineTests: XCTestCase {
     override func setUp() { m = PetStateMachine() }
 
     func test_initial_isIdle()                    { XCTAssertEqual(m.currentState, .idle) }
+    func test_lastActiveAgent_nilInitially()      { XCTAssertNil(m.lastActiveAgent) }
     func test_UserPromptSubmit_thinking()         { m.handle("UserPromptSubmit", [:]); XCTAssertEqual(m.currentState, .thinking) }
     func test_PreToolUse_typing()                 { m.handle("PreToolUse", [:]); XCTAssertEqual(m.currentState, .typing) }
     func test_PreToolUse_webSearch_searching()    { m.handle("PreToolUse", ["tool_name":"web_search"]); XCTAssertEqual(m.currentState, .searching) }
@@ -20,6 +21,14 @@ final class PetStateMachineTests: XCTestCase {
         m.handle("UserPromptSubmit", [:])   // thinking
         m.applyQuotaRecommendation(.sleeping)
         XCTAssertEqual(m.currentState, .thinking)  // hook wins
+    }
+
+    func test_lastActiveAgent_tracksAgentFromPayload() {
+        let sm = PetStateMachine()
+        sm.handle("UserPromptSubmit", ["agent": "opencode"])
+        XCTAssertEqual(sm.lastActiveAgent, .opencode)
+        sm.handle("Stop", ["agent": "claude"])
+        XCTAssertEqual(sm.lastActiveAgent, .claude)
     }
 
     func test_quotaMonitorRecommendsSleepingWhenDetectedQuotaIsFull() {

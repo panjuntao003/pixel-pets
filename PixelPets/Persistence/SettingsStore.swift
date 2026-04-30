@@ -6,6 +6,8 @@ struct AppSettings: Codable {
     var enabledCLIs: [String: Bool] = [:]
     var hookPort: UInt16 = 15799
     var scenePreference: ScenePreference = .random
+    var equippedAccessories: [String: String] = [:]
+    var skinOverride: String? = nil
 
     init() {}
 
@@ -15,6 +17,8 @@ struct AppSettings: Codable {
         enabledCLIs = try container.decodeIfPresent([String: Bool].self, forKey: .enabledCLIs) ?? [:]
         hookPort = try container.decodeIfPresent(UInt16.self, forKey: .hookPort) ?? 15799
         scenePreference = try container.decodeIfPresent(ScenePreference.self, forKey: .scenePreference) ?? .random
+        equippedAccessories = try container.decodeIfPresent([String: String].self, forKey: .equippedAccessories) ?? [:]
+        skinOverride = try container.decodeIfPresent(String.self, forKey: .skinOverride)
     }
 
     func isEnabled(_ skin: AgentSkin) -> Bool {

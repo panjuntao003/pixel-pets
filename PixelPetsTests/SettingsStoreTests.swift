@@ -33,6 +33,14 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertEqual(store.settings.scenePreference, .random)
     }
 
+    func test_defaults_equippedAccessories_isEmpty() {
+        XCTAssertTrue(store.settings.equippedAccessories.isEmpty)
+    }
+
+    func test_defaults_skinOverride_isNil() {
+        XCTAssertNil(store.settings.skinOverride)
+    }
+
     func test_update_persistsToDisk() {
         store.update { $0.hookPort = 9000 }
         let store2 = SettingsStore(directory: tempDir.path)
@@ -62,6 +70,27 @@ final class SettingsStoreTests: XCTestCase {
         store.update { $0.hookPermissionAsked = true }
         let store2 = SettingsStore(directory: tempDir.path)
         XCTAssertTrue(store2.settings.hookPermissionAsked)
+    }
+
+    func test_equippedAccessories_roundtrips() {
+        store.update { $0.equippedAccessories["top"] = "sprout" }
+        let store2 = SettingsStore(directory: tempDir.path)
+        XCTAssertEqual(store2.settings.equippedAccessories["top"], "sprout")
+    }
+
+    func test_skinOverride_roundtrips() {
+        store.update { $0.skinOverride = "opencode" }
+        let store2 = SettingsStore(directory: tempDir.path)
+        XCTAssertEqual(store2.settings.skinOverride, "opencode")
+    }
+
+    func test_skinOverride_nilByDefault_inLegacyJSON() {
+        let path = tempDir.appendingPathComponent("settings.json").path
+        let json = #"{"hookPort":15799}"#
+        FileManager.default.createFile(atPath: path, contents: Data(json.utf8))
+        let store2 = SettingsStore(directory: tempDir.path)
+        XCTAssertNil(store2.settings.skinOverride)
+        XCTAssertTrue(store2.settings.equippedAccessories.isEmpty)
     }
 
     func test_migratesUserDefaultsHookPermission() {
