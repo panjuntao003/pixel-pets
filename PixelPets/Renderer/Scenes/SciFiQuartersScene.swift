@@ -3,6 +3,7 @@ import SwiftUI
 struct SciFiQuartersScene: HabitatScene {
     let id: SceneID = .sciFiQuarters
     let displayName = "星际生活舱"
+    let sceneDescription = "温和休息场景"
 
     private let nebulaDrift: CGFloat = 0
 

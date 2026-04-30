@@ -48,7 +48,8 @@ final class PetViewModel: ObservableObject {
     @Published var state: PetState = .idle
     @Published var activeSkin: AgentSkin = .claude
     @Published var level: Int = 1
-    @Published var accessories: [Accessory] = []
+    @Published var unlockedAccessories: [Accessory] = []
+    @Published var equippedAccessories: [Accessory] = []
     @Published var cliInfos: [CliQuotaInfo] = []
     @Published var totalLifetimeTokens: Int = 0
     @Published var hooksAvailable: Bool = false   // false if node missing
@@ -64,6 +65,8 @@ final class PetViewModel: ObservableObject {
         vm.state = .idle
         vm.activeSkin = .claude
         vm.hooksAvailable = true
+        vm.unlockedAccessories = [.sprout, .battery, .headset, .minidrone, .jetpack, .halo, .codecloud, .cape, .antenna]
+        vm.equippedAccessories = [.sprout, .battery]
         vm.cliInfos = [
             CliQuotaInfo(
                 id: .claude,

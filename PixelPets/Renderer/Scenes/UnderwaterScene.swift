@@ -3,6 +3,7 @@ import SwiftUI
 struct UnderwaterScene: HabitatScene {
     let id: SceneID = .underwater
     let displayName = "像素水族箱"
+    let sceneDescription = "放松状态场景"
 
     private let corals: [(x: CGFloat, height: CGFloat, color: String)] = [
         (0.06, 0.28, "E17055"), (0.10, 0.20, "FD79A8"), (0.14, 0.35, "00B894"),

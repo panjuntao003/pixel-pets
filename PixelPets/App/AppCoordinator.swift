@@ -22,6 +22,8 @@ final class AppCoordinator: ObservableObject {
     private var quotaTimer: Timer?
     private var evolutionTimer: Timer?
     private var cancellables: Set<AnyCancellable> = []
+    private var latestClaudeRateLimitResult: QuotaFetchResult?
+    private var latestClaudeRateLimitUpdatedAt: Date?
 
     @Published var hookPermissionOptions: [CLIHookOption] = []
     @Published private(set) var shouldShowHookPermission = false
@@ -40,6 +42,23 @@ final class AppCoordinator: ObservableObject {
             }
             .store(in: &cancellables)
         restoreGrowth()
+        if let override = settingsStore.settings.skinOverride,
+           let skin = AgentSkin(rawValue: override) {
+            viewModel.activeSkin = skin
+        }
+        settingsStore.$settings
+            .map(\.equippedAccessories)
+            .removeDuplicates()
+            .sink { [weak self] _ in
+                guard let self else { return }
+                let unlocked = self.viewModel.unlockedAccessories
+                let equipped = self.settingsStore.settings.equippedAccessories.compactMap { (_, accRaw) -> Accessory? in
+                    guard let acc = Accessory(rawValue: accRaw), unlocked.contains(acc) else { return nil }
+                    return acc
+                }
+                self.viewModel.equippedAccessories = equipped
+            }
+            .store(in: &cancellables)
         refreshDetectedCLIs()
         configureHooksIfPossible()
         startHookServer()
@@ -118,6 +137,14 @@ final class AppCoordinator: ObservableObject {
             viewModel.activeSkin = skin
         }
 
+        if let agent = payload["agent"] as? String, let skin = AgentSkin(rawValue: agent) {
+            if skin == .claude, let result = Self.claudeRateLimitFetchResult(from: payload) {
+                latestClaudeRateLimitResult = result
+                latestClaudeRateLimitUpdatedAt = Date()
+                updateCLIInfo(skin: .claude, fetchResult: result, planBadge: "Claude")
+            }
+        }
+
         refreshTokenUsage()
     }
 
@@ -142,7 +169,12 @@ final class AppCoordinator: ObservableObject {
         let (level, accessories) = growthEngine.compute(totalTokens: totalTokens)
         viewModel.totalLifetimeTokens = totalTokens
         viewModel.level = level
-        viewModel.accessories = accessories
+        viewModel.unlockedAccessories = accessories
+        let equipped = settingsStore.settings.equippedAccessories.compactMap { (slotRaw, accRaw) -> Accessory? in
+            guard let acc = Accessory(rawValue: accRaw), accessories.contains(acc) else { return nil }
+            return acc
+        }
+        viewModel.equippedAccessories = equipped
         growthStore.saveTotalTokens(totalTokens)
         growthStore.saveUnlockedAccessories(accessories)
 
@@ -250,7 +282,11 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func refreshClaudeQuota() async {
-        let result = await claudeQuotaClient.fetch()
+        let result = Self.preferredClaudeQuotaFetchResult(
+            apiResult: await claudeQuotaClient.fetch(),
+            hookResult: latestClaudeRateLimitResult,
+            hookUpdatedAt: latestClaudeRateLimitUpdatedAt
+        )
         updateCLIInfo(skin: .claude, fetchResult: result, planBadge: "Claude")
         let codexResult = await codexQuotaClient.fetch()
         updateCLIInfo(skin: .codex, fetchResult: codexResult, planBadge: "ChatGPT")
@@ -324,6 +360,70 @@ final class AppCoordinator: ObservableObject {
             return .unavailable("正在读取配额")
         case .opencode:
             return .unavailable("正在读取配额")
+        }
+    }
+
+    static func claudeRateLimitFetchResult(from payload: [String: Any]) -> QuotaFetchResult? {
+        guard let rateLimits = payload["rate_limits"] as? [String: Any] else {
+            return nil
+        }
+
+        let tiers = [
+            claudeRateLimitTier(id: "five_hour", from: rateLimits["five_hour"]),
+            claudeRateLimitTier(id: "seven_day", from: rateLimits["seven_day"])
+        ].compactMap { $0 }
+
+        return tiers.isEmpty ? nil : .success(tiers)
+    }
+
+    static func preferredClaudeQuotaFetchResult(
+        apiResult: QuotaFetchResult,
+        hookResult: QuotaFetchResult?,
+        hookUpdatedAt: Date?,
+        now: Date = Date()
+    ) -> QuotaFetchResult {
+        guard
+            let hookResult,
+            let hookUpdatedAt,
+            now.timeIntervalSince(hookUpdatedAt) <= 10 * 60
+        else {
+            return apiResult
+        }
+
+        return hookResult
+    }
+
+    private static func claudeRateLimitTier(id: String, from value: Any?) -> QuotaTier? {
+        guard
+            let window = value as? [String: Any],
+            let usedPercentage = doubleValue(window["used_percentage"])
+        else {
+            return nil
+        }
+
+        return QuotaTier(
+            id: id,
+            utilization: min(1, max(0, usedPercentage / 100)),
+            resetsAt: nil,
+            isEstimated: false
+        )
+    }
+
+    private static func doubleValue(_ value: Any?) -> Double? {
+        switch value {
+        case let number as NSNumber:
+            if CFGetTypeID(number) == CFBooleanGetTypeID() {
+                return nil
+            }
+            return number.doubleValue
+        case let double as Double:
+            return double
+        case let int as Int:
+            return Double(int)
+        case _ as Bool:
+            return nil
+        default:
+            return nil
         }
     }
 }

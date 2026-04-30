@@ -3,6 +3,7 @@ import SwiftUI
 struct SpaceStationScene: HabitatScene {
     let id: SceneID = .spaceStation
     let displayName = "太空站"
+    let sceneDescription = "默认科技感场景"
 
     private static let stars: [(x: CGFloat, y: CGFloat, period: Int)] = [
         (0.07, 0.08, 46), (0.16, 0.22, 63), (0.24, 0.12, 74), (0.31, 0.34, 52),

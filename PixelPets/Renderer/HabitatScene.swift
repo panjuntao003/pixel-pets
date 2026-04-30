@@ -19,9 +19,21 @@ extension ScenePreference {
     }
 }
 
+extension SceneID {
+    var emoji: String {
+        switch self {
+        case .spaceStation: return "🚀"
+        case .cyberpunkLab: return "🔬"
+        case .sciFiQuarters: return "🛏"
+        case .underwater: return "🐠"
+        }
+    }
+}
+
 protocol HabitatScene {
     var id: SceneID { get }
     var displayName: String { get }
+    var sceneDescription: String { get }
     func drawBackground(_ ctx: GraphicsContext, size: CGSize, frame: Int)
     func robotCenter(for state: PetState, in size: CGSize) -> CGPoint
 }

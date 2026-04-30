@@ -3,6 +3,7 @@ import SwiftUI
 struct CyberpunkLabScene: HabitatScene {
     let id: SceneID = .cyberpunkLab
     let displayName = "赛博朋克实验室"
+    let sceneDescription = "高能工作场景"
 
     func drawBackground(_ ctx: GraphicsContext, size: CGSize, frame: Int) {
         ctx.fill(Path(CGRect(origin: .zero, size: size)), with: .color(Color(hex: "08000F")))
