@@ -66,7 +66,7 @@ struct LoadoutTab: View {
         return accessory
     }
 
-    private func accessoryState(_ accessory: Accessory) -> AccessoryState {
+    private func accessoryState(_ accessory: Accessory) -> AccessoryLoadoutState {
         guard unlockedAccessories.contains(accessory) else {
             return .locked
         }
@@ -100,7 +100,7 @@ struct LoadoutTab: View {
     }
 }
 
-enum AccessoryState {
+enum AccessoryLoadoutState {
     case equipped, unlocked, locked
 }
 
@@ -146,7 +146,7 @@ private struct EquippedSlotView: View {
 
 private struct AccessoryCell: View {
     let accessory: Accessory
-    let state: AccessoryState
+    let state: AccessoryLoadoutState
     let onTap: () -> Void
 
     private var isLocked: Bool {

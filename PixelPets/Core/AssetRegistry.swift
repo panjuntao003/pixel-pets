@@ -21,6 +21,10 @@ final class AssetRegistry {
         loadScenes()
         loadPets()
         loadAccessories()
+        
+        #if DEBUG
+        ManifestValidator.validateAll()
+        #endif
     }
     
     private func loadScenes() {
