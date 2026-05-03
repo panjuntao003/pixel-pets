@@ -12,6 +12,10 @@
     "dim": {
       "bg": "bg_dim.png",
       "floor": "floor.png"
+    },
+    "alert": {
+      "bg": "bg_alert.png",
+      "floor": "floor.png"
     }
   }
 }

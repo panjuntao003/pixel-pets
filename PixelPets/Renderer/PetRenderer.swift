@@ -68,27 +68,16 @@ struct PetRenderer: View {
 
     @ViewBuilder
     private var petBodyView: some View {
-        if let asset = petAsset {
-            let stateKey = state.rawValue
-            if let stateImageName = asset.states[stateKey] ?? asset.states["idle"] {
-                let root = Bundle.main.resourceURL?.appendingPathComponent("Assets/PixelPets/Pets")
-                let assetDir = root?.appendingPathComponent(asset.id)
-                let finalURL = assetDir?.appendingPathComponent(stateImageName)
-                
-                if let safeURL = finalURL, let image = NSImage(contentsOf: safeURL) {
-                    let w = CGFloat(asset.baseSize.w)
-                    let h = CGFloat(asset.baseSize.h)
-                    let r = h / w
-                    Image(nsImage: image)
-                        .resizable()
-                        .interpolation(.none)
-                        .frame(width: size, height: size * r)
-                } else {
-                    procedureFallback
-                }
-            } else {
-                procedureFallback
-            }
+        if let asset = petAsset,
+           let url = AssetRegistry.shared.assetURL(forPet: asset.id, state: state),
+           let image = NSImage(contentsOf: url) {
+            let w = CGFloat(asset.baseSize.w)
+            let h = CGFloat(asset.baseSize.h)
+            let r = h / w
+            Image(nsImage: image)
+                .resizable()
+                .interpolation(.none)
+                .frame(width: size, height: size * r)
         } else {
             procedureFallback
         }
@@ -128,7 +117,7 @@ struct PetRenderer: View {
         if let asset = AssetRegistry.shared.accessories[accessory.rawValue] {
             return asset
         }
-        // Fallback mock
+        // Fallback mock (kept for transition)
         switch accessory {
         case .halo:
             return AccessoryAsset(id: "halo", name: "Halo", size: IntSize(width: 24, height: 16), mountPoint: .aboveHead, layer: .floating, states: ["normal": "normal.png"])
@@ -148,6 +137,18 @@ struct AccessoryRenderer: View {
     let scale: CGFloat
 
     var body: some View {
+        if let url = AssetRegistry.shared.assetURL(forAccessory: asset.id, state: state),
+           let image = NSImage(contentsOf: url) {
+            Image(nsImage: image)
+                .resizable()
+                .interpolation(.none)
+                .frame(width: CGFloat(asset.size.w) * scale, height: CGFloat(asset.size.h) * scale)
+        } else {
+            procedureFallback
+        }
+    }
+
+    private var procedureFallback: some View {
         Canvas { ctx, sz in
             let rect = CGRect(origin: .zero, size: sz)
             

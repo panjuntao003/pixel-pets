@@ -5,6 +5,7 @@ enum SceneID: String, CaseIterable, Codable {
     case cyberpunkLab = "cyberpunk_lab"
     case sciFiQuarters = "scifi_quarters"
     case underwater = "underwater"
+    case galaxyObservatory = "galaxy_observatory"
 }
 
 extension ScenePreference {
@@ -15,6 +16,7 @@ extension ScenePreference {
         case .cyberpunkLab: return .cyberpunkLab
         case .sciFiQuarters: return .sciFiQuarters
         case .underwater: return .underwater
+        case .galaxyObservatory: return .galaxyObservatory
         }
     }
 }
@@ -26,6 +28,7 @@ extension SceneID {
         case .cyberpunkLab: return "🔬"
         case .sciFiQuarters: return "🛏"
         case .underwater: return "🐠"
+        case .galaxyObservatory: return "🌌"
         }
     }
 }
@@ -45,6 +48,7 @@ struct SceneRegistry {
         case .cyberpunkLab: return CyberpunkLabScene()
         case .sciFiQuarters: return SciFiQuartersScene()
         case .underwater: return UnderwaterScene()
+        case .galaxyObservatory: return GalaxyObservatoryScene()
         }
     }
 

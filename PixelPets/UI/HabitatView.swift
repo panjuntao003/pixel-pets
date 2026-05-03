@@ -3,7 +3,7 @@ import SwiftUI
 struct HabitatView: View {
     @ObservedObject var viewModel: PetViewModel
     @EnvironmentObject var settingsStore: SettingsStore
-    @State private var currentSceneID: SceneID = SceneID.allCases.randomElement()!
+    @State private var currentSceneID: SceneID = .galaxyObservatory
 
     private var currentScene: any HabitatScene {
         SceneRegistry.scene(for: currentSceneID)
@@ -73,6 +73,21 @@ struct HabitatView: View {
             currentSceneID = next
         }
     }
+}
+
+#Preview("Habitat States") {
+    VStack(spacing: 0) {
+        ForEach([PetState.idle, .thinking, .charging, .error], id: \.self) { state in
+            let vm = PetViewModel.mock()
+            let _ = { vm.state = state }()
+            VStack(alignment: .leading) {
+                Text(state.rawValue.capitalized).font(.caption).padding(.leading)
+                HabitatView(viewModel: vm)
+            }
+            .frame(height: 160)
+        }
+    }
+    .frame(width: 360)
 }
 
 private struct SceneWithRobot: View {

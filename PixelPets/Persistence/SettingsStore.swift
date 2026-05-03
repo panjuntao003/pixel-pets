@@ -5,7 +5,7 @@ struct AppSettings: Codable {
     var hookPermissionAsked: Bool = false
     var enabledCLIs: [String: Bool] = [:]
     var hookPort: UInt16 = 15799
-    var scenePreference: ScenePreference = .random
+    var scenePreference: ScenePreference = .galaxyObservatory
     var equippedAccessories: [String: String] = [:]
     var skinOverride: String? = nil
 
@@ -32,6 +32,7 @@ enum ScenePreference: String, Codable, CaseIterable {
     case cyberpunkLab = "cyberpunk_lab"
     case sciFiQuarters = "scifi_quarters"
     case underwater
+    case galaxyObservatory = "galaxy_observatory"
 
     var displayName: String {
         switch self {
@@ -40,6 +41,7 @@ enum ScenePreference: String, Codable, CaseIterable {
         case .cyberpunkLab: return "赛博朋克实验室"
         case .sciFiQuarters: return "星际生活舱"
         case .underwater: return "像素水族箱"
+        case .galaxyObservatory: return "银河观测站"
         }
     }
 }

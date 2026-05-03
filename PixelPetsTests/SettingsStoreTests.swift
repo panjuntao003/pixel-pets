@@ -29,8 +29,8 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertEqual(store.settings.hookPort, 15799)
     }
 
-    func test_defaults_scenePreference_isRandom() {
-        XCTAssertEqual(store.settings.scenePreference, .random)
+    func test_defaults_scenePreference_isGalaxyObservatory() {
+        XCTAssertEqual(store.settings.scenePreference, .galaxyObservatory)
     }
 
     func test_defaults_equippedAccessories_isEmpty() {

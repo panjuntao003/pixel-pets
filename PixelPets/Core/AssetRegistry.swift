@@ -64,11 +64,44 @@ final class AssetRegistry {
 
     // Asset Resolution
     func assetURL(forScene sceneID: String, layer: String, state: SceneState) -> URL? {
-        guard let scene = scenes[sceneID],
-              let layers = scene.states[state.rawValue] ?? scene.states["normal"],
-              let fileName = getLayerFileName(layers, layer) else { return nil }
+        guard let scene = scenes[sceneID] else { return nil }
         
-        return assetsRoot.appendingPathComponent("Scenes/\(sceneID)/\(fileName)")
+        // Try specific state, then fallback to normal
+        let stateKeys = [state.rawValue, "normal"]
+        for key in stateKeys {
+            if let layers = scene.states[key],
+               let fileName = getLayerFileName(layers, layer) {
+                return assetsRoot.appendingPathComponent("Scenes/\(sceneID)/\(fileName)")
+            }
+        }
+        return nil
+    }
+
+    func assetURL(forPet petID: String, state: PetState) -> URL? {
+        guard let pet = pets[petID] else { return nil }
+        
+        let stateKeys = [state.rawValue, "idle"]
+        for key in stateKeys {
+            if let fileName = pet.states[key] {
+                return assetsRoot.appendingPathComponent("Pets/\(petID)/\(fileName)")
+            }
+        }
+        return nil
+    }
+
+    func assetURL(forAccessory accID: String, state: PetState) -> URL? {
+        guard let acc = accessories[accID] else { return nil }
+        
+        // Map pet state to accessory state
+        let accState = (state == .thinking || state == .fast) ? "active" : "normal"
+        let stateKeys = [accState, "normal"]
+        
+        for key in stateKeys {
+            if let fileName = acc.states[key] {
+                return assetsRoot.appendingPathComponent("Accessories/\(accID)/\(fileName)")
+            }
+        }
+        return nil
     }
 
     private func getLayerFileName(_ layers: SceneLayers, _ layer: String) -> String? {

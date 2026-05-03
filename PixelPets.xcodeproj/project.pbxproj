@@ -20,6 +20,7 @@
 		2A2317D0F005270C335D3798 /* CliCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */; };
 		2B81DC330F8FE5701A2C1F3D /* HookPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */; };
 		2C4870A406DE2E3C7E4E1528 /* SysTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11DBD5FB294FA4BE66E36A2 /* SysTab.swift */; };
+		2ED4924BFC5526A6A5250E83 /* GalaxyObservatoryScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9808A22A4B0F104DEA54D6BD /* GalaxyObservatoryScene.swift */; };
 		31C5C8CEAECB30D7E951C812 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60297808408A5939E6D93BD2 /* PopoverView.swift */; };
 		31D3D0833FEE73E24684A1BC /* UnderwaterScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB459746E7968D5048831CB /* UnderwaterScene.swift */; };
 		330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B161320AB8F459F62F9F48 /* AgentSkin.swift */; };
@@ -141,6 +142,7 @@
 		93816F676209A8B72617BD27 /* UnitTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTab.swift; sourceTree = "<group>"; };
 		9394436749431BF36A637FED /* OpenCodeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParser.swift; sourceTree = "<group>"; };
 		95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRegistryTests.swift; sourceTree = "<group>"; };
+		9808A22A4B0F104DEA54D6BD /* GalaxyObservatoryScene.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GalaxyObservatoryScene.swift; sourceTree = "<group>"; };
 		99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClient.swift; sourceTree = "<group>"; };
 		99CE2F3CA0D291740976E7EA /* Accessory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessory.swift; sourceTree = "<group>"; };
 		9CC0D6D6102F63EC9CD74390 /* AssetRegistry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetRegistry.swift; sourceTree = "<group>"; };
@@ -321,6 +323,7 @@
 				90061AD910EF29CA768D68F4 /* SciFiQuartersScene.swift */,
 				6ADD1FCEA57D688F94D5126B /* SpaceStationScene.swift */,
 				FBB459746E7968D5048831CB /* UnderwaterScene.swift */,
+				9808A22A4B0F104DEA54D6BD /* GalaxyObservatoryScene.swift */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -526,6 +529,7 @@
 				E357C6E529165DEE6B8DDF22 /* PetRenderer.swift in Sources */,
 				E6676DDEB701A3B308025398 /* HabitatRenderer.swift in Sources */,
 				8FE3FA6E864BDD0682052E97 /* AssetRegistry.swift in Sources */,
+				2ED4924BFC5526A6A5250E83 /* GalaxyObservatoryScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

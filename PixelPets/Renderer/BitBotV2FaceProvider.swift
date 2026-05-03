@@ -31,6 +31,8 @@ struct BitBotV2FaceProvider: FaceProvider {
             drawError(ctx, frame: frame, scale: scale)
         case .sleeping, .auth:
             drawSleep(ctx, frame: frame, scale: scale)
+        case .charging:
+            drawWorking(ctx, frame: frame, scale: scale)
         }
     }
 
