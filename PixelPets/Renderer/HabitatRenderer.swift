@@ -7,7 +7,7 @@ struct HabitatRenderer: View {
     let legacyScene: any HabitatScene // Fallback for Phase 1
 
     var body: some View {
-        let state = currentVisualState
+        let state = viewModel.visualState
         
         GeometryReader { geo in
             // 1. Layered Background
@@ -61,26 +61,6 @@ struct HabitatRenderer: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    
-    private var currentVisualState: VisualState {
-        // In a real app, this would be reactive to SystemEvents.
-        // For now, we derive it from the viewModel.state which acts as a proxy.
-        let event: SystemEvent
-        switch viewModel.state {
-        case .idle: event = .appIdle
-        case .thinking: event = .aiThinking
-        case .typing, .searching: event = .aiStreaming
-        case .success: event = .requestSucceeded
-        case .error: event = .requestFailed
-        case .charging: event = .quotaResetting
-        case .quotaLow: event = .quotaLow
-        case .sleeping: event = .appIdle // map to idle with dim
-        default: event = .appIdle
-        }
-        
-        let initial = VisualState(petState: .idle, sceneState: .normal)
-        return VisualStateReducer.reduce(event: event, current: initial)
     }
     
     @ViewBuilder

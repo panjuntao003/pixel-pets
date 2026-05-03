@@ -44,8 +44,10 @@ struct CliQuotaInfo: Identifiable {
     }
 }
 
+@MainActor
 final class PetViewModel: ObservableObject {
     @Published var state: PetState = .idle
+    @Published var visualState: VisualState = VisualState(petState: .idle, sceneState: .normal)
     @Published var activeSkin: AgentSkin = .claude
     @Published var level: Int = 1
     @Published var unlockedAccessories: [Accessory] = []
@@ -53,6 +55,29 @@ final class PetViewModel: ObservableObject {
     @Published var cliInfos: [CliQuotaInfo] = []
     @Published var totalLifetimeTokens: Int = 0
     @Published var hooksAvailable: Bool = false   // false if node missing
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        // Observe ActivityCoordinator to update visualState
+        setupObservations()
+    }
+    
+    private func setupObservations() {
+        ActivityCoordinator.shared.$currentEvent
+            .combineLatest(ActivityCoordinator.shared.$activeProvider)
+            .sink { [weak self] event, provider in
+                guard let self = self else { return }
+                self.visualState = VisualStateReducer.reduce(event: event, current: self.visualState)
+                self.state = self.visualState.petState
+                
+                // Automatically switch skin if a provider is active
+                if provider != .unknown, let skin = AgentSkin(rawValue: provider.rawValue) {
+                     self.activeSkin = skin
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     var enabledCLIFilter: ((CliQuotaInfo) -> Bool) = { _ in true }
 

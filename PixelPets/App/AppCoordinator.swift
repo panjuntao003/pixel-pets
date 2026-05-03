@@ -10,6 +10,8 @@ final class AppCoordinator: ObservableObject {
     private let growthStore = GrowthStore()
     private let hookServer = HookServer()
     private let hookRegistrar = HookRegistrar()
+    private let claudeLogEventSource = ClaudeLogEventSource()
+    private let openCodeLogEventSource = OpenCodeLogEventSource()
     private let claudeQuotaClient = ClaudeQuotaClient()
     private let codexQuotaClient = CodexQuotaClient()
     private let geminiQuotaClient = GeminiQuotaClient()
@@ -62,6 +64,11 @@ final class AppCoordinator: ObservableObject {
         refreshDetectedCLIs()
         configureHooksIfPossible()
         startHookServer()
+        ActivityCoordinator.shared.start(sources: [
+            claudeLogEventSource,
+            openCodeLogEventSource,
+            ManualDebugEventSource.shared
+        ])
         refreshTokenUsage()
         refreshQuota()
         prepareHookPermissionPromptIfNeeded()
@@ -127,8 +134,9 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func handleHookEvent(_ event: String, payload: [String: Any]) {
+        claudeLogEventSource.handleHook(event: event, payload: payload)
         stateMachine.handle(event, payload)
-        viewModel.state = stateMachine.currentState
+        // viewModel.state is now updated via ActivityCoordinator -> viewModel.visualState
 
         if settingsStore.settings.skinOverride == nil,
            let agent = payload["agent"] as? String,
@@ -306,8 +314,11 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func applyQuotaRecommendation() {
-        stateMachine.applyQuotaRecommendation(QuotaMonitor.recommendation(for: viewModel.cliInfos))
-        viewModel.state = stateMachine.currentState
+        let recommendation = QuotaMonitor.recommendation(for: viewModel.cliInfos)
+        if recommendation == .sleeping {
+            claudeLogEventSource.push(.quotaLow)
+        }
+        stateMachine.applyQuotaRecommendation(recommendation)
     }
 
     private func updateCLIInfo(

@@ -75,21 +75,37 @@ struct HabitatView: View {
     }
 }
 
-#Preview("Habitat States") {
-    ScrollView {
-        VStack(spacing: 0) {
-            ForEach([PetState.idle, .thinking, .typing, .charging, .error, .quotaLow], id: \.self) { state in
-                let vm = PetViewModel.mock()
-                let _ = { vm.state = state }()
+#Preview("Habitat Events") {
+    let _ = ActivityCoordinator.shared.startForPreview()
+    return ScrollView {
+        VStack(spacing: 20) {
+            let events: [(String, SystemEvent)] = [
+                ("Idle", .appIdle),
+                ("Thinking", .aiThinking),
+                ("Streaming", .aiStreaming),
+                ("Success", .requestSucceeded),
+                ("Error", .requestFailed),
+                ("Quota Low", .quotaLow),
+                ("Charging", .quotaResetting)
+            ]
+            
+            ForEach(events, id: \.0) { name, event in
                 VStack(alignment: .leading) {
-                    Text(state.rawValue.capitalized).font(.caption).padding(.leading)
-                    HabitatView(viewModel: vm)
+                    Text(name).font(.headline).padding(.leading)
+                    Button("Trigger \(name)") {
+                        ManualDebugEventSource.shared.trigger(.claude, event)
+                    }
+                    .padding(.leading)
+                    
+                    HabitatView(viewModel: PetViewModel.mock())
+                        .frame(height: 160)
+                        .border(Color.gray.opacity(0.2))
                 }
-                .frame(height: 160)
             }
         }
+        .padding()
     }
-    .frame(width: 360, height: 600)
+    .frame(width: 400, height: 800)
 }
 
 private struct SceneWithRobot: View {
