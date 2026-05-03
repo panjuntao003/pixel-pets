@@ -1,9 +1,5 @@
 import SwiftUI
 
-extension AccessorySlot: CaseIterable {
-    static var allCases: [AccessorySlot] { [.top, .back, .side] }
-}
-
 struct LoadoutTab: View {
     @ObservedObject var viewModel: PetViewModel
     @EnvironmentObject private var settingsStore: SettingsStore

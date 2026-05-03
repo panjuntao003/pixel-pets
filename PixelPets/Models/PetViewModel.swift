@@ -66,7 +66,7 @@ final class PetViewModel: ObservableObject {
         vm.activeSkin = .claude
         vm.hooksAvailable = true
         vm.unlockedAccessories = [.sprout, .battery, .headset, .minidrone, .jetpack, .halo, .codecloud, .cape, .antenna]
-        vm.equippedAccessories = [.sprout, .battery]
+        vm.equippedAccessories = [.sprout, .battery, .halo, .antenna]
         vm.cliInfos = [
             CliQuotaInfo(
                 id: .claude,

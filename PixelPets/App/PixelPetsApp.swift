@@ -61,19 +61,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     private func makeStatusIcon(state: PetState) -> NSImage {
         let renderer = ImageRenderer(
-            content: BitBotStatusIconRenderer(
-                skin: coordinator.viewModel.activeSkin,
-                state: state,
-                size: 16
-            )
+            content: MenuBarIconRenderer(size: 18)
         )
         renderer.scale = NSScreen.main?.backingScaleFactor ?? 2.0
         guard let cgImage = renderer.cgImage else {
-            return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "PixelPets")!
+            return NSImage(systemSymbolName: "dog", accessibilityDescription: "PixelPets")!
         }
 
-        let image = NSImage(cgImage: cgImage, size: NSSize(width: 16, height: 16))
-        image.isTemplate = false
+        let image = NSImage(cgImage: cgImage, size: NSSize(width: 18, height: 18))
+        image.isTemplate = true
         return image
     }
 

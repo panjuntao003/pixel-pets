@@ -36,8 +36,8 @@ struct HabitatView: View {
                 }
         )
         .onAppear { applyScenePreference() }
-        .onChange(of: settingsStore.settings.scenePreference) { _ in
-            if let id = settingsStore.settings.scenePreference.sceneID {
+        .onChange(of: settingsStore.settings.scenePreference) { _, newValue in
+            if let id = newValue.sceneID {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     currentSceneID = id
                 }
@@ -81,25 +81,22 @@ private struct SceneWithRobot: View {
     let frame: Int
 
     var body: some View {
-        GeometryReader { geo in
-            Canvas { ctx, size in
-                scene.drawBackground(ctx, size: size, frame: frame)
-            }
+        let mockAsset = SceneAsset(
+            id: scene.id.rawValue,
+            name: scene.displayName,
+            logicalSize: IntSize(width: 360, height: 140),
+            defaultPetPosition: IntPoint(x: 180, y: 76),
+            safeArea: SceneAsset.EdgeInsets(top: 8, bottom: 12, left: 12, right: 12),
+            states: [:],
+            effects: []
+        )
 
-            let center = scene.robotCenter(for: viewModel.state, in: geo.size)
-            let floatOffset: CGFloat = scene.id == .underwater
-                ? 3.0 * sin(Double(frame % 40) / 40 * .pi * 2)
-                : 0
-
-            BitBotV2Renderer(
-                skin: viewModel.activeSkin,
-                state: viewModel.state,
-                frame: frame,
-                size: 60
-            )
-            .position(x: center.x, y: center.y + floatOffset)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        HabitatRenderer(
+            viewModel: viewModel,
+            currentScene: mockAsset,
+            frame: frame,
+            legacyScene: scene
+        )
     }
 }
 

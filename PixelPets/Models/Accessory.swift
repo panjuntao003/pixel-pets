@@ -1,15 +1,17 @@
-enum AccessorySlot: String { case top, back, side }
+enum AccessorySlot: String, CaseIterable { case top, back, side }
 
 enum Accessory: String, CaseIterable, Codable {
     case sprout, headset, halo, antenna          // top
+    case bubbleHelmet                            // top
     case battery, jetpack, cape                  // back
     case minidrone, codecloud                    // side
+    case errorPatch, tokenCube                   // side
 
     var slot: AccessorySlot {
         switch self {
-        case .sprout, .headset, .halo, .antenna: return .top
+        case .sprout, .headset, .halo, .antenna, .bubbleHelmet: return .top
         case .battery, .jetpack, .cape:           return .back
-        case .minidrone, .codecloud:              return .side
+        case .minidrone, .codecloud, .errorPatch, .tokenCube: return .side
         }
     }
 
@@ -24,6 +26,9 @@ enum Accessory: String, CaseIterable, Codable {
         case .cape:      return 15_000_000
         case .antenna:   return 20_000_000
         case .codecloud: return 12_000_000
+        case .errorPatch: return 1_000_000
+        case .bubbleHelmet: return 4_000_000
+        case .tokenCube: return 6_000_000
         }
     }
 }
@@ -50,6 +55,9 @@ extension Accessory {
         case .cape: return "🧣"
         case .minidrone: return "🛸"
         case .codecloud: return "☁️"
+        case .errorPatch: return "🩹"
+        case .bubbleHelmet: return "🤿"
+        case .tokenCube: return "🧊"
         }
     }
 
@@ -64,6 +72,9 @@ extension Accessory {
         case .cape: return "Cape"
         case .minidrone: return "Drone"
         case .codecloud: return "Cloud"
+        case .errorPatch: return "Patch"
+        case .bubbleHelmet: return "Helmet"
+        case .tokenCube: return "Cube"
         }
     }
 }

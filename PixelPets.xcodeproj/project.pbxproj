@@ -12,7 +12,6 @@
 		0A47824554C1429037C478C9 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFCD7BA48B79CE99162BB7A5 /* AppCoordinator.swift */; };
 		0D6F974A6A68C8255CE17D2A /* PetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52CBD94E5910ED06A425C3C /* PetViewModel.swift */; };
-		0E383E81F08707D6ACF8E643 /* BitBotStatusIconRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */; };
 		16EA9521CDA030620DE6A419 /* MapTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4491D293E3F6BA5DFEEEC2A4 /* MapTab.swift */; };
 		1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = FE22542ED2A510E28DA6DA7C /* gemini_sample.json */; };
 		210579FE34D21A6E145BDB75 /* QuotaTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FA3634ADF305BDF917BF6B /* QuotaTier.swift */; };
@@ -39,6 +38,7 @@
 		5F7D433973146C5AE5674233 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 		6086C0743523B0F6A28BC8C0 /* GrowthStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */; };
 		66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9394436749431BF36A637FED /* OpenCodeLogParser.swift */; };
+		66083BAFD5E9226509648B89 /* VisualState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6351328D8C8825F75DB027 /* VisualState.swift */; };
 		67408F393CF1F241A056E447 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C77F49A948472204AEFDF7E /* GameSettingsView.swift */; };
 		6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */; };
 		776B90A5D7870C311722EFF8 /* CodexLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */; };
@@ -69,13 +69,17 @@
 		C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */; };
 		CAB8B886E33493A8717256B0 /* UnitTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93816F676209A8B72617BD27 /* UnitTab.swift */; };
 		CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */; };
+		D8B01589C118BB45803F5FA3 /* MenuBarIconRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE98564E5C6F47927461B3BB /* MenuBarIconRenderer.swift */; };
 		DA7B8F8212627EC4E56FDCC8 /* GrowthEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */; };
 		DACE0CA30AABD07B5497FBAF /* PixelPetsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */; };
 		E1387ED2C7775C1E728CD015 /* GeminiLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */; };
+		E357C6E529165DEE6B8DDF22 /* PetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888779C2D18C39C636AA0371 /* PetRenderer.swift */; };
 		E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */; };
 		E47E29F5AF119F6055E983CD /* claude_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */; };
+		E6676DDEB701A3B308025398 /* HabitatRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8162BFBFAC6F397D720ECF7E /* HabitatRenderer.swift */; };
 		E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
+		FAC75BF2C50D8290E2AD26C9 /* AssetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135BD52FFCDB08D95BB636D /* AssetModels.swift */; };
 		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +105,7 @@
 		360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParser.swift; sourceTree = "<group>"; };
 		3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CliCardView.swift; sourceTree = "<group>"; };
 		3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGateTests.swift; sourceTree = "<group>"; };
+		3E6351328D8C8825F75DB027 /* VisualState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisualState.swift; sourceTree = "<group>"; };
 		43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
 		4491D293E3F6BA5DFEEEC2A4 /* MapTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTab.swift; sourceTree = "<group>"; };
 		45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParserTests.swift; sourceTree = "<group>"; };
@@ -120,6 +125,8 @@
 		6ADD1FCEA57D688F94D5126B /* SpaceStationScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStationScene.swift; sourceTree = "<group>"; };
 		75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBarView.swift; sourceTree = "<group>"; };
 		7C77F49A948472204AEFDF7E /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
+		8162BFBFAC6F397D720ECF7E /* HabitatRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HabitatRenderer.swift; sourceTree = "<group>"; };
+		888779C2D18C39C636AA0371 /* PetRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PetRenderer.swift; sourceTree = "<group>"; };
 		8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorTests.swift; sourceTree = "<group>"; };
 		8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotV2Renderer.swift; sourceTree = "<group>"; };
 		8EE22E86BDDAD381ADABEDF4 /* CodexLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexLogParserTests.swift; sourceTree = "<group>"; };
@@ -135,14 +142,15 @@
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		9F56DC065FAE03A663C8383E /* codex-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "codex-hook.js"; sourceTree = "<group>"; };
 		AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClock.swift; sourceTree = "<group>"; };
+		B135BD52FFCDB08D95BB636D /* AssetModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetModels.swift; sourceTree = "<group>"; };
 		B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelPetsApp.swift; sourceTree = "<group>"; };
 		B52CBD94E5910ED06A425C3C /* PetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewModel.swift; sourceTree = "<group>"; };
 		B6B161320AB8F459F62F9F48 /* AgentSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSkin.swift; sourceTree = "<group>"; };
 		B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatScene.swift; sourceTree = "<group>"; };
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE98564E5C6F47927461B3BB /* MenuBarIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconRenderer.swift; sourceTree = "<group>"; };
 		C5DFC862F77574208340D87A /* NodeGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGate.swift; sourceTree = "<group>"; };
 		C5FF5F498032037211B5C222 /* AnimationClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClockTests.swift; sourceTree = "<group>"; };
-		C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitBotStatusIconRenderer.swift; sourceTree = "<group>"; };
 		CB85949D9BAB777DA9C22692 /* gemini-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "gemini-hook.js"; sourceTree = "<group>"; };
 		D11DBD5FB294FA4BE66E36A2 /* SysTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysTab.swift; sourceTree = "<group>"; };
 		E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngineTests.swift; sourceTree = "<group>"; };
@@ -286,13 +294,15 @@
 			isa = PBXGroup;
 			children = (
 				AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */,
-				C93F4E73C3D7EFF07CFA0B0B /* BitBotStatusIconRenderer.swift */,
 				1E8DD5CC086B1FDEB0D4C11E /* BitBotV2FaceProvider.swift */,
 				8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */,
 				4EE0EC6058E905C89792375F /* FaceProvider.swift */,
 				B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */,
+				BE98564E5C6F47927461B3BB /* MenuBarIconRenderer.swift */,
 				9276B97C5781060F8B436E4A /* PixelColor.swift */,
 				B9C75A853EC9775B444B2AD9 /* Scenes */,
+				888779C2D18C39C636AA0371 /* PetRenderer.swift */,
+				8162BFBFAC6F397D720ECF7E /* HabitatRenderer.swift */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -337,6 +347,8 @@
 				683C1BB6357F9C9CD9E0C516 /* PetState.swift */,
 				B52CBD94E5910ED06A425C3C /* PetViewModel.swift */,
 				27FA3634ADF305BDF917BF6B /* QuotaTier.swift */,
+				B135BD52FFCDB08D95BB636D /* AssetModels.swift */,
+				3E6351328D8C8825F75DB027 /* VisualState.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -373,8 +385,6 @@
 				5E267D52E18C603AA5B42F80 /* PBXTargetDependency */,
 			);
 			name = PixelPetsTests;
-			packageProductDependencies = (
-			);
 			productName = PixelPetsTests;
 			productReference = 5E565548CDE4528D76590E57 /* PixelPetsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -391,8 +401,6 @@
 			dependencies = (
 			);
 			name = PixelPets;
-			packageProductDependencies = (
-			);
 			productName = PixelPets;
 			productReference = BB5FC658A7CAC3CD9205611B /* PixelPets.app */;
 			productType = "com.apple.product-type.application";
@@ -465,7 +473,6 @@
 				330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */,
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
 				0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */,
-				0E383E81F08707D6ACF8E643 /* BitBotStatusIconRenderer.swift in Sources */,
 				3F00AB7AC7A60B40AAA98D5D /* BitBotV2FaceProvider.swift in Sources */,
 				CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */,
 				2149B8F6DD9541BF2E0CE5A5 /* ClaudeLogParser.swift in Sources */,
@@ -485,6 +492,7 @@
 				BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */,
 				4EED8D9ABB2C68C7D053BE62 /* LoadoutTab.swift in Sources */,
 				16EA9521CDA030620DE6A419 /* MapTab.swift in Sources */,
+				D8B01589C118BB45803F5FA3 /* MenuBarIconRenderer.swift in Sources */,
 				BDB688527872D702C345F81D /* NodeGate.swift in Sources */,
 				78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */,
 				66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */,
@@ -503,6 +511,10 @@
 				E445E70C800B484C2EBD1EAF /* TokenBatch.swift in Sources */,
 				31D3D0833FEE73E24684A1BC /* UnderwaterScene.swift in Sources */,
 				CAB8B886E33493A8717256B0 /* UnitTab.swift in Sources */,
+				FAC75BF2C50D8290E2AD26C9 /* AssetModels.swift in Sources */,
+				66083BAFD5E9226509648B89 /* VisualState.swift in Sources */,
+				E357C6E529165DEE6B8DDF22 /* PetRenderer.swift in Sources */,
+				E6676DDEB701A3B308025398 /* HabitatRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
