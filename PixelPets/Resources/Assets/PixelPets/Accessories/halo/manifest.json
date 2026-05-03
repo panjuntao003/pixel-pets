@@ -1,0 +1,10 @@
+{
+  "id": "halo",
+  "name": "Halo",
+  "size": { "width": 24, "height": 16 },
+  "mountPoint": "aboveHead",
+  "layer": "floating",
+  "states": {
+    "normal": "normal.png"
+  }
+}

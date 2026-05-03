@@ -16,18 +16,26 @@ struct IntPoint: Codable, Equatable {
 }
 
 struct IntSize: Codable, Equatable {
-    let width: Int
-    let height: Int
+    let w: Int
+    let h: Int
 
     init(width: Int, height: Int) {
-        self.width = width
-        self.height = height
+        self.w = width
+        self.h = height
     }
 
-    var cgSize: CGSize { CGSize(width: width, height: height) }
+    var cgSize: CGSize { CGSize(width: w, height: h) }
 }
 
 // MARK: - Scene Asset
+
+struct SceneLayers: Codable, Equatable {
+    let bg: String?
+    let mid: String?
+    let floor: String?
+    let fxBack: String?
+    let fxFront: String?
+}
 
 struct SceneAsset: Identifiable, Codable {
     let id: String
@@ -35,9 +43,8 @@ struct SceneAsset: Identifiable, Codable {
     let logicalSize: IntSize
     let defaultPetPosition: IntPoint
     let safeArea: EdgeInsets
-    let states: [String: String] // Mapping state name to background asset name
-    let effects: [String]
-
+    let states: [String: SceneLayers] // normal, dim, active, charging, alert
+    
     struct EdgeInsets: Codable, Equatable {
         let top, bottom, left, right: Int
     }
@@ -60,6 +67,7 @@ struct PetAsset: Identifiable, Codable {
     let id: String
     let name: String
     let baseSize: IntSize
+    let states: [String: String] // idle, thinking, charging, error, happy, etc.
     let anchors: [AccessoryMountPoint: IntPoint]
 }
 
@@ -77,4 +85,5 @@ struct AccessoryAsset: Identifiable, Codable {
     let size: IntSize
     let mountPoint: AccessoryMountPoint
     let layer: AccessoryLayer
+    let states: [String: String] // normal, active, etc.
 }

@@ -8,10 +8,20 @@ struct HabitatRenderer: View {
 
     var body: some View {
         GeometryReader { geo in
-            // 1. Background (Legacy for now, we'll replace later)
-            Canvas { ctx, size in
-                legacyScene.drawBackground(ctx, size: size, frame: frame)
+            // 1. Layered Background
+            ZStack {
+                renderLayer("bg", in: geo.size)
+                renderLayer("mid", in: geo.size)
+                renderLayer("fxBack", in: geo.size)
             }
+            .background(
+                // Fallback to legacy if no bg layer found
+                Canvas { ctx, size in
+                    if AssetRegistry.shared.assetURL(forScene: currentScene.id, layer: "bg", state: sceneState) == nil {
+                        legacyScene.drawBackground(ctx, size: size, frame: frame)
+                    }
+                }
+            )
 
             // 2. Derive Pet Position
             let center = legacyScene.robotCenter(for: viewModel.state, in: geo.size)
@@ -29,7 +39,34 @@ struct HabitatRenderer: View {
                 equippedAccessories: viewModel.equippedAccessories
             )
             .position(x: center.x, y: finalY)
+            
+            // 4. Foreground layers
+            ZStack {
+                renderLayer("fxFront", in: geo.size)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var sceneState: SceneState {
+        // Derive scene state from pet state for now
+        switch viewModel.state {
+        case .sleeping: return .dim
+        case .error: return .alert
+        case .thinking, .typing, .searching: return .active
+        default: return .normal
+        }
+    }
+    
+    @ViewBuilder
+    private func renderLayer(_ layer: String, in size: CGSize) -> some View {
+        if let url = AssetRegistry.shared.assetURL(forScene: currentScene.id, layer: layer, state: sceneState),
+           let image = NSImage(contentsOf: url) {
+            Image(nsImage: image)
+                .resizable()
+                .interpolation(.none) // Keep it pixelated
+                .aspectRatio(contentMode: .fill)
+                .frame(width: size.width, height: size.height)
+        }
     }
 }

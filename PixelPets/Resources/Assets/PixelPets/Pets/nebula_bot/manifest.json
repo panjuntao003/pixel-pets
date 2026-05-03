@@ -1,0 +1,20 @@
+{
+  "id": "nebula_bot",
+  "name": "Nebula Bot",
+  "baseSize": { "width": 24, "height": 28 },
+  "states": {
+    "idle": "idle.png",
+    "thinking": "thinking.png",
+    "charging": "charging.png",
+    "error": "error.png"
+  },
+  "anchors": {
+    "headTop": { "x": 12, "y": 2 },
+    "aboveHead": { "x": 12, "y": -4 },
+    "faceCenter": { "x": 12, "y": 9 },
+    "chest": { "x": 12, "y": 20 },
+    "back": { "x": 20, "y": 18 },
+    "leftSide": { "x": 0, "y": 16 },
+    "rightSide": { "x": 24, "y": 16 }
+  }
+}

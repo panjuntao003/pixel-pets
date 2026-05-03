@@ -7,81 +7,139 @@ struct PetRenderer: View {
     let size: CGFloat
     let equippedAccessories: [Accessory]
 
-    // Default BitBotV2 logical size
-    private let logicalW: CGFloat = 24
-    private let logicalH: CGFloat = 28
+    private var petAsset: PetAsset? {
+        let assetID: String = (skin == .claude) ? "nebula_bot" : skin.rawValue
+        return AssetRegistry.shared.pets[assetID]
+    }
 
-    // Define anchors for the current BitBotV2 body
     private var anchors: [AccessoryMountPoint: CGPoint] {
-        let scale = size / logicalW
-        return [
-            .headTop: CGPoint(x: 12 * scale, y: 2 * scale),
-            .aboveHead: CGPoint(x: 12 * scale, y: -4 * scale),
-            .faceCenter: CGPoint(x: 12 * scale, y: 9 * scale),
-            .chest: CGPoint(x: 12 * scale, y: 20 * scale),
-            .back: CGPoint(x: 20 * scale, y: 18 * scale),
-            .leftSide: CGPoint(x: 0 * scale, y: 16 * scale),
-            .rightSide: CGPoint(x: 24 * scale, y: 16 * scale)
-        ]
+        let baseWidth: CGFloat = getBaseWidth()
+        let scale: CGFloat = size / baseWidth
+        
+        guard let asset = petAsset else {
+            return [
+                .headTop: CGPoint(x: 12.0 * scale, y: 2.0 * scale),
+                .aboveHead: CGPoint(x: 12.0 * scale, y: -4.0 * scale),
+                .faceCenter: CGPoint(x: 12.0 * scale, y: 9.0 * scale),
+                .chest: CGPoint(x: 12.0 * scale, y: 20.0 * scale),
+                .back: CGPoint(x: 20.0 * scale, y: 18.0 * scale),
+                .leftSide: CGPoint(x: 0.0 * scale, y: 16.0 * scale),
+                .rightSide: CGPoint(x: 24.0 * scale, y: 16.0 * scale)
+            ]
+        }
+        
+        var points: [AccessoryMountPoint: CGPoint] = [:]
+        for (point, anchor) in asset.anchors {
+            let px: CGFloat = CGFloat(anchor.x) * scale
+            let py: CGFloat = CGFloat(anchor.y) * scale
+            points[point] = CGPoint(x: px, y: py)
+        }
+        return points
+    }
+
+    private func getBaseWidth() -> CGFloat {
+        if let asset = petAsset {
+            return CGFloat(asset.baseSize.w)
+        }
+        return 24.0
+    }
+
+    private func getBaseHeight() -> CGFloat {
+        if let asset = petAsset {
+            return CGFloat(asset.baseSize.h)
+        }
+        return 28.0
     }
 
     var body: some View {
-        ZStack {
-            // 1. Back Accessories
+        let petWidth: CGFloat = getBaseWidth()
+        let petHeight: CGFloat = getBaseHeight()
+        let ratio: CGFloat = petHeight / petWidth
+        let containerHeight: CGFloat = size * ratio
+        
+        return ZStack {
             renderAccessories(in: .back)
-
-            // 2. Main Pet Body
-            BitBotV2Renderer(
-                skin: skin,
-                state: state,
-                frame: frame,
-                size: size
-            )
-
-            // 3. Front Accessories
+            petBodyView
             renderAccessories(in: .front)
-
-            // 4. Floating Accessories
             renderAccessories(in: .floating)
         }
-        .frame(width: size, height: size * logicalH / logicalW)
+        .frame(width: size, height: containerHeight)
+    }
+
+    @ViewBuilder
+    private var petBodyView: some View {
+        if let asset = petAsset {
+            let stateKey = state.rawValue
+            if let stateImageName = asset.states[stateKey] ?? asset.states["idle"] {
+                let root = Bundle.main.resourceURL?.appendingPathComponent("Assets/PixelPets/Pets")
+                let assetDir = root?.appendingPathComponent(asset.id)
+                let finalURL = assetDir?.appendingPathComponent(stateImageName)
+                
+                if let safeURL = finalURL, let image = NSImage(contentsOf: safeURL) {
+                    let w = CGFloat(asset.baseSize.w)
+                    let h = CGFloat(asset.baseSize.h)
+                    let r = h / w
+                    Image(nsImage: image)
+                        .resizable()
+                        .interpolation(.none)
+                        .frame(width: size, height: size * r)
+                } else {
+                    procedureFallback
+                }
+            } else {
+                procedureFallback
+            }
+        } else {
+            procedureFallback
+        }
+    }
+
+    private var procedureFallback: some View {
+        BitBotV2Renderer(
+            skin: skin,
+            state: state,
+            frame: frame,
+            size: size
+        )
     }
 
     @ViewBuilder
     private func renderAccessories(in layer: AccessoryLayer) -> some View {
+        let baseW: CGFloat = getBaseWidth()
+        let accessoryScale: CGFloat = size / baseW
+        let currentAnchors = self.anchors
+        
         ForEach(equippedAccessories, id: \.self) { accessory in
-            let asset = asset(for: accessory)
-            if asset.layer == layer, let anchor = anchors[asset.mountPoint] {
+            let asset = resolveAccessoryAsset(for: accessory)
+            if asset.layer == layer, let anchor = currentAnchors[asset.mountPoint] {
                 AccessoryRenderer(
                     accessory: accessory,
                     asset: asset,
                     state: state,
                     frame: frame,
-                    scale: size / logicalW
+                    scale: accessoryScale
                 )
                 .position(x: anchor.x, y: anchor.y)
             }
         }
     }
 
-    // Temporary mapping to mock assets
-    private func asset(for accessory: Accessory) -> AccessoryAsset {
+    private func resolveAccessoryAsset(for accessory: Accessory) -> AccessoryAsset {
+        if let asset = AssetRegistry.shared.accessories[accessory.rawValue] {
+            return asset
+        }
+        // Fallback mock
         switch accessory {
         case .halo:
-            return AccessoryAsset(id: "halo", name: "Halo", size: IntSize(width: 24, height: 16), mountPoint: .aboveHead, layer: .floating)
+            return AccessoryAsset(id: "halo", name: "Halo", size: IntSize(width: 24, height: 16), mountPoint: .aboveHead, layer: .floating, states: ["normal": "normal.png"])
         case .antenna:
-            return AccessoryAsset(id: "antenna", name: "Antenna", size: IntSize(width: 16, height: 24), mountPoint: .headTop, layer: .front)
-        case .sprout:
-            return AccessoryAsset(id: "sprout", name: "Sprout", size: IntSize(width: 16, height: 16), mountPoint: .headTop, layer: .front)
-        case .battery:
-            return AccessoryAsset(id: "battery", name: "Battery", size: IntSize(width: 20, height: 20), mountPoint: .back, layer: .back)
+            return AccessoryAsset(id: "antenna", name: "Antenna", size: IntSize(width: 16, height: 24), mountPoint: .headTop, layer: .front, states: ["normal": "normal.png"])
         default:
-            return AccessoryAsset(id: "unknown", name: "Unknown", size: IntSize(width: 16, height: 16), mountPoint: .headTop, layer: .front)
+            return AccessoryAsset(id: "unknown", name: "Unknown", size: IntSize(width: 16, height: 16), mountPoint: .headTop, layer: .front, states: [:])
         }
     }
 }
 
-// Temporary Accessory Renderer
 struct AccessoryRenderer: View {
     let accessory: Accessory
     let asset: AccessoryAsset
@@ -91,7 +149,6 @@ struct AccessoryRenderer: View {
 
     var body: some View {
         Canvas { ctx, sz in
-            // For now, just draw a placeholder box to verify anchors
             let rect = CGRect(origin: .zero, size: sz)
             
             switch accessory {
@@ -114,6 +171,6 @@ struct AccessoryRenderer: View {
                 ctx.stroke(Path(rect), with: .color(.black), lineWidth: 1)
             }
         }
-        .frame(width: CGFloat(asset.size.width) * scale, height: CGFloat(asset.size.height) * scale)
+        .frame(width: CGFloat(asset.size.w) * scale, height: CGFloat(asset.size.h) * scale)
     }
 }

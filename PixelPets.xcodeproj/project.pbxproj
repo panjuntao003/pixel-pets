@@ -50,6 +50,7 @@
 		8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683C1BB6357F9C9CD9E0C516 /* PetState.swift */; };
 		8AA227BCB4EAB6ABB811B135 /* HookRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */; };
 		8AACAAC62F8149551BE9D596 /* PixelColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9276B97C5781060F8B436E4A /* PixelColor.swift */; };
+		8FE3FA6E864BDD0682052E97 /* AssetRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC0D6D6102F63EC9CD74390 /* AssetRegistry.swift */; };
 		905F301E04A93DDFA4B47B29 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A43FD451CF7A4BE88EBD8C /* SettingsStore.swift */; };
 		9529F0562B69CF5D49F8D038 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */; };
 		96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */; };
@@ -60,6 +61,7 @@
 		B5B14046A8EFD2856BE8D446 /* codex-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = 9F56DC065FAE03A663C8383E /* codex-hook.js */; };
 		BA99E9516BC24CE665F0F641 /* HabitatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */; };
 		BC1211A5AC91155F76A86345 /* HookServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 215E338061E37977B5F19E4C /* HookServer.swift */; };
+		BC2B071DF2D1A5C092EB4D00 /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = BDB07994EE12CD72DE0C6643 /* Assets */; };
 		BC366626C0D435185948FD29 /* FaceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE0EC6058E905C89792375F /* FaceProvider.swift */; };
 		BDB688527872D702C345F81D /* NodeGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DFC862F77574208340D87A /* NodeGate.swift */; };
 		C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */; };
@@ -79,6 +81,7 @@
 		E6676DDEB701A3B308025398 /* HabitatRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8162BFBFAC6F397D720ECF7E /* HabitatRenderer.swift */; };
 		E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
+		F8B8897D5414AA737BF8FEBE /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = 427D83A561C5233E212E56D1 /* Assets */; };
 		FAC75BF2C50D8290E2AD26C9 /* AssetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135BD52FFCDB08D95BB636D /* AssetModels.swift */; };
 		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
 /* End PBXBuildFile section */
@@ -106,6 +109,7 @@
 		3B4E20C56B29053A38F4C8D0 /* CliCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CliCardView.swift; sourceTree = "<group>"; };
 		3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGateTests.swift; sourceTree = "<group>"; };
 		3E6351328D8C8825F75DB027 /* VisualState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VisualState.swift; sourceTree = "<group>"; };
+		427D83A561C5233E212E56D1 /* Assets */ = {isa = PBXFileReference; includeInIndex = 1; path = Assets; sourceTree = "<group>"; };
 		43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
 		4491D293E3F6BA5DFEEEC2A4 /* MapTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTab.swift; sourceTree = "<group>"; };
 		45D0CBD32FB778AFE94DEA53 /* GeminiLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLogParserTests.swift; sourceTree = "<group>"; };
@@ -139,6 +143,7 @@
 		95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRegistryTests.swift; sourceTree = "<group>"; };
 		99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClient.swift; sourceTree = "<group>"; };
 		99CE2F3CA0D291740976E7EA /* Accessory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accessory.swift; sourceTree = "<group>"; };
+		9CC0D6D6102F63EC9CD74390 /* AssetRegistry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetRegistry.swift; sourceTree = "<group>"; };
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		9F56DC065FAE03A663C8383E /* codex-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "codex-hook.js"; sourceTree = "<group>"; };
 		AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClock.swift; sourceTree = "<group>"; };
@@ -148,6 +153,7 @@
 		B6B161320AB8F459F62F9F48 /* AgentSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSkin.swift; sourceTree = "<group>"; };
 		B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatScene.swift; sourceTree = "<group>"; };
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDB07994EE12CD72DE0C6643 /* Assets */ = {isa = PBXFileReference; includeInIndex = 1; name = Assets; path = PixelPets/Resources/Assets; sourceTree = "<group>"; };
 		BE98564E5C6F47927461B3BB /* MenuBarIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconRenderer.swift; sourceTree = "<group>"; };
 		C5DFC862F77574208340D87A /* NodeGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGate.swift; sourceTree = "<group>"; };
 		C5FF5F498032037211B5C222 /* AnimationClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClockTests.swift; sourceTree = "<group>"; };
@@ -206,6 +212,7 @@
 			children = (
 				8449B8E9211D259512FAF7DE /* Fixtures */,
 				8A9595D30C39B4F128AB2B5B /* hooks */,
+				427D83A561C5233E212E56D1 /* Assets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -335,6 +342,7 @@
 			children = (
 				52E02B09537952D8CA58865A /* GrowthEngine.swift */,
 				0A72F4F208D51F2DA034981F /* PetStateMachine.swift */,
+				9CC0D6D6102F63EC9CD74390 /* AssetRegistry.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -459,6 +467,8 @@
 				1C032DEA17F7EDAA7D5349F3 /* gemini_sample.json in Resources */,
 				0A47824554C1429037C478C9 /* opencode_sample.json in Resources */,
 				38BD0015059AC48A6FD38792 /* pixelpets-hook.js in Resources */,
+				BC2B071DF2D1A5C092EB4D00 /* Assets in Resources */,
+				F8B8897D5414AA737BF8FEBE /* Assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +525,7 @@
 				66083BAFD5E9226509648B89 /* VisualState.swift in Sources */,
 				E357C6E529165DEE6B8DDF22 /* PetRenderer.swift in Sources */,
 				E6676DDEB701A3B308025398 /* HabitatRenderer.swift in Sources */,
+				8FE3FA6E864BDD0682052E97 /* AssetRegistry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
