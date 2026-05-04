@@ -3,15 +3,21 @@ import SwiftUI
 struct HabitatView: View {
     @ObservedObject var viewModel: PetViewModel
     @EnvironmentObject var settingsStore: SettingsStore
+    @Environment(\.scenePhase) private var scenePhase
     @State private var currentSceneID: SceneID = .galaxyObservatory
 
     private var currentScene: any HabitatScene {
         SceneRegistry.scene(for: currentSceneID)
     }
 
+    private var targetFPS: Double {
+        if scenePhase != .active { return 1.0 }
+        return viewModel.visualState.petState == .idle ? 10.0 : 30.0
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            AnimationClock(fps: 30) { frame in
+            AnimationClock(fps: targetFPS) { frame in
                 SceneWithRobot(scene: currentScene, viewModel: viewModel, frame: frame)
             }
 

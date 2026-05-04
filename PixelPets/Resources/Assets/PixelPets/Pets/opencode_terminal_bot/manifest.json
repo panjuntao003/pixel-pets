@@ -1,0 +1,10 @@
+{
+  "id": "opencode_terminal_bot",
+  "name": "Terminal Bot",
+  "baseSize": { "width": 24, "height": 28 },
+  "states": { "idle": "idle.png" },
+  "anchors": {
+    "headTop": { "x": 12, "y": 4 },
+    "aboveHead": { "x": 12, "y": -4 }
+  }
+}

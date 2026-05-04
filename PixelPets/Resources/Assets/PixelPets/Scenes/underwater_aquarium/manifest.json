@@ -1,0 +1,10 @@
+{
+  "id": "underwater_aquarium",
+  "name": "Underwater Aquarium",
+  "logicalSize": { "width": 360, "height": 140 },
+  "defaultPetPosition": { "x": 180, "y": 70 },
+  "safeArea": { "top": 10, "bottom": 10, "left": 10, "right": 10 },
+  "states": {
+    "normal": { "bg": "bg.png", "floor": "floor.png" }
+  }
+}

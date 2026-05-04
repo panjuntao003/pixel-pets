@@ -1,0 +1,8 @@
+{
+  "id": "bubble_helmet",
+  "name": "Bubble Helmet",
+  "size": { "width": 24, "height": 24 },
+  "mountPoint": "faceCenter",
+  "layer": "front",
+  "states": { "normal": "normal.png" }
+}

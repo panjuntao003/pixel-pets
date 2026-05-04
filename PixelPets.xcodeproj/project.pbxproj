@@ -93,6 +93,7 @@
 		E6676DDEB701A3B308025398 /* HabitatRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8162BFBFAC6F397D720ECF7E /* HabitatRenderer.swift */; };
 		E80B86BFD06D585D2E4FDDEA /* ClaudeQuotaClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */; };
 		F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902053947864E8D75FE02CFB /* HookServerTests.swift */; };
+		F4ED0DB1A81F4745C81B0D55 /* AssetGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B998A29B80BCE0E3DF1F145F /* AssetGalleryView.swift */; };
 		F8B8897D5414AA737BF8FEBE /* Assets in Resources */ = {isa = PBXBuildFile; fileRef = 427D83A561C5233E212E56D1 /* Assets */; };
 		FAC75BF2C50D8290E2AD26C9 /* AssetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B135BD52FFCDB08D95BB636D /* AssetModels.swift */; };
 		FAD36F908B01738A66189F55 /* codex_sample.jsonl in Resources */ = {isa = PBXBuildFile; fileRef = 43E4787627A5AA5FD6306B1C /* codex_sample.jsonl */; };
@@ -173,6 +174,7 @@
 		B52CBD94E5910ED06A425C3C /* PetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetViewModel.swift; sourceTree = "<group>"; };
 		B6B161320AB8F459F62F9F48 /* AgentSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSkin.swift; sourceTree = "<group>"; };
 		B7EEFF2DA5DA38BCA2811AE0 /* HabitatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatScene.swift; sourceTree = "<group>"; };
+		B998A29B80BCE0E3DF1F145F /* AssetGalleryView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetGalleryView.swift; sourceTree = "<group>"; };
 		BB5FC658A7CAC3CD9205611B /* PixelPets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PixelPets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDB07994EE12CD72DE0C6643 /* Assets */ = {isa = PBXFileReference; includeInIndex = 1; name = Assets; path = PixelPets/Resources/Assets; sourceTree = "<group>"; };
 		BE98564E5C6F47927461B3BB /* MenuBarIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconRenderer.swift; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 				75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */,
 				BF5A76CD75700858B284AA0D /* Settings */,
 				A592E909D9AB4DA568C7DBF0 /* DebugStateHUD.swift */,
+				B998A29B80BCE0E3DF1F145F /* AssetGalleryView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -582,6 +585,7 @@
 				4B2E7F6BA5B5F19E87E47AEA /* ClaudeLogEventSource.swift in Sources */,
 				49BA08CCAEB39AA90B6E6AC4 /* OpenCodeLogEventSource.swift in Sources */,
 				A87B2D5F56B1C7DF5522DEF7 /* DebugStateHUD.swift in Sources */,
+				F4ED0DB1A81F4745C81B0D55 /* AssetGalleryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

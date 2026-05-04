@@ -23,7 +23,10 @@ final class AssetRegistry {
         loadAccessories()
         
         #if DEBUG
-        ManifestValidator.validateAll()
+        let issues = ManifestValidator.validateAll()
+        for issue in issues where issue.severity == .error {
+            print("\(issue.severity.rawValue) [\(issue.assetID)] \(issue.message)")
+        }
         #endif
     }
     

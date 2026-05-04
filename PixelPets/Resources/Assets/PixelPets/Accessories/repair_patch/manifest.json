@@ -1,0 +1,8 @@
+{
+  "id": "repair_patch",
+  "name": "Repair Patch",
+  "size": { "width": 8, "height": 8 },
+  "mountPoint": "chest",
+  "layer": "front",
+  "states": { "normal": "normal.png" }
+}

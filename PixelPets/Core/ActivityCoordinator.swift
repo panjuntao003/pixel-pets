@@ -18,6 +18,9 @@ final class ActivityCoordinator: ObservableObject {
     @Published private(set) var eventHistory: [EventRecord] = []
     private let historyLimit = 10
     
+    @Published private(set) var isWaitingForMinDuration = false
+    @Published private(set) var priorityOverrideActive = false
+    
     private var cancellables = Set<AnyCancellable>()
     private var transientTimer: Timer?
     private let minimumStateDuration: TimeInterval = 2.0
@@ -37,6 +40,19 @@ final class ActivityCoordinator: ObservableObject {
                 }
                 .store(in: &cancellables)
         }
+    }
+    
+    func diagnosticsSummary() -> String {
+        return """
+        Pixel Pets Diagnostics
+        ---
+        Active Provider: \(activeProvider.rawValue)
+        Current Event: \(currentEvent.rawValue)
+        Priority Override: \(priorityOverrideActive)
+        Waiting for Min Duration: \(isWaitingForMinDuration)
+        Persistent States: \(persistentStates.map { "\($0.key.rawValue):\($0.value.rawValue)" }.joined(separator: ", "))
+        History: \(eventHistory.prefix(5).map { "[\($0.provider.rawValue)] \($0.event.rawValue)" }.joined(separator: " <- "))
+        """
     }
     
     func startForPreview() {
@@ -65,9 +81,11 @@ final class ActivityCoordinator: ObservableObject {
     }
     
     private func startTransientTimer() {
+        isWaitingForMinDuration = true
         transientTimer?.invalidate()
         transientTimer = Timer.scheduledTimer(withTimeInterval: minimumStateDuration, repeats: false) { [weak self] _ in
             Task { @MainActor in
+                self?.isWaitingForMinDuration = false
                 self?.lastTransient = nil
                 self?.updateCurrentState()
             }
@@ -76,11 +94,13 @@ final class ActivityCoordinator: ObservableObject {
     
     private func updateCurrentState() {
         var highest: (AIProvider, SystemEvent) = (.unknown, .appIdle)
+        var hasOverride = false
         
         // Check persistent states
         for (p, s) in persistentStates {
             if priority(for: s) > priority(for: highest.1) {
                 highest = (p, s)
+                hasOverride = true
             }
         }
         
@@ -88,11 +108,13 @@ final class ActivityCoordinator: ObservableObject {
         if let transient = lastTransient {
             if priority(for: transient.1) >= priority(for: highest.1) {
                 highest = transient
+                hasOverride = true
             }
         }
         
         currentEvent = highest.1
         activeProvider = highest.0
+        priorityOverrideActive = hasOverride && highest.1 != .appIdle
     }
     
     private func isPersistent(_ event: SystemEvent) -> Bool {
