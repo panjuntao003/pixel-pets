@@ -157,19 +157,25 @@ final class AppCoordinator: ObservableObject {
     }
 
     private func refreshTokenUsage() {
-        let snapshot = logPoller.poll()
-        applyGrowth(totalTokens: max(snapshot.lifetimeTokens, growthStore.loadTotalTokens()))
+        Task {
+            let poller = self.logPoller
+            let snapshot = await Task.detached(priority: .background) {
+                poller.poll()
+            }.value
+            
+            applyGrowth(totalTokens: max(snapshot.lifetimeTokens, growthStore.loadTotalTokens()))
 
-        for (skin, usage) in snapshot.usageByCLI {
-            updateCLIInfo(
-                skin: skin,
-                fetchResult: estimatedFetchResultIfNeeded(skin: skin, usage: usage),
-                todayTokens: usage.todayTokens,
-                weekTokens: usage.weekTokens,
-                planBadge: skin.displayName
-            )
+            for (skin, usage) in snapshot.usageByCLI {
+                updateCLIInfo(
+                    skin: skin,
+                    fetchResult: estimatedFetchResultIfNeeded(skin: skin, usage: usage),
+                    todayTokens: usage.todayTokens,
+                    weekTokens: usage.weekTokens,
+                    planBadge: skin.displayName
+                )
+            }
+            applyQuotaRecommendation()
         }
-        applyQuotaRecommendation()
     }
 
     private func applyGrowth(totalTokens: Int) {
