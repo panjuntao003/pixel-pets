@@ -520,14 +520,18 @@ final class LogPoller {
 
     private func parseAll(for skin: AgentSkin, since date: Date) -> TokenBatch {
         switch skin {
-        case .claude:
-            return ClaudeLogParser(installedAt: date).parseAll()
-        case .gemini:
-            return GeminiLogParser(installedAt: date).parseAll()
-        case .codex:
-            return CodexLogParser(installedAt: date).parseAll()
         case .opencode:
             return OpenCodeLogParser(installedAt: date).parseAll()
+        case .claude, .gemini, .codex:
+            let paths = logFilePaths(for: skin)
+            var batch = TokenBatch()
+            for path in paths {
+                let mtime = modificationTime(path: path)
+                if mtime >= date.timeIntervalSince1970 {
+                    batch.add(parseFile(path: path, for: skin, since: date))
+                }
+            }
+            return batch
         }
     }
 
