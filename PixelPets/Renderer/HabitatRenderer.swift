@@ -77,8 +77,7 @@ struct HabitatRenderer: View {
     
     @ViewBuilder
     private func renderLayer(_ layer: String, in size: CGSize, state: SceneState) -> some View {
-        if let url = AssetRegistry.shared.assetURL(forScene: currentScene.id, layer: layer, state: state),
-           let image = NSImage(contentsOf: url) {
+        if let image = AssetRegistry.shared.cachedImage(forScene: currentScene.id, layer: layer, state: state) {
             Image(nsImage: image)
                 .resizable()
                 .interpolation(.none) // Keep it pixelated

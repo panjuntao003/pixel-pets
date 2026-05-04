@@ -69,8 +69,7 @@ struct PetRenderer: View {
     @ViewBuilder
     private var petBodyView: some View {
         if let asset = petAsset,
-           let url = AssetRegistry.shared.assetURL(forPet: asset.id, state: state),
-           let image = NSImage(contentsOf: url) {
+           let image = AssetRegistry.shared.cachedImage(forPet: asset.id, state: state) {
             let w = CGFloat(asset.baseSize.w)
             let h = CGFloat(asset.baseSize.h)
             let r = h / w
@@ -137,8 +136,7 @@ struct AccessoryRenderer: View {
     let scale: CGFloat
 
     var body: some View {
-        if let url = AssetRegistry.shared.assetURL(forAccessory: asset.id, state: state),
-           let image = NSImage(contentsOf: url) {
+        if let image = AssetRegistry.shared.cachedImage(forAccessory: asset.id, state: state) {
             Image(nsImage: image)
                 .resizable()
                 .interpolation(.none)

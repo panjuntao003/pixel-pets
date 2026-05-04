@@ -2,7 +2,12 @@
   "id": "neural_jellyfish",
   "name": "Neural Jellyfish",
   "baseSize": { "width": 32, "height": 32 },
-  "states": { "idle": "idle.png" },
+  "states": {
+    "idle": "idle.png",
+    "thinking": "thinking.png",
+    "charging": "charging.png",
+    "error": "error.png"
+  },
   "anchors": {
     "headTop": { "x": 16, "y": 4 },
     "faceCenter": { "x": 16, "y": 12 },

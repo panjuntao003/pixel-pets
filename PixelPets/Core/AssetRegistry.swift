@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 final class AssetRegistry {
     static let shared = AssetRegistry()
@@ -6,6 +7,8 @@ final class AssetRegistry {
     private(set) var scenes: [String: SceneAsset] = [:]
     private(set) var pets: [String: PetAsset] = [:]
     private(set) var accessories: [String: AccessoryAsset] = [:]
+    
+    private var imageCache: [URL: NSImage] = [:]
     
     private let fileManager = FileManager.default
     private let assetsRoot: URL
@@ -107,6 +110,33 @@ final class AssetRegistry {
             if let fileName = acc.states[key] {
                 return assetsRoot.appendingPathComponent("Accessories/\(accID)/\(fileName)")
             }
+        }
+        return nil
+    }
+    
+    // Caching
+    func cachedImage(forScene sceneID: String, layer: String, state: SceneState) -> NSImage? {
+        guard let url = assetURL(forScene: sceneID, layer: layer, state: state) else { return nil }
+        return loadAndCacheImage(at: url)
+    }
+    
+    func cachedImage(forPet petID: String, state: PetState) -> NSImage? {
+        guard let url = assetURL(forPet: petID, state: state) else { return nil }
+        return loadAndCacheImage(at: url)
+    }
+    
+    func cachedImage(forAccessory accID: String, state: PetState) -> NSImage? {
+        guard let url = assetURL(forAccessory: accID, state: state) else { return nil }
+        return loadAndCacheImage(at: url)
+    }
+    
+    private func loadAndCacheImage(at url: URL) -> NSImage? {
+        if let cached = imageCache[url] {
+            return cached
+        }
+        if let image = NSImage(contentsOf: url) {
+            imageCache[url] = image
+            return image
         }
         return nil
     }

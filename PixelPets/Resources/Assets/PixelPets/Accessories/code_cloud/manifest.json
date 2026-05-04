@@ -4,5 +4,8 @@
   "size": { "width": 24, "height": 16 },
   "mountPoint": "aboveHead",
   "layer": "floating",
-  "states": { "normal": "normal.png" }
+  "states": {
+    "normal": "normal.png",
+    "active": "active.png"
+  }
 }
