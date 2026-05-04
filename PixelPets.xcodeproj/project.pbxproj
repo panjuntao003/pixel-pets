@@ -63,6 +63,7 @@
 		A28DC8662EDDF29DBAF20069 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 34939660747858E47D81A896 /* opencode_sample.json */; };
 		A4944C2A3047E1CE2F6B63E9 /* ManualDebugEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84955256CBD7B24D25F65968 /* ManualDebugEventSource.swift */; };
 		A4B4591701321FF657CF855E /* ManifestValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FA5D54AC250067F6F46DCB /* ManifestValidator.swift */; };
+		A87B2D5F56B1C7DF5522DEF7 /* DebugStateHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = A592E909D9AB4DA568C7DBF0 /* DebugStateHUD.swift */; };
 		AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */; };
 		AF0B5B0854628685CC37008F /* ActivityCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0194CF4AEA7422AA56E78F /* ActivityCoordinator.swift */; };
 		B1137381FF565B4109F3BE72 /* GeminiLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD3546F58A0D1360A238DC3 /* GeminiLogParser.swift */; };
@@ -163,6 +164,7 @@
 		9CC0D6D6102F63EC9CD74390 /* AssetRegistry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssetRegistry.swift; sourceTree = "<group>"; };
 		9CCC288550F94E3A3960E5A3 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		9F56DC065FAE03A663C8383E /* codex-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "codex-hook.js"; sourceTree = "<group>"; };
+		A592E909D9AB4DA568C7DBF0 /* DebugStateHUD.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DebugStateHUD.swift; sourceTree = "<group>"; };
 		AA0194CF4AEA7422AA56E78F /* ActivityCoordinator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ActivityCoordinator.swift; sourceTree = "<group>"; };
 		ABAE73F7F5DCD857D883A8E3 /* SystemEvent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemEvent.swift; sourceTree = "<group>"; };
 		AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClock.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				60297808408A5939E6D93BD2 /* PopoverView.swift */,
 				75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */,
 				BF5A76CD75700858B284AA0D /* Settings */,
+				A592E909D9AB4DA568C7DBF0 /* DebugStateHUD.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -578,6 +581,7 @@
 				AF0B5B0854628685CC37008F /* ActivityCoordinator.swift in Sources */,
 				4B2E7F6BA5B5F19E87E47AEA /* ClaudeLogEventSource.swift in Sources */,
 				49BA08CCAEB39AA90B6E6AC4 /* OpenCodeLogEventSource.swift in Sources */,
+				A87B2D5F56B1C7DF5522DEF7 /* DebugStateHUD.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

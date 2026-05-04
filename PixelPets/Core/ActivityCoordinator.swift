@@ -8,6 +8,16 @@ final class ActivityCoordinator: ObservableObject {
     @Published private(set) var currentEvent: SystemEvent = .appIdle
     @Published private(set) var activeProvider: AIProvider = .unknown
     
+    struct EventRecord: Identifiable {
+        let id = UUID()
+        let timestamp = Date()
+        let provider: AIProvider
+        let event: SystemEvent
+    }
+    
+    @Published private(set) var eventHistory: [EventRecord] = []
+    private let historyLimit = 10
+    
     private var cancellables = Set<AnyCancellable>()
     private var transientTimer: Timer?
     private let minimumStateDuration: TimeInterval = 2.0
@@ -22,6 +32,7 @@ final class ActivityCoordinator: ObservableObject {
             source.events
                 .receive(on: DispatchQueue.main)
                 .sink { [weak self] provider, event in
+                    self?.recordEvent(provider, event)
                     self?.handleEvent(provider, event)
                 }
                 .store(in: &cancellables)
@@ -30,6 +41,14 @@ final class ActivityCoordinator: ObservableObject {
     
     func startForPreview() {
         start(sources: [ManualDebugEventSource.shared])
+    }
+    
+    private func recordEvent(_ provider: AIProvider, _ event: SystemEvent) {
+        let record = EventRecord(provider: provider, event: event)
+        eventHistory.insert(record, at: 0)
+        if eventHistory.count > historyLimit {
+            eventHistory.removeLast()
+        }
     }
     
     private func handleEvent(_ provider: AIProvider, _ event: SystemEvent) {

@@ -1,0 +1,12 @@
+{
+  "id": "cactus_sprite",
+  "name": "Quantum Cactus",
+  "baseSize": { "width": 32, "height": 32 },
+  "states": {
+    "idle": "idle.png"
+  },
+  "anchors": {
+    "headTop": { "x": 16, "y": 2 },
+    "aboveHead": { "x": 16, "y": -4 }
+  }
+}
