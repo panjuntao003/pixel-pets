@@ -19,11 +19,17 @@ struct AppSettings: Codable {
         .claude: true, .opencode: true, .codex: true, .gemini: true
     ]
 
+    // Quota Monitor fields (Phase A)
+    var lowQuotaThreshold: Int = 20
+    var refreshIntervalSeconds: Int = 300
+    var enabledProviders: [String: Bool] = [:]
+
     init() {}
 
     enum CodingKeys: String, CodingKey {
         case hookPermissionAsked, enabledCLIs, hookPort, scenePreference, equippedAccessories, skinOverride
         case isPixelPetEnabled, animationIntensity, lowDistractionMode, reduceMotion, enableQuotaAlerts, enabledEventSources
+        case lowQuotaThreshold, refreshIntervalSeconds, enabledProviders
     }
 
     init(from decoder: Decoder) throws {
@@ -44,10 +50,19 @@ struct AppSettings: Codable {
         enabledEventSources = try container.decodeIfPresent([AIProvider: Bool].self, forKey: .enabledEventSources) ?? [
             .claude: true, .opencode: true, .codex: true, .gemini: true
         ]
+
+        // Quota Monitor fields
+        lowQuotaThreshold = try container.decodeIfPresent(Int.self, forKey: .lowQuotaThreshold) ?? 20
+        refreshIntervalSeconds = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalSeconds) ?? 300
+        enabledProviders = try container.decodeIfPresent([String: Bool].self, forKey: .enabledProviders) ?? [:]
     }
 
     func isEnabled(_ skin: AgentSkin) -> Bool {
         enabledCLIs[skin.rawValue] != false
+    }
+
+    func isProviderEnabled(_ provider: AIProvider) -> Bool {
+        enabledProviders[provider.rawValue] != false
     }
 }
 
