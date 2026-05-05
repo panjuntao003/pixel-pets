@@ -8,10 +8,7 @@ struct PixelPetsApp: App {
 
     var body: some Scene {
         Settings {
-            GameSettingsView(
-                viewModel: appDelegate.coordinator.viewModel,
-                onRegisterHooks: appDelegate.coordinator.registerDetectedHooks
-            )
+            GameSettingsView()
                 .environmentObject(appDelegate.coordinator.settingsStore)
         }
     }

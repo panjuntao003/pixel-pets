@@ -1,64 +1,90 @@
 import SwiftUI
 
-enum SettingsTab: String, CaseIterable {
-    case unit = "UNIT"
-    case loadout = "LOADOUT"
-    case map = "MAP"
-    case sys = "SYS"
+struct GameSettingsView: View {
+    @EnvironmentObject private var settingsStore: SettingsStore
 
-    var title: String {
-        switch self {
-        case .unit: return "宠物"
-        case .loadout: return "装备"
-        case .map: return "场景"
-        case .sys: return "系统"
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .unit: return "cpu"
-        case .loadout: return "backpack"
-        case .map: return "mountain.2"
-        case .sys: return "gearshape"
-        }
+    var body: some View {
+        QuotaSettingsView()
+            .environmentObject(settingsStore)
+            .frame(width: 400, height: 320)
     }
 }
 
-struct GameSettingsView: View {
+struct QuotaSettingsView: View {
     @EnvironmentObject private var settingsStore: SettingsStore
-    @ObservedObject var viewModel: PetViewModel
-
-    var onRegisterHooks: () -> Void = {}
-
-    @State private var selectedTab: SettingsTab = .unit
 
     var body: some View {
-        NavigationSplitView {
-            List(SettingsTab.allCases, id: \.self, selection: $selectedTab) { tab in
-                Label(tab.title, systemImage: tab.systemImage)
-                    .tag(tab)
+        Form {
+            Section("Providers") {
+                ForEach(AIProvider.allCases.filter { $0 != .unknown }, id: \.self) { provider in
+                    Toggle(provider.displayName, isOn: Binding(
+                        get: { settingsStore.settings.isProviderEnabled(provider) },
+                        set: { enabled in
+                            settingsStore.update { settings in
+                                if enabled {
+                                    settings.enabledProviders[provider.rawValue] = true
+                                } else {
+                                    settings.enabledProviders[provider.rawValue] = false
+                                }
+                            }
+                        }
+                    ))
+                }
             }
-            .listStyle(.sidebar)
-            .navigationSplitViewColumnWidth(min: 140, ideal: 160)
-        } detail: {
-            detailView
-                .environmentObject(settingsStore)
-        }
-        .frame(width: 520, height: 420)
-    }
 
-    @ViewBuilder
-    private var detailView: some View {
-        switch selectedTab {
-        case .unit:
-            UnitTab(viewModel: viewModel)
-        case .loadout:
-            LoadoutTab(viewModel: viewModel)
-        case .map:
-            MapTab()
-        case .sys:
-            SysTab(onRegisterHooks: onRegisterHooks)
+            Section("Thresholds") {
+                HStack {
+                    Text("Low quota threshold")
+                    Spacer()
+                    Picker("", selection: Binding(
+                        get: { settingsStore.settings.lowQuotaThreshold },
+                        set: { newValue in
+                            settingsStore.update { settings in
+                                settings.lowQuotaThreshold = newValue
+                            }
+                        }
+                    )) {
+                        Text("10%").tag(10)
+                        Text("20%").tag(20)
+                        Text("30%").tag(30)
+                        Text("50%").tag(50)
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 80)
+                }
+            }
+
+            Section("Refresh") {
+                HStack {
+                    Text("Auto-refresh interval")
+                    Spacer()
+                    Picker("", selection: Binding(
+                        get: { settingsStore.settings.refreshIntervalSeconds },
+                        set: { newValue in
+                            settingsStore.update { settings in
+                                settings.refreshIntervalSeconds = newValue
+                            }
+                        }
+                    )) {
+                        Text("1 min").tag(60)
+                        Text("5 min").tag(300)
+                        Text("15 min").tag(900)
+                        Text("30 min").tag(1800)
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 100)
+                }
+            }
+
+            Section {
+                HStack {
+                    Text("Enable Pixel Pet")
+                    Spacer()
+                    Text("Coming later")
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
+        .formStyle(.grouped)
     }
 }
