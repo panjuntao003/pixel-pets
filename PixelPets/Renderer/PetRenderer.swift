@@ -12,29 +12,26 @@ struct PetRenderer: View {
         return AssetRegistry.shared.pets[assetID]
     }
 
-    private var anchors: [AccessoryMountPoint: CGPoint] {
+    private func computeAnchors() -> [AccessoryMountPoint: CGPoint] {
         let baseWidth: CGFloat = getBaseWidth()
         let scale: CGFloat = size / baseWidth
         
-        guard let asset = petAsset else {
-            return [
-                .headTop: CGPoint(x: 12.0 * scale, y: 2.0 * scale),
-                .aboveHead: CGPoint(x: 12.0 * scale, y: -4.0 * scale),
-                .faceCenter: CGPoint(x: 12.0 * scale, y: 9.0 * scale),
-                .chest: CGPoint(x: 12.0 * scale, y: 20.0 * scale),
-                .back: CGPoint(x: 20.0 * scale, y: 18.0 * scale),
-                .leftSide: CGPoint(x: 0.0 * scale, y: 16.0 * scale),
-                .rightSide: CGPoint(x: 24.0 * scale, y: 16.0 * scale)
-            ]
+        if let asset = petAsset {
+            var points: [AccessoryMountPoint: CGPoint] = [:]
+            for (point, anchor) in asset.anchors {
+                points[point] = CGPoint(x: CGFloat(anchor.x) * scale, y: CGFloat(anchor.y) * scale)
+            }
+            return points
         }
-        
-        var points: [AccessoryMountPoint: CGPoint] = [:]
-        for (point, anchor) in asset.anchors {
-            let px: CGFloat = CGFloat(anchor.x) * scale
-            let py: CGFloat = CGFloat(anchor.y) * scale
-            points[point] = CGPoint(x: px, y: py)
-        }
-        return points
+        return [
+            .headTop: CGPoint(x: 12.0 * scale, y: 2.0 * scale),
+            .aboveHead: CGPoint(x: 12.0 * scale, y: -4.0 * scale),
+            .faceCenter: CGPoint(x: 12.0 * scale, y: 9.0 * scale),
+            .chest: CGPoint(x: 12.0 * scale, y: 20.0 * scale),
+            .back: CGPoint(x: 20.0 * scale, y: 18.0 * scale),
+            .leftSide: CGPoint(x: 0.0 * scale, y: 16.0 * scale),
+            .rightSide: CGPoint(x: 24.0 * scale, y: 16.0 * scale)
+        ]
     }
 
     private func getBaseWidth() -> CGFloat {
@@ -56,12 +53,13 @@ struct PetRenderer: View {
         let petHeight: CGFloat = getBaseHeight()
         let ratio: CGFloat = petHeight / petWidth
         let containerHeight: CGFloat = size * ratio
+        let anchors = computeAnchors()
         
         return ZStack {
-            renderAccessories(in: .back)
+            renderAccessories(in: .back, anchors: anchors)
             petBodyView
-            renderAccessories(in: .front)
-            renderAccessories(in: .floating)
+            renderAccessories(in: .front, anchors: anchors)
+            renderAccessories(in: .floating, anchors: anchors)
         }
         .frame(width: size, height: containerHeight)
     }
@@ -69,7 +67,8 @@ struct PetRenderer: View {
     @ViewBuilder
     private var petBodyView: some View {
         if let asset = petAsset,
-           let image = AssetRegistry.shared.cachedImage(forPet: asset.id, state: state) {
+           let image = AssetRegistry.shared.cachedImage(forPet: asset.id, state: state)
+               ?? ProceduralSpriteCache.shared.cachedImage(for: skin, state: state) {
             let w = CGFloat(asset.baseSize.w)
             let h = CGFloat(asset.baseSize.h)
             let r = h / w
@@ -92,14 +91,13 @@ struct PetRenderer: View {
     }
 
     @ViewBuilder
-    private func renderAccessories(in layer: AccessoryLayer) -> some View {
+    private func renderAccessories(in layer: AccessoryLayer, anchors: [AccessoryMountPoint: CGPoint]) -> some View {
         let baseW: CGFloat = getBaseWidth()
         let accessoryScale: CGFloat = size / baseW
-        let currentAnchors = self.anchors
         
         ForEach(equippedAccessories, id: \.self) { accessory in
             let asset = resolveAccessoryAsset(for: accessory)
-            if asset.layer == layer, let anchor = currentAnchors[asset.mountPoint] {
+            if asset.layer == layer, let anchor = anchors[asset.mountPoint] {
                 AccessoryRenderer(
                     accessory: accessory,
                     asset: asset,
@@ -119,11 +117,11 @@ struct PetRenderer: View {
         // Fallback mock (kept for transition)
         switch accessory {
         case .halo:
-            return AccessoryAsset(id: "halo", name: "Halo", size: IntSize(width: 24, height: 16), mountPoint: .aboveHead, layer: .floating, states: ["normal": "normal.png"])
+            return AccessoryAsset(id: "halo", name: "Halo", size: IntSize(width: 24, height: 16), mountPoint: .aboveHead, layer: .floating, states: ["normal": "normal.png"], productionReady: false, incompatiblePets: nil)
         case .antenna:
-            return AccessoryAsset(id: "antenna", name: "Antenna", size: IntSize(width: 16, height: 24), mountPoint: .headTop, layer: .front, states: ["normal": "normal.png"])
+            return AccessoryAsset(id: "antenna", name: "Antenna", size: IntSize(width: 16, height: 24), mountPoint: .headTop, layer: .front, states: ["normal": "normal.png"], productionReady: false, incompatiblePets: nil)
         default:
-            return AccessoryAsset(id: "unknown", name: "Unknown", size: IntSize(width: 16, height: 16), mountPoint: .headTop, layer: .front, states: [:])
+            return AccessoryAsset(id: "unknown", name: "Unknown", size: IntSize(width: 16, height: 16), mountPoint: .headTop, layer: .front, states: [:], productionReady: false, incompatiblePets: nil)
         }
     }
 }

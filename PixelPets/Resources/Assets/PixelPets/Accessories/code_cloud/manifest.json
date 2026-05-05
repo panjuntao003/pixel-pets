@@ -1,11 +1,12 @@
 {
   "id": "code_cloud",
   "name": "Code Cloud",
-  "size": { "width": 24, "height": 16 },
+  "size": { "width": 24, "height": 24 },
   "mountPoint": "aboveHead",
   "layer": "floating",
   "states": {
     "normal": "normal.png",
     "active": "active.png"
-  }
+  },
+  "productionReady": true
 }

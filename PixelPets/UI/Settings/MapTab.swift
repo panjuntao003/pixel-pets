@@ -69,7 +69,8 @@ struct MapTab: View {
                         settingsStore.update { $0.scenePreference = .random }
                     }
 
-                ForEach(SceneID.allCases, id: \.self) { sceneID in
+                let productionIDs = AssetRegistry.shared.productionScenes.keys
+                ForEach(SceneID.allCases.filter { productionIDs.contains($0.rawValue) }, id: \.self) { sceneID in
                     SceneCard(
                         emoji: sceneID.emoji,
                         name: SceneRegistry.scene(for: sceneID).displayName,

@@ -126,7 +126,8 @@ private struct SceneWithRobot: View {
             logicalSize: IntSize(width: 360, height: 140),
             defaultPetPosition: IntPoint(x: 180, y: 76),
             safeArea: SceneAsset.EdgeInsets(top: 8, bottom: 12, left: 12, right: 12),
-            states: [:]
+            states: [:],
+            productionReady: false
         )
 
         HabitatRenderer(

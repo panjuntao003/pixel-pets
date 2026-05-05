@@ -1,8 +1,13 @@
 {
   "id": "repair_patch",
   "name": "Repair Patch",
-  "size": { "width": 8, "height": 8 },
+  "size": { "width": 12, "height": 12 },
   "mountPoint": "chest",
   "layer": "front",
-  "states": { "normal": "normal.png" }
+  "states": {
+    "normal": "normal.png",
+    "active": "active.png"
+  },
+  "productionReady": true,
+  "incompatiblePets": ["neural_jellyfish"]
 }

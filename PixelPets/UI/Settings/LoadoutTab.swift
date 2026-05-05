@@ -41,12 +41,23 @@ struct LoadoutTab: View {
             Text("全部配饰")
                 .font(.headline)
 
+            let productionAccs = AssetRegistry.shared.productionAccessories.keys
+            let currentPetID = viewModel.activeSkin == .claude ? "nebula_bot" : viewModel.activeSkin.rawValue
+            
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 56))], spacing: 8) {
-                ForEach(Accessory.allCases, id: \.self) { accessory in
+                ForEach(Accessory.allCases.filter { productionAccs.contains($0.rawValue) }, id: \.self) { accessory in
+                    let asset = AssetRegistry.shared.accessories[accessory.rawValue]
+                    let isCompatible = !(asset?.incompatiblePets?.contains(currentPetID) ?? false)
+                    
                     AccessoryCell(
                         accessory: accessory,
                         state: accessoryState(accessory),
-                        onTap: { toggleAccessory(accessory) }
+                        isCompatible: isCompatible,
+                        onTap: { 
+                            if isCompatible {
+                                toggleAccessory(accessory)
+                            }
+                        }
                     )
                 }
             }
@@ -147,6 +158,7 @@ private struct EquippedSlotView: View {
 private struct AccessoryCell: View {
     let accessory: Accessory
     let state: AccessoryLoadoutState
+    let isCompatible: Bool
     let onTap: () -> Void
 
     private var isLocked: Bool {
@@ -154,6 +166,7 @@ private struct AccessoryCell: View {
     }
 
     private var label: String {
+        if !isCompatible { return "不兼容" }
         switch state {
         case .equipped: return "装备中"
         case .unlocked: return "已解锁"
@@ -175,8 +188,8 @@ private struct AccessoryCell: View {
         VStack(spacing: 5) {
             Text(accessory.emoji)
                 .font(.title2)
-                .grayscale(isLocked ? 1 : 0)
-                .opacity(isLocked ? 0.4 : 1)
+                .grayscale((isLocked || !isCompatible) ? 1 : 0)
+                .opacity((isLocked || !isCompatible) ? 0.4 : 1)
 
             Text(accessory.displayName)
                 .font(.caption2.weight(.semibold))
@@ -197,11 +210,12 @@ private struct AccessoryCell: View {
                 .stroke(state == .equipped ? Color.accentColor : .clear, lineWidth: 2)
         }
         .contentShape(RoundedRectangle(cornerRadius: 8))
-        .opacity(isLocked ? 0.65 : 1)
+        .opacity((isLocked || !isCompatible) ? 0.65 : 1)
         .onTapGesture(perform: onTap)
     }
 
     private var labelColor: Color {
+        if !isCompatible { return .red.opacity(0.8) }
         switch state {
         case .equipped: return .green
         case .unlocked: return .secondary

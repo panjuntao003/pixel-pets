@@ -49,18 +49,12 @@ struct PopoverView: View {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }.buttonStyle(.plain).help("刷新配额")
-                Button {
-                    openSettings()
-                } label: {
+                SettingsLink {
                     Image(systemName: "gearshape")
                         .font(.system(size: 13)).foregroundStyle(.secondary)
                 }.buttonStyle(.plain).help("设置")
             }.padding(.horizontal, 12).padding(.vertical, 8)
         }.frame(width: 360)
-    }
-
-    private func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     }
 
     private func fmt(_ n: Int) -> String {
@@ -81,8 +75,8 @@ private struct EmptyStateView: View {
             Text("在设置中启用至少一个 CLI")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
-            Button("打开设置") {
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            SettingsLink {
+                Text("打开设置")
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)

@@ -31,7 +31,7 @@ final class GrowthStore {
             return
         }
 
-        guard sqlite3_open_v2(dbPath, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK else {
+        guard sqlite3_open_v2(dbPath, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX, nil) == SQLITE_OK else {
             recordError("Failed to open database: \(sqliteErrorMessage())")
             if db != nil {
                 sqlite3_close(db)
@@ -141,6 +141,7 @@ final class GrowthStore {
 
     private func createTables() {
         guard let db else { return }
+        sqlite3_exec(db, "PRAGMA journal_mode=WAL", nil, nil, nil)
         guard sqlite3_exec(db, "CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '')", nil, nil, nil) == SQLITE_OK else {
             recordError("Failed to create kv table: \(sqliteErrorMessage())")
             return

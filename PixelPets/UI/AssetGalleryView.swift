@@ -37,7 +37,11 @@ struct AssetGalleryView: View {
         VStack(spacing: 20) {
             ForEach(Array(registry.scenes.values)) { scene in
                 VStack(alignment: .leading) {
-                    Text(scene.name).font(.headline)
+                    HStack {
+                        Text(scene.name).font(.headline)
+                        Spacer()
+                        statusLabel(for: scene.productionReady)
+                    }
                     Text("ID: \(scene.id)").font(.caption)
                     
                     HStack {
@@ -68,7 +72,11 @@ struct AssetGalleryView: View {
         VStack(spacing: 20) {
             ForEach(Array(registry.pets.values)) { pet in
                 VStack(alignment: .leading) {
-                    Text(pet.name).font(.headline)
+                    HStack {
+                        Text(pet.name).font(.headline)
+                        Spacer()
+                        statusLabel(for: pet.productionReady)
+                    }
                     Text("Size: \(pet.baseSize.w)x\(pet.baseSize.h)").font(.caption)
                     
                     HStack {
@@ -101,7 +109,11 @@ struct AssetGalleryView: View {
         VStack(spacing: 20) {
             ForEach(Array(registry.accessories.values)) { acc in
                 VStack(alignment: .leading) {
-                    Text(acc.name).font(.headline)
+                    HStack {
+                        Text(acc.name).font(.headline)
+                        Spacer()
+                        statusLabel(for: acc.productionReady)
+                    }
                     Text("Mount: \(acc.mountPoint.rawValue) | Layer: \(acc.layer.rawValue)").font(.caption)
                     
                     HStack {
@@ -123,5 +135,21 @@ struct AssetGalleryView: View {
                 .border(Color.gray.opacity(0.3))
             }
         }
+    }
+
+    @ViewBuilder
+    private func statusLabel(for ready: Bool?) -> some View {
+        let (text, color) = ready == true ? ("Production Ready", Color.green) :
+                           ready == false ? ("Debug Only", Color.red) :
+                           ("Technical Valid Only", Color.orange)
+        
+        Text(text)
+            .font(.system(size: 8, weight: .bold))
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(color.opacity(0.1))
+            .foregroundStyle(color)
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(color.opacity(0.2), lineWidth: 1))
     }
 }

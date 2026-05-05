@@ -1,0 +1,12 @@
+{
+  "id": "sidekick_drone",
+  "name": "Sidekick Drone",
+  "size": { "width": 20, "height": 20 },
+  "mountPoint": "rightSide",
+  "layer": "floating",
+  "states": {
+    "normal": "normal.png",
+    "active": "active.png"
+  },
+  "productionReady": false
+}

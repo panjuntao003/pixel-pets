@@ -53,7 +53,14 @@ struct SceneRegistry {
     }
 
     static func randomScene() -> any HabitatScene {
-        scene(for: SceneID.allCases.randomElement()!)
+        let productionIDs = AssetRegistry.shared.productionScenes.keys
+        let availableIDs = SceneID.allCases.filter { productionIDs.contains($0.rawValue) }
+        
+        if let randomID = availableIDs.randomElement() {
+            return scene(for: randomID)
+        }
+        // Fallback to space station if no production scenes found (unlikely)
+        return scene(for: SceneID.spaceStation)
     }
 
     static func scene(for preference: ScenePreference) -> any HabitatScene {

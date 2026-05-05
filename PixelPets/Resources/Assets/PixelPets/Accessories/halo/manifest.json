@@ -5,6 +5,8 @@
   "mountPoint": "aboveHead",
   "layer": "floating",
   "states": {
-    "normal": "normal.png"
-  }
+    "normal": "normal.png",
+    "active": "active.png"
+  },
+  "productionReady": true
 }

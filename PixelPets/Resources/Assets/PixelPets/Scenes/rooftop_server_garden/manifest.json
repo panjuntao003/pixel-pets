@@ -2,11 +2,12 @@
   "id": "rooftop_server_garden",
   "name": "Rooftop Server Garden",
   "logicalSize": { "width": 360, "height": 140 },
-  "defaultPetPosition": { "x": 180, "y": 85 },
+  "defaultPetPosition": { "x": 180, "y": 80 },
   "safeArea": { "top": 10, "bottom": 10, "left": 10, "right": 10 },
   "states": {
     "normal": { "bg": "bg.png", "floor": "floor.png" },
     "dim": { "bg": "bg_dim.png", "floor": "floor.png" },
     "alert": { "bg": "bg_alert.png", "floor": "floor.png" }
-  }
+  },
+  "productionReady": true
 }

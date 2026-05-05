@@ -12,5 +12,6 @@
     "headTop": { "x": 16, "y": 4 },
     "faceCenter": { "x": 16, "y": 12 },
     "aboveHead": { "x": 16, "y": -4 }
-  }
+  },
+  "productionReady": true
 }

@@ -40,5 +40,8 @@ final class PetStateMachine {
 
     func forceEvolve() { transition(.evolving) }
 
-    private func transition(_ state: PetState) { currentState = state }
+    private func transition(_ state: PetState) {
+        guard currentState != state else { return }
+        currentState = state
+    }
 }

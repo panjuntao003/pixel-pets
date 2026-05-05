@@ -5,13 +5,29 @@ targets:
     platform: macOS
     deploymentTarget: "26.0"
     sources:
-      - PixelPets
+      - path: PixelPets
+        excludes:
+          - "Resources/Assets"
+          - "Resources/Fixtures"
     settings:
       INFOPLIST_FILE: PixelPets/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: com.pixelpets.app
       SWIFT_VERSION: "5.9"
     resources:
-      - PixelPets/Resources
+      - path: PixelPets/Resources/hooks
+        includes:
+          - "*.js"
+    preBuildScripts:
+      - name: "Copy Asset Directory Structure"
+        script: |
+          set -e
+          ASSETS_SRC="${SRCROOT}/PixelPets/Resources/Assets"
+          ASSETS_DST="${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Assets"
+          rsync -a --delete "$ASSETS_SRC/" "$ASSETS_DST/"
+        inputFiles:
+          - $(SRCROOT)/PixelPets/Resources/Assets
+        outputFiles:
+          - $(UNLOCALIZED_RESOURCES_FOLDER_PATH)/Assets
   PixelPetsTests:
     type: bundle.unit-test
     platform: macOS

@@ -15,8 +15,7 @@ struct ValidationIssue: Identifiable {
 }
 
 struct ManifestValidator {
-    static func validateAll() -> [ValidationIssue] {
-        let registry = AssetRegistry.shared
+    static func validate(registry: AssetRegistry) -> [ValidationIssue] {
         var issues: [ValidationIssue] = []
         
         for (_, scene) in registry.scenes {

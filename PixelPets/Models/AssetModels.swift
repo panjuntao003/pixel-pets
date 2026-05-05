@@ -44,6 +44,7 @@ struct SceneAsset: Identifiable, Codable {
     let defaultPetPosition: IntPoint
     let safeArea: EdgeInsets
     let states: [String: SceneLayers] // normal, dim, active, charging, alert
+    let productionReady: Bool?
     
     struct EdgeInsets: Codable, Equatable {
         let top, bottom, left, right: Int
@@ -69,6 +70,7 @@ struct PetAsset: Identifiable, Codable {
     let baseSize: IntSize
     let states: [String: String] // idle, thinking, charging, error, happy, etc.
     let anchors: [AccessoryMountPoint: IntPoint]
+    let productionReady: Bool?
 }
 
 // MARK: - Accessory Asset
@@ -86,4 +88,6 @@ struct AccessoryAsset: Identifiable, Codable {
     let mountPoint: AccessoryMountPoint
     let layer: AccessoryLayer
     let states: [String: String] // normal, active, etc.
+    let productionReady: Bool?
+    let incompatiblePets: [String]?
 }

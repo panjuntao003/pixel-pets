@@ -7,6 +7,17 @@ final class AssetRegistry {
     private(set) var scenes: [String: SceneAsset] = [:]
     private(set) var pets: [String: PetAsset] = [:]
     private(set) var accessories: [String: AccessoryAsset] = [:]
+
+    // Filtered views for production UI
+    var productionScenes: [String: SceneAsset] {
+        scenes.filter { $0.value.productionReady != false }
+    }
+    var productionPets: [String: PetAsset] {
+        pets.filter { $0.value.productionReady != false }
+    }
+    var productionAccessories: [String: AccessoryAsset] {
+        accessories.filter { $0.value.productionReady != false }
+    }
     
     private var imageCache: [URL: NSImage] = [:]
     
@@ -26,7 +37,7 @@ final class AssetRegistry {
         loadAccessories()
         
         #if DEBUG
-        let issues = ManifestValidator.validateAll()
+        let issues = ManifestValidator.validate(registry: self)
         for issue in issues where issue.severity == .error {
             print("\(issue.severity.rawValue) [\(issue.assetID)] \(issue.message)")
         }

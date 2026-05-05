@@ -59,6 +59,21 @@ final class ActivityCoordinator: ObservableObject {
         start(sources: [ManualDebugEventSource.shared])
     }
     
+    #if DEBUG
+    func reset() {
+        persistentStates.removeAll()
+        lastTransient = nil
+        eventHistory.removeAll()
+        currentEvent = .appIdle
+        activeProvider = .unknown
+        isWaitingForMinDuration = false
+        priorityOverrideActive = false
+        transientTimer?.invalidate()
+        transientTimer = nil
+        cancellables.removeAll()
+    }
+    #endif
+    
     private func recordEvent(_ provider: AIProvider, _ event: SystemEvent) {
         let record = EventRecord(provider: provider, event: event)
         eventHistory.insert(record, at: 0)
@@ -127,10 +142,10 @@ final class ActivityCoordinator: ObservableObject {
     private func priority(for event: SystemEvent) -> Int {
         switch event {
         case .requestFailed:   return 100
+        case .aiStreaming:     return 95
+        case .aiThinking:      return 92
         case .quotaLow:        return 90
         case .quotaResetting:  return 80
-        case .aiStreaming:     return 70
-        case .aiThinking:      return 60
         case .requestSucceeded: return 50
         case .quotaRecovered:  return 40
         case .userStartedRequest: return 30
