@@ -53,6 +53,7 @@
 		66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9394436749431BF36A637FED /* OpenCodeLogParser.swift */; };
 		67408F393CF1F241A056E447 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C77F49A948472204AEFDF7E /* GameSettingsView.swift */; };
 		67D808CA0F9D6FCF63F9E80E /* ClaudeLogEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827658726169B40B6773122A /* ClaudeLogEventSource.swift */; };
+		691FB3703F9C6417D79C4C16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F37A095CE41C582C8A5692 /* AppDelegate.swift */; };
 		6AF577D1EAB17321BFBA522E /* MenuBarDotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67889CBDC4B02CE0B02BF984 /* MenuBarDotView.swift */; };
 		6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */; };
 		6CC01ED719BB437556975E0E /* ProceduralSpriteCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA993F56CB91DA7B601CED7 /* ProceduralSpriteCache.swift */; };
@@ -182,6 +183,7 @@
 		9F56DC065FAE03A663C8383E /* codex-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "codex-hook.js"; sourceTree = "<group>"; };
 		A10E6FAA1C3925F9A4BC9786 /* claude_sample.jsonl */ = {isa = PBXFileReference; path = claude_sample.jsonl; sourceTree = "<group>"; };
 		A2C1BFEB2D136A5E75099745 /* QuotaSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaSource.swift; sourceTree = "<group>"; };
+		A9F37A095CE41C582C8A5692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationClock.swift; sourceTree = "<group>"; };
 		ACD1A54A87B02EF9A0AB0E6A /* ManifestValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestValidator.swift; sourceTree = "<group>"; };
 		AD9B07519F06EA0EA1CC1404 /* codex_sample.jsonl */ = {isa = PBXFileReference; path = codex_sample.jsonl; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 			isa = PBXGroup;
 			children = (
 				EFCD7BA48B79CE99162BB7A5 /* AppCoordinator.swift */,
+				A9F37A095CE41C582C8A5692 /* AppDelegate.swift */,
 				B4D228234AC373EA76E5C54E /* PixelPetsApp.swift */,
 				31435A41B49EC232E5A7EC86 /* QuotaCoordinator.swift */,
 			);
@@ -588,6 +591,7 @@
 				330EC8D06DCF268C659420A2 /* AgentSkin.swift in Sources */,
 				96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */,
 				0BC34BC4E842A035E286AC38 /* AppCoordinator.swift in Sources */,
+				691FB3703F9C6417D79C4C16 /* AppDelegate.swift in Sources */,
 				ADC8897DACA43ED914459479 /* AssetGalleryView.swift in Sources */,
 				6282A0F6F53185CFA49024DA /* AssetModels.swift in Sources */,
 				72F5C76DE1DE17492E35CB2D /* AssetRegistry.swift in Sources */,
