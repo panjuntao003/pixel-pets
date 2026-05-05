@@ -25,6 +25,31 @@ struct IntSize: Codable, Equatable {
     }
 
     var cgSize: CGSize { CGSize(width: w, height: h) }
+
+    // All manifests use "width"/"height". Legacy "w"/"h" is accepted for compatibility.
+    // Encoding always produces "width"/"height" so written manifests stay consistent.
+    init(from decoder: Decoder) throws {
+        enum WidthHeightKeys: String, CodingKey { case width, height }
+        enum LegacyKeys: String, CodingKey { case w, h }
+
+        if let c = try? decoder.container(keyedBy: WidthHeightKeys.self),
+           let width = try? c.decode(Int.self, forKey: .width),
+           let height = try? c.decode(Int.self, forKey: .height) {
+            w = width
+            h = height
+        } else {
+            let c = try decoder.container(keyedBy: LegacyKeys.self)
+            w = try c.decode(Int.self, forKey: .w)
+            h = try c.decode(Int.self, forKey: .h)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        enum WidthHeightKeys: String, CodingKey { case width, height }
+        var c = encoder.container(keyedBy: WidthHeightKeys.self)
+        try c.encode(w, forKey: .width)
+        try c.encode(h, forKey: .height)
+    }
 }
 
 // MARK: - Scene Asset
@@ -71,6 +96,40 @@ struct PetAsset: Identifiable, Codable {
     let states: [String: String] // idle, thinking, charging, error, happy, etc.
     let anchors: [AccessoryMountPoint: IntPoint]
     let productionReady: Bool?
+
+    // Swift's JSONDecoder cannot decode [StringEnum: Value] from a JSON object —
+    // it treats non-String/Int keyed dictionaries as arrays. We decode anchors as
+    // [String: IntPoint] first, then map to the typed enum keys.
+    init(from decoder: Decoder) throws {
+        enum Keys: String, CodingKey {
+            case id, name, baseSize, states, anchors, productionReady
+        }
+        let c = try decoder.container(keyedBy: Keys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        baseSize = try c.decode(IntSize.self, forKey: .baseSize)
+        states = try c.decode([String: String].self, forKey: .states)
+        productionReady = try c.decodeIfPresent(Bool.self, forKey: .productionReady)
+
+        let rawAnchors = try c.decode([String: IntPoint].self, forKey: .anchors)
+        anchors = Dictionary(uniqueKeysWithValues: rawAnchors.compactMap { key, point in
+            AccessoryMountPoint(rawValue: key).map { ($0, point) }
+        })
+    }
+
+    func encode(to encoder: Encoder) throws {
+        enum Keys: String, CodingKey {
+            case id, name, baseSize, states, anchors, productionReady
+        }
+        var c = encoder.container(keyedBy: Keys.self)
+        try c.encode(id, forKey: .id)
+        try c.encode(name, forKey: .name)
+        try c.encode(baseSize, forKey: .baseSize)
+        try c.encode(states, forKey: .states)
+        try c.encodeIfPresent(productionReady, forKey: .productionReady)
+        let rawAnchors = Dictionary(uniqueKeysWithValues: anchors.map { ($0.key.rawValue, $0.value) })
+        try c.encode(rawAnchors, forKey: .anchors)
+    }
 }
 
 // MARK: - Accessory Asset
