@@ -20,6 +20,7 @@ struct PixelPetsApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     let coordinator = AppCoordinator()
+    lazy var quotaCoordinator = QuotaCoordinator(settingsStore: coordinator.settingsStore)
     private let popover = NSPopover()
     private var statusItem: NSStatusItem?
     private var hookPermissionWindow: NSWindow?
@@ -31,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         setupPopover()
         bindHookPermissionPrompt()
         coordinator.start()
+        quotaCoordinator.start()
         coordinator.viewModel.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
@@ -75,13 +77,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
     private func setupPopover() {
         popover.behavior = .transient
-        popover.contentSize = NSSize(width: 360, height: 520)
+        popover.contentSize = NSSize(width: 280, height: 420)
         popover.delegate = self
         popover.contentViewController = NSHostingController(
             rootView: PopoverView(
-                viewModel: coordinator.viewModel,
-                onRefresh: coordinator.refresh,
-                onConfigureHooks: coordinator.registerDetectedHooks
+                stateStore: quotaCoordinator.stateStore,
+                onRefresh: coordinator.refresh
             )
             .environmentObject(coordinator.settingsStore)
         )

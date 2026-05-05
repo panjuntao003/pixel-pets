@@ -43,6 +43,7 @@
 		4EED8D9ABB2C68C7D053BE62 /* LoadoutTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4DB44E1B953463E26A0C87 /* LoadoutTab.swift */; };
 		4F9D695DFFE0DF0F2BC37A1D /* SciFiQuartersScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90061AD910EF29CA768D68F4 /* SciFiQuartersScene.swift */; };
 		56CFA5EE01D3CF64A550CEC9 /* CyberpunkLabScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B7C7ACDA1D8E6F97737825 /* CyberpunkLabScene.swift */; };
+		57994EE31E32913BFE55FCA8 /* QuotaCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE175D67C9AF85DC79520DFD /* QuotaCardView.swift */; };
 		58B219AA03D415A8CE065245 /* SystemEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE73FE16262AA24DA4C5785 /* SystemEventSource.swift */; };
 		5B00F603A4EF6BB8782A607B /* gemini_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = E4A296FB2AA0F63C2F9E73C7 /* gemini_sample.json */; };
 		5CA68D8D7383B681F9B90F71 /* ClaudeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC47AF5D7354F040D7EAA76 /* ClaudeLogParserTests.swift */; };
@@ -52,6 +53,7 @@
 		66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9394436749431BF36A637FED /* OpenCodeLogParser.swift */; };
 		67408F393CF1F241A056E447 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C77F49A948472204AEFDF7E /* GameSettingsView.swift */; };
 		67D808CA0F9D6FCF63F9E80E /* ClaudeLogEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827658726169B40B6773122A /* ClaudeLogEventSource.swift */; };
+		6AF577D1EAB17321BFBA522E /* MenuBarDotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67889CBDC4B02CE0B02BF984 /* MenuBarDotView.swift */; };
 		6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */; };
 		6CC01ED719BB437556975E0E /* ProceduralSpriteCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA993F56CB91DA7B601CED7 /* ProceduralSpriteCache.swift */; };
 		72F5C76DE1DE17492E35CB2D /* AssetRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80433406A56850A438A47CCF /* AssetRegistry.swift */; };
@@ -148,6 +150,7 @@
 		61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
 		62179BA01062955FB70F71FA /* opencode_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = opencode_sample.json; sourceTree = "<group>"; };
 		6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParser.swift; sourceTree = "<group>"; };
+		67889CBDC4B02CE0B02BF984 /* MenuBarDotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarDotView.swift; sourceTree = "<group>"; };
 		683C1BB6357F9C9CD9E0C516 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
 		68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBatch.swift; sourceTree = "<group>"; };
 		694A9609392B6FDBF6F795CD /* GrowthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStore.swift; sourceTree = "<group>"; };
@@ -201,6 +204,7 @@
 		CDE73FE16262AA24DA4C5785 /* SystemEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEventSource.swift; sourceTree = "<group>"; };
 		D11DBD5FB294FA4BE66E36A2 /* SysTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SysTab.swift; sourceTree = "<group>"; };
 		DD46176C63EAC09DC514CE49 /* DebugStateHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugStateHUD.swift; sourceTree = "<group>"; };
+		DE175D67C9AF85DC79520DFD /* QuotaCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaCardView.swift; sourceTree = "<group>"; };
 		E4A296FB2AA0F63C2F9E73C7 /* gemini_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = gemini_sample.json; sourceTree = "<group>"; };
 		E5585BE7221D4BD3F166CB3E /* GrowthEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthEngineTests.swift; sourceTree = "<group>"; };
 		E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStoreTests.swift; sourceTree = "<group>"; };
@@ -234,8 +238,10 @@
 				DD46176C63EAC09DC514CE49 /* DebugStateHUD.swift */,
 				4C8BF2517DCE7CEFB60114B3 /* HabitatView.swift */,
 				E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */,
+				67889CBDC4B02CE0B02BF984 /* MenuBarDotView.swift */,
 				60297808408A5939E6D93BD2 /* PopoverView.swift */,
 				75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */,
+				DE175D67C9AF85DC79520DFD /* QuotaCardView.swift */,
 				BF5A76CD75700858B284AA0D /* Settings */,
 			);
 			path = UI;
@@ -611,6 +617,7 @@
 				1D5DF8C374E32B447ED8FF30 /* ManifestValidator.swift in Sources */,
 				CA601687B85D06D3CAC8556A /* ManualDebugEventSource.swift in Sources */,
 				16EA9521CDA030620DE6A419 /* MapTab.swift in Sources */,
+				6AF577D1EAB17321BFBA522E /* MenuBarDotView.swift in Sources */,
 				D8B01589C118BB45803F5FA3 /* MenuBarIconRenderer.swift in Sources */,
 				BDB688527872D702C345F81D /* NodeGate.swift in Sources */,
 				78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */,
@@ -626,6 +633,7 @@
 				6CC01ED719BB437556975E0E /* ProceduralSpriteCache.swift in Sources */,
 				A443C8EABAA30435A1BE59CE /* ProviderQuotaSnapshot.swift in Sources */,
 				C27119513A6AEF92DC1BB180 /* QuotaBarView.swift in Sources */,
+				57994EE31E32913BFE55FCA8 /* QuotaCardView.swift in Sources */,
 				B4A4CDB50783F1EB30B943EA /* QuotaClient.swift in Sources */,
 				C10E252196DE610DF0D9E3F9 /* QuotaCoordinator.swift in Sources */,
 				2F1E20A082290F686CE9205E /* QuotaSource.swift in Sources */,

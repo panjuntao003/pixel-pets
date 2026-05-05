@@ -2,85 +2,89 @@ import AppKit
 import SwiftUI
 
 struct PopoverView: View {
-    @ObservedObject var viewModel: PetViewModel
     @EnvironmentObject var settingsStore: SettingsStore
+    @ObservedObject var stateStore: QuotaStateStore
     var onRefresh: () -> Void = {}
-    var onConfigureHooks: () -> Void = {}
+
+    private var enabledProviders: [AIProvider] {
+        AIProvider.allCases.filter { $0 != .unknown && settingsStore.settings.isProviderEnabled($0) }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            HabitatView(viewModel: viewModel)
-                .environmentObject(settingsStore)
+            Text("Quota Monitor")
+                .font(.system(size: 13, weight: .bold))
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
-            Divider()
-            LinearGradient(
-                colors: [
-                    Color(nsColor: .windowBackgroundColor).opacity(0),
-                    Color(nsColor: .windowBackgroundColor)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 4)
-
-            ScrollView {
-                if viewModel.visibleClis.isEmpty {
-                    EmptyStateView()
-                        .padding(20)
-                } else {
-                    VStack(spacing: 8) {
-                        ForEach(viewModel.visibleClis) { info in
-                            CliCardView(info: info)
-                        }
+            if enabledProviders.isEmpty {
+                noProvidersView
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(enabledProviders, id: \.self) { provider in
+                        QuotaCardView(
+                            provider: provider,
+                            snapshot: stateStore.snapshot(for: provider)
+                        )
                     }
-                    .padding(12)
                 }
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
             }
 
             Divider()
 
             HStack {
-                Text("累计 \(fmt(viewModel.totalLifetimeTokens)) tokens")
-                    .font(.system(size: 9)).foregroundStyle(.secondary)
+                if let refreshedAt = stateStore.lastRefreshAt {
+                    Text("Refreshed \(relativeTime(from: refreshedAt))")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.tertiary)
+                }
                 Spacer()
-                Button {
-                    onRefresh()
-                } label: {
+                Button(action: onRefresh) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                }.buttonStyle(.plain).help("刷新配额")
+                        .font(.system(size: 12))
+                }
+                .buttonStyle(.plain)
+                .help("Refresh quotas")
                 SettingsLink {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 13)).foregroundStyle(.secondary)
-                }.buttonStyle(.plain).help("设置")
-            }.padding(.horizontal, 12).padding(.vertical, 8)
-        }.frame(width: 360)
+                        .font(.system(size: 13))
+                }
+                .buttonStyle(.plain)
+                .help("Settings")
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+        }
+        .frame(width: 280)
     }
 
-    private func fmt(_ n: Int) -> String {
-        if n >= 1_000_000 { return String(format: "%.1fM", Double(n)/1_000_000) }
-        if n >= 1_000     { return String(format: "%.0fK", Double(n)/1_000) }
-        return "\(n)"
-    }
-}
-
-private struct EmptyStateView: View {
-    var body: some View {
+    private var noProvidersView: some View {
         VStack(spacing: 12) {
-            Image(systemName: "powerplug.portrait")
-                .font(.system(size: 32))
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 28))
                 .foregroundStyle(.secondary)
-            Text("所有终端已休眠")
+            Text("No providers enabled")
                 .font(.system(size: 13, weight: .medium))
-            Text("在设置中启用至少一个 CLI")
+            Text("Enable at least one provider in Settings")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
             SettingsLink {
-                Text("打开设置")
+                Text("Open Settings")
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.small)
         }
+        .padding(.vertical, 30)
         .frame(maxWidth: .infinity)
+    }
+
+    private func relativeTime(from date: Date) -> String {
+        let interval = -date.timeIntervalSinceNow
+        if interval < 60 { return "just now" }
+        if interval < 3600 { return "\(Int(interval/60)) min ago" }
+        if interval < 86400 { return "\(Int(interval/3600))h ago" }
+        return "\(Int(interval/86400))d ago"
     }
 }
