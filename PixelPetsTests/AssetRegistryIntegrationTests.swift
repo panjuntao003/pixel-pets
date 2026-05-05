@@ -214,4 +214,18 @@ final class AssetRegistryIntegrationTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - Exact count verification
+
+    func test_exactTotalCounts() {
+        XCTAssertEqual(registry.scenes.count, 5, "Expected 5 total scenes")
+        XCTAssertEqual(registry.pets.count, 4, "Expected 4 total pets")
+        XCTAssertEqual(registry.accessories.count, 7, "Expected 7 total accessories")
+    }
+
+    func test_exactProductionCounts() {
+        XCTAssertEqual(registry.productionScenes.count, 4, "Expected 4 production scenes (2 true + 2 nil)")
+        XCTAssertEqual(registry.productionPets.count, 3, "Expected 3 production pets (2 true + 1 nil)")
+        XCTAssertEqual(registry.productionAccessories.count, 4, "Expected 4 production accessories (3 true + 1 nil)")
+    }
 }

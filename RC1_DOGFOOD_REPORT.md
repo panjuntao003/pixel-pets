@@ -41,10 +41,12 @@
 - **事件追溯**: [记录 HUD 的 Timeline 是否能准确解释宠物刚才为什么变红或充电]
 - **优先级标识**: [确认 `[OVERRIDE]` 标签是否能在关键时刻帮助排查状态覆盖逻辑]
 
-## 6. 资产稳定性与兼容性
-- **Galaxy Observatory 组合**: [运行状况，锚点是否偏离]
-- **Rooftop Server Garden 组合**: [运行状况，云朵配件动画是否正常]
-- **Underwater Aquarium 组合**: [运行状况，32x32 尺寸水母和泡泡头盔是否完美贴合]
+## 6. 资产稳定性与兼容性 (Content Pack 01)
+- **Underwater Aquarium (Pet: Jellyfish)**: [运行状况，锚点是否偏离]
+- **Rooftop Server Garden (Pet: Terminal Bot)**: [运行状况，云朵配件动画是否正常]
+- **Production Filtering**: [验证在设置页面是否**无法**选到 Quantum Cactus 或 Repair Workshop]
+- **Incompatibility Enforcement**: [验证 Repair Patch 是否在 Neural Jellyfish 身上显示为“不兼容”且无法装备]
+- **Debug Gallery Visibility**: [确认在调试模式下是否依然能预览所有 01 资产，包括 Debug Only 资产]
 - **Fallback 机制**: [在人为删除某张 state png 后，系统是否优雅回退]
 
 ---
