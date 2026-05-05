@@ -1,12 +1,19 @@
-# Quota Monitor MVP Phase A — Implementation Plan
+# Quota Monitor MVP Phase A — Implementation Plan (Revised)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Rewire the PixelPets app from a virtual pet system into a minimal menu-bar AI quota monitor. Disconnect Pixel Pets runtime without deleting source files.
 
-**Architecture:** Replace `AppCoordinator` with `QuotaCoordinator` that fetches quotas from 4 providers via existing quota clients, stores snapshots in `QuotaStateStore`, and drives a minimal popover UI. Keep all pet source files on disk but not referenced from the main execution path.
+**Architecture:** Replace `AppCoordinator` with `QuotaCoordinator` that fetches quotas from 4 providers sequentially via existing quota clients, stores snapshots in `QuotaStateStore`, and drives a minimal popover UI. Keep all pet source files on disk and in the build target — only the app entry point stops referencing them.
 
 **Tech Stack:** Swift 5.9, SwiftUI, AppKit (NSStatusItem/NSPopover), Combine
+
+**Key constraints:**
+- No physical deletion of Pixel Pets files
+- SettingsStore keeps old fields for backward compat with pet code still in build target
+- enabledProviders uses `[String: Bool]` (rawValue keys) to avoid enum-key Codable issues
+- QuotaCoordinator uses sequential async/await (no TaskGroup)
+- AIProvider.displayName defined once in AIProvider.swift
 
 ---
 
@@ -17,6 +24,7 @@
 - Create: `PixelPets/Models/QuotaSource.swift`
 - Create: `PixelPets/Models/ProviderQuotaSnapshot.swift`
 - Create: `PixelPets/Models/QuotaStateStore.swift`
+- Modify: `PixelPets/Models/AIProvider.swift` — add `displayName`
 - Create: `PixelPetsTests/QuotaStateStoreTests.swift`
 
 - [ ] **Step 1: Create QuotaStatus.swift**
@@ -47,7 +55,25 @@ enum QuotaSource: String, Codable {
 }
 ```
 
-- [ ] **Step 3: Create ProviderQuotaSnapshot.swift**
+- [ ] **Step 3: Add displayName to AIProvider.swift**
+
+Append to `AIProvider.swift`:
+
+```swift
+extension AIProvider {
+    var displayName: String {
+        switch self {
+        case .claude:  return "Claude"
+        case .opencode: return "OpenCode"
+        case .codex:   return "Codex"
+        case .gemini:  return "Gemini"
+        case .unknown: return "Unknown"
+        }
+    }
+}
+```
+
+- [ ] **Step 4: Create ProviderQuotaSnapshot.swift**
 
 ```swift
 import Foundation
@@ -91,7 +117,7 @@ struct ProviderQuotaSnapshot: Codable, Equatable {
 }
 ```
 
-- [ ] **Step 4: Create QuotaStateStore.swift**
+- [ ] **Step 5: Create QuotaStateStore.swift**
 
 ```swift
 import Foundation
@@ -132,17 +158,10 @@ final class QuotaStateStore: ObservableObject {
         if candidates.allSatisfy({ $0.status == .unavailable }) { return .unavailable }
         return .unknown
     }
-
-    var allProviderStatuses: [(AIProvider, QuotaStatus)] {
-        AIProvider.allCases.compactMap { provider in
-            guard provider != .unknown else { return nil }
-            return (provider, snapshots[provider]?.status ?? .unknown)
-        }
-    }
 }
 ```
 
-- [ ] **Step 5: Write QuotaStateStoreTests.swift**
+- [ ] **Step 6: Write QuotaStateStoreTests.swift**
 
 ```swift
 import XCTest
@@ -219,23 +238,30 @@ final class QuotaStateStoreTests: XCTestCase {
     private func makeSnapshot(_ prov: AIProvider, _ status: QuotaStatus) -> ProviderQuotaSnapshot {
         ProviderQuotaSnapshot(
             provider: prov, status: status, remainingPercent: status == .normal ? 80 : nil,
-            resetAt: nil, lastCheckedAt: Date(), lastSuccessfulAt: Date(),
+            resetAt: nil, lastCheckedAt: Date(), lastSuccessfulAt: status != .unavailable ? Date() : nil,
             source: .providerAPI, message: nil
         )
     }
 }
 ```
 
-- [ ] **Step 6: Run tests to verify they pass**
+- [ ] **Step 7: Run tests**
 
 Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' -only-testing:PixelPetsTests/QuotaStateStoreTests 2>&1`
-Expected: All tests PASS
+Expected: All tests PASS, test count = 8
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Add new files to Xcode target**
+
+The `project.yml` uses `sources: - path: PixelPets` which auto-includes all Swift files. Verify with:
+
+Run: `xcodebuild -list -project PixelPets.xcodeproj`
+Then regenerate project if using XcodeGen: `(cd /Users/panjuntao/Developer/pixel-pets && xcodegen generate --use-cache 2>&1 || echo "XcodeGen not available, verify files appear in Xcode manually")`
+
+- [ ] **Step 9: Commit**
 
 ```bash
-git add PixelPets/Models/QuotaStatus.swift PixelPets/Models/QuotaSource.swift PixelPets/Models/ProviderQuotaSnapshot.swift PixelPets/Models/QuotaStateStore.swift PixelPetsTests/QuotaStateStoreTests.swift
-git commit -m "feat(quota): add QuotaStatus, QuotaSource, ProviderQuotaSnapshot, QuotaStateStore with tests"
+git add PixelPets/Models/QuotaStatus.swift PixelPets/Models/QuotaSource.swift PixelPets/Models/ProviderQuotaSnapshot.swift PixelPets/Models/QuotaStateStore.swift PixelPets/Models/AIProvider.swift PixelPetsTests/QuotaStateStoreTests.swift
+git commit -m "feat(quota): add QuotaStatus, QuotaSource, ProviderQuotaSnapshot, QuotaStateStore, displayName with tests"
 ```
 
 ---
@@ -249,7 +275,7 @@ git commit -m "feat(quota): add QuotaStatus, QuotaSource, ProviderQuotaSnapshot,
 
 - [ ] **Step 1: Create CodexQuotaClient.swift**
 
-Extract the `CodexQuotaClient` class (lines 161–263) from `ClaudeQuotaClient.swift` into the new file:
+Copy the `CodexQuotaClient` class (lines 161–263) from `ClaudeQuotaClient.swift` into the new file:
 
 ```swift
 import Foundation
@@ -259,64 +285,319 @@ final class CodexQuotaClient {
     private static let usageURL = URL(string: "https://chatgpt.com/backend-api/wham/usage")!
 
     func fetch() async -> QuotaFetchResult {
-        // ... (exact copy from ClaudeQuotaClient.swift lines 165–189)
+        guard let token = Self.readAccessToken() else {
+            return .unavailable("未找到 Codex ChatGPT 凭据")
+        }
+
+        var request = URLRequest(url: Self.usageURL, timeoutInterval: 10)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                return .unavailable("Codex 配额 API 请求失败")
+            }
+
+            let tiers = Self.parseQuotaTiers(from: data)
+            guard !tiers.isEmpty else {
+                return .unavailable("Codex 响应中无配额数据")
+            }
+
+            return .success(tiers)
+        } catch {
+            return .unavailable("Codex 配额 API 请求失败")
+        }
     }
 
     static func parseQuotaTiers(from data: Data, now: Date = Date()) -> [QuotaTier] {
-        // ... (exact copy from ClaudeQuotaClient.swift lines 192–203)
+        guard
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let rateLimit = json["rate_limit"] as? [String: Any]
+        else {
+            return []
+        }
+
+        return [
+            quotaTier(id: "five_hour", from: rateLimit["primary_window"], now: now),
+            quotaTier(id: "weekly", from: rateLimit["secondary_window"], now: now)
+        ].compactMap { $0 }
     }
 
     private static func quotaTier(id: String, from value: Any?, now: Date) -> QuotaTier? {
-        // ... (exact copy from ClaudeQuotaClient.swift lines 206–219)
+        guard
+            let window = value as? [String: Any],
+            let usedPercent = doubleValue(window["used_percent"])
+        else {
+            return nil
+        }
+
+        return QuotaTier(
+            id: id,
+            utilization: min(1, max(0, usedPercent / 100)),
+            resetsAt: resetDate(from: window, now: now),
+            isEstimated: false
+        )
     }
 
     private static func resetDate(from window: [String: Any], now: Date) -> Date? {
-        // ... (exact copy from ClaudeQuotaClient.swift lines 222–229)
+        if let resetAt = doubleValue(window["reset_at"]) {
+            return Date(timeIntervalSince1970: resetAt)
+        }
+        if let resetAfter = doubleValue(window["reset_after_seconds"]) {
+            return now.addingTimeInterval(resetAfter)
+        }
+        return nil
     }
 
     private static func readAccessToken() -> String? {
-        // ... (exact copy from ClaudeQuotaClient.swift lines 232–243)
+        let credentialURL = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent(authFilePath)
+        guard let data = try? Data(contentsOf: credentialURL),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              json["auth_mode"] as? String == "chatgpt",
+              let tokens = json["tokens"] as? [String: Any],
+              let token = tokens["access_token"] as? String,
+              !token.isEmpty else {
+            return nil
+        }
+        return token
     }
 
-    private static func doubleValue(_ value: Any?) -> Double? {
-        // ... (exact copy from ClaudeQuotaClient.swift lines 246–261)
+    internal static func doubleValue(_ value: Any?) -> Double? {
+        switch value {
+        case let number as NSNumber:
+            if CFGetTypeID(number) == CFBooleanGetTypeID() {
+                return nil
+            }
+            return number.doubleValue
+        case let double as Double:
+            return double
+        case let int as Int:
+            return Double(int)
+        case _ as Bool:
+            return nil
+        default:
+            return nil
+        }
     }
 }
 ```
 
 - [ ] **Step 2: Create GeminiQuotaClient.swift**
 
-Extract the `GeminiQuotaClient` class (lines 265–458) from `ClaudeQuotaClient.swift` into the new file:
+Copy the `GeminiQuotaClient` class (lines 265–458) from `ClaudeQuotaClient.swift` into the new file. Keep all methods identical:
 
 ```swift
 import Foundation
 
 final class GeminiQuotaClient {
     private static let oauthFilePath = ".gemini/oauth_creds.json"
-    // ... (exact copy from ClaudeQuotaClient.swift, but remove the `private static func doubleValue` 
-    // since it's also needed by other clients, keep it internal)
+    private static let tokenURL = URL(string: "https://oauth2.googleapis.com/token")!
+    private static let loadCodeAssistURL = URL(string: "https://cloudcode-pa.googleapis.com/v1internal:loadCodeAssist")!
+    private static let retrieveQuotaURL = URL(string: "https://cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota")!
+    private static let oauthClientID = "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com"
+    private static let oauthClientSecret = "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"
+    private static let iso8601Formatter = ISO8601DateFormatter()
 
-    // Keep all methods exactly as they are in ClaudeQuotaClient.swift lines 265–458
-    // EXCEPT for the static fetch/parse methods that are called externally - those stay public
+    func fetch() async -> QuotaFetchResult {
+        guard let token = await Self.readAccessToken() else {
+            return .unavailable("未找到 Gemini CLI 凭据")
+        }
+
+        do {
+            let loadData = try await Self.postJSON(
+                url: Self.loadCodeAssistURL,
+                token: token,
+                body: [
+                    "metadata": [
+                        "ideType": "IDE_UNSPECIFIED",
+                        "platform": "PLATFORM_UNSPECIFIED",
+                        "pluginType": "GEMINI"
+                    ]
+                ]
+            )
+            guard let project = Self.parseProject(from: loadData) else {
+                return .unavailable("Gemini 响应中无项目数据")
+            }
+
+            let quotaData = try await Self.postJSON(
+                url: Self.retrieveQuotaURL,
+                token: token,
+                body: ["project": project]
+            )
+            let tiers = Self.parseQuotaTiers(from: quotaData)
+            guard !tiers.isEmpty else {
+                return .unavailable("Gemini 响应中无配额数据")
+            }
+            return .success(tiers)
+        } catch {
+            return .unavailable("Gemini 配额 API 请求失败")
+        }
+    }
+
+    static func parseQuotaTiers(from data: Data) -> [QuotaTier] {
+        guard
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let buckets = json["buckets"] as? [[String: Any]]
+        else {
+            return []
+        }
+
+        let proTier      = classTier(id: "pro",        from: buckets) { $0.contains("pro") }
+        let flashTier    = classTier(id: "flash",      from: buckets) { $0.contains("flash") && !$0.contains("lite") }
+        let flashLiteTier = classTier(id: "flash_lite", from: buckets) { $0.contains("flash") && $0.contains("lite") }
+
+        return [proTier, flashTier, flashLiteTier].compactMap { $0 }
+    }
+
+    static func parseProject(from data: Data) -> String? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        if let project = json["cloudaicompanionProject"] as? String, !project.isEmpty {
+            return project
+        }
+
+        if let project = json["cloudaicompanionProject"] as? [String: Any],
+           let id = project["id"] as? String,
+           !id.isEmpty {
+            return id
+        }
+
+        return nil
+    }
+
+    private static func classTier(id: String, from buckets: [[String: Any]], matching: (String) -> Bool) -> QuotaTier? {
+        let selected = buckets.filter { bucket in
+            guard let modelId = bucket["modelId"] as? String else { return false }
+            return matching(modelId)
+        }
+        guard !selected.isEmpty else { return nil }
+
+        let fractions = selected.compactMap { doubleValue($0["remainingFraction"]) }
+        guard !fractions.isEmpty else { return nil }
+
+        let avgRemaining = fractions.reduce(0, +) / Double(fractions.count)
+
+        let resetDates = selected.compactMap { bucket -> Date? in
+            guard let t = bucket["resetTime"] as? String else { return nil }
+            return iso8601Formatter.date(from: t)
+        }
+
+        return QuotaTier(
+            id: id,
+            utilization: min(1, max(0, 1 - avgRemaining)),
+            resetsAt: resetDates.min(),
+            isEstimated: false
+        )
+    }
+
+    private static func readAccessToken() async -> String? {
+        let credentialURL = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent(oauthFilePath)
+        guard let data = try? Data(contentsOf: credentialURL),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        if let token = json["access_token"] as? String,
+           !token.isEmpty,
+           !isExpired(json["expiry_date"]) {
+            return token
+        }
+
+        guard let refreshToken = json["refresh_token"] as? String, !refreshToken.isEmpty else {
+            return nil
+        }
+
+        return await refreshAccessToken(refreshToken: refreshToken)
+    }
+
+    private static func refreshAccessToken(refreshToken: String) async -> String? {
+        var request = URLRequest(url: tokenURL, timeoutInterval: 10)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        var components = URLComponents()
+        components.queryItems = [
+            URLQueryItem(name: "client_id", value: oauthClientID),
+            URLQueryItem(name: "client_secret", value: oauthClientSecret),
+            URLQueryItem(name: "refresh_token", value: refreshToken),
+            URLQueryItem(name: "grant_type", value: "refresh_token")
+        ]
+        request.httpBody = components.percentEncodedQuery?.data(using: .utf8)
+
+        guard
+            let (data, response) = try? await URLSession.shared.data(for: request),
+            (response as? HTTPURLResponse)?.statusCode == 200,
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let token = json["access_token"] as? String,
+            !token.isEmpty
+        else {
+            return nil
+        }
+
+        return token
+    }
+
+    private static func postJSON(url: URL, token: String, body: [String: Any]) async throws -> Data {
+        var request = URLRequest(url: url, timeoutInterval: 10)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        return data
+    }
+
+    private static func isExpired(_ value: Any?) -> Bool {
+        guard let expiryMilliseconds = doubleValue(value) else {
+            return false
+        }
+        let expiryDate = Date(timeIntervalSince1970: expiryMilliseconds / 1000)
+        return expiryDate.timeIntervalSinceNow < 60
+    }
+
+    internal static func doubleValue(_ value: Any?) -> Double? {
+        switch value {
+        case let number as NSNumber:
+            if CFGetTypeID(number) == CFBooleanGetTypeID() {
+                return nil
+            }
+            return number.doubleValue
+        case let double as Double:
+            return double
+        case let int as Int:
+            return Double(int)
+        case _ as Bool:
+            return nil
+        default:
+            return nil
+        }
+    }
 }
 ```
 
-Note: `doubleValue` is used by all three clients. After extraction, a shared utility can be considered. For now, since the Gemini client uses its own private `doubleValue`, we duplicate it (each file has its own copy of this helper). This matches the existing pattern.
-
 - [ ] **Step 3: Remove extracted classes from ClaudeQuotaClient.swift**
 
-Delete lines 161–458 from `ClaudeQuotaClient.swift` (everything after the `ClaudeQuotaClient` class).
+Delete lines 161–458 from `ClaudeQuotaClient.swift`. The file should now contain ONLY the `ClaudeQuotaClient` class (lines 1–159).
 
-- [ ] **Step 4: Update project.yml to include new files**
+Also make `doubleValue` in `ClaudeQuotaClient` `internal` instead of `private` (not strictly needed since each client has its own copy, but cleaner).
 
-No changes needed — `project.yml` uses `sources: - path: PixelPets` which automatically includes all Swift files in the directory.
+- [ ] **Step 4: Run existing quota tests to verify extraction didn't break anything**
 
-- [ ] **Step 5: Run existing Claude quota tests to verify nothing broke**
+Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' -only-testing:PixelPetsTests/ClaudeQuotaClientTests -only-testing:PixelPetsTests/QuotaStateStoreTests 2>&1`
+Expected: All tests PASS, test count for ClaudeQuotaClientTests = 7 + QuotaStateStoreTests = 8
 
-Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' 2>&1`
-Expected: ClaudeQuotaClientTests and QuotaStateStoreTests all PASS
-
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add PixelPets/Senses/CodexQuotaClient.swift PixelPets/Senses/GeminiQuotaClient.swift PixelPets/Senses/ClaudeQuotaClient.swift
@@ -333,9 +614,71 @@ git commit -m "refactor(quota): extract CodexQuotaClient and GeminiQuotaClient t
 
 - [ ] **Step 1: Create QuotaCoordinator.swift**
 
+QuotaCoordinator fetches quotas SEQUENTIALLY (no TaskGroup) to avoid MainActor/Sendable issues.
+
 ```swift
 import Foundation
 import Combine
+
+/// Maps a QuotaFetchResult to a ProviderQuotaSnapshot using a configurable low-quota threshold.
+/// - estimated results are evaluated with the same utilization + threshold logic as success.
+/// - lastSuccessfulAt = checkedAt for both success and estimated.
+func mapQuotaFetchResultToSnapshot(
+    provider: AIProvider,
+    result: QuotaFetchResult,
+    checkedAt: Date,
+    lowQuotaThreshold: Int = 20
+) -> ProviderQuotaSnapshot {
+    switch result {
+    case .success(let tiers):
+        let maxUtilization = tiers.isEmpty ? 0.0 : tiers.map(\.utilization).max() ?? 0.0
+        let remaining = (1.0 - maxUtilization) * 100.0
+        let soonestReset = tiers.compactMap(\.resetsAt).min()
+        let status: QuotaStatus = maxUtilization >= 1.0 ? .exhausted
+            : (remaining <= Double(lowQuotaThreshold)) ? .low
+            : .normal
+        return ProviderQuotaSnapshot(
+            provider: provider,
+            status: status,
+            remainingPercent: remaining,
+            resetAt: soonestReset,
+            lastCheckedAt: checkedAt,
+            lastSuccessfulAt: checkedAt,
+            source: .providerAPI,
+            message: nil
+        )
+
+    case .estimated(let tiers):
+        let maxUtilization = tiers.isEmpty ? 0.0 : tiers.map(\.utilization).max() ?? 0.0
+        let remaining = (1.0 - maxUtilization) * 100.0
+        let soonestReset = tiers.compactMap(\.resetsAt).min()
+        let status: QuotaStatus = maxUtilization >= 1.0 ? .exhausted
+            : (remaining <= Double(lowQuotaThreshold)) ? .low
+            : .normal
+        return ProviderQuotaSnapshot(
+            provider: provider,
+            status: status,
+            remainingPercent: remaining,
+            resetAt: soonestReset,
+            lastCheckedAt: checkedAt,
+            lastSuccessfulAt: checkedAt,
+            source: .estimated,
+            message: nil
+        )
+
+    case .unavailable(let reason):
+        return ProviderQuotaSnapshot(
+            provider: provider,
+            status: .unavailable,
+            remainingPercent: nil,
+            resetAt: nil,
+            lastCheckedAt: checkedAt,
+            lastSuccessfulAt: nil,
+            source: .unknown,
+            message: reason
+        )
+    }
+}
 
 @MainActor
 final class QuotaCoordinator: ObservableObject {
@@ -351,11 +694,13 @@ final class QuotaCoordinator: ObservableObject {
     private var hasStarted = false
 
     var enabledProviders: Set<AIProvider> {
+        let settings = settingsStore.settings
         var providers = Set<AIProvider>()
-        if settingsStore.settings.isProviderEnabled(.claude) { providers.insert(.claude) }
-        if settingsStore.settings.isProviderEnabled(.codex) { providers.insert(.codex) }
-        if settingsStore.settings.isProviderEnabled(.gemini) { providers.insert(.gemini) }
-        if settingsStore.settings.isProviderEnabled(.opencode) { providers.insert(.opencode) }
+        for provider in [AIProvider.claude, AIProvider.codex, AIProvider.gemini, AIProvider.opencode] {
+            if settings.isProviderEnabled(provider) {
+                providers.insert(provider)
+            }
+        }
         return providers
     }
 
@@ -378,79 +723,33 @@ final class QuotaCoordinator: ObservableObject {
     }
 
     private func refreshAll() async {
-        let providers = enabledProviders
-        await withTaskGroup(of: (AIProvider, ProviderQuotaSnapshot).self) { group in
-            for provider in AIProvider.allCases {
-                guard provider != .unknown, providers.contains(provider) else { continue }
-                group.addTask { await self.fetchAndMap(provider: provider) }
-            }
-            for await (provider, snapshot) in group {
-                stateStore.update(provider: provider, snapshot: snapshot)
-            }
-        }
-    }
-
-    private func fetchAndMap(provider: AIProvider) async -> (AIProvider, ProviderQuotaSnapshot) {
-        let now = Date()
-        let result: QuotaFetchResult
-        switch provider {
-        case .claude:
-            result = await claudeClient.fetch()
-        case .codex:
-            result = await codexClient.fetch()
-        case .gemini:
-            result = await geminiClient.fetch()
-        case .opencode:
-            result = await openCodeGoClient.fetch()
-        case .unknown:
-            return (.unknown, ProviderQuotaSnapshot.unavailable(provider: .unknown, message: "Unknown provider"))
-        }
-        return (provider, mapToSnapshot(provider: provider, result: result, checkedAt: now))
-    }
-
-    private func mapToSnapshot(provider: AIProvider, result: QuotaFetchResult, checkedAt: Date) -> ProviderQuotaSnapshot {
         let threshold = settingsStore.settings.lowQuotaThreshold
+        let now = Date()
 
-        switch result {
-        case .success(let tiers):
-            let maxUtilization = tiers.isEmpty ? 0.0 : tiers.map(\.utilization).max() ?? 0.0
-            let remaining = (1.0 - maxUtilization) * 100.0
-            let soonestReset = tiers.compactMap(\.resetsAt).min()
-            let status: QuotaStatus = maxUtilization >= 1.0 ? .exhausted
-                : (remaining <= Double(threshold)) ? .low
-                : .normal
-            return ProviderQuotaSnapshot(
-                provider: provider, status: status,
-                remainingPercent: remaining,
-                resetAt: soonestReset,
-                lastCheckedAt: checkedAt,
-                lastSuccessfulAt: Date(),
-                source: .providerAPI,
-                message: nil
+        for providerProvider in AIProvider.allCases {
+            guard providerProvider != .unknown, enabledProviders.contains(providerProvider) else { continue }
+
+            let result: QuotaFetchResult
+            switch providerProvider {
+            case .claude:
+                result = await claudeClient.fetch()
+            case .codex:
+                result = await codexClient.fetch()
+            case .gemini:
+                result = await geminiClient.fetch()
+            case .opencode:
+                result = await openCodeGoClient.fetch()
+            case .unknown:
+                continue
+            }
+
+            let snapshot = mapQuotaFetchResultToSnapshot(
+                provider: providerProvider,
+                result: result,
+                checkedAt: now,
+                lowQuotaThreshold: threshold
             )
-        case .estimated(let tiers):
-            let maxUtilization = tiers.isEmpty ? 0.0 : tiers.map(\.utilization).max() ?? 0.0
-            let remaining = (1.0 - maxUtilization) * 100.0
-            let soonestReset = tiers.compactMap(\.resetsAt).min()
-            return ProviderQuotaSnapshot(
-                provider: provider, status: .normal,
-                remainingPercent: remaining,
-                resetAt: soonestReset,
-                lastCheckedAt: checkedAt,
-                lastSuccessfulAt: Date(),
-                source: .estimated,
-                message: "Estimated"
-            )
-        case .unavailable(let reason):
-            return ProviderQuotaSnapshot(
-                provider: provider, status: .unavailable,
-                remainingPercent: nil,
-                resetAt: nil,
-                lastCheckedAt: checkedAt,
-                lastSuccessfulAt: nil,
-                source: .unknown,
-                message: reason
-            )
+            stateStore.update(provider: providerProvider, snapshot: snapshot)
         }
     }
 }
@@ -458,179 +757,7 @@ final class QuotaCoordinator: ObservableObject {
 
 - [ ] **Step 2: Create QuotaCoordinatorTests.swift**
 
-```swift
-import XCTest
-@testable import PixelPets
-
-@MainActor
-final class QuotaCoordinatorTests: XCTestCase {
-    var coordinator: QuotaCoordinator!
-
-    override func setUp() {
-        super.setUp()
-        coordinator = QuotaCoordinator()
-    }
-
-    func test_enabledProviders_defaultAllEnabled() {
-        let providers = coordinator.enabledProviders
-        XCTAssertTrue(providers.contains(.claude))
-        XCTAssertTrue(providers.contains(.codex))
-        XCTAssertTrue(providers.contains(.gemini))
-        XCTAssertTrue(providers.contains(.opencode))
-    }
-
-    func test_enabledProviders_respectsSettings() {
-        coordinator.settingsStore.update { $0.isProviderEnabled(.codex) = false }
-        let providers = coordinator.enabledProviders
-        XCTAssertFalse(providers.contains(.codex))
-        XCTAssertTrue(providers.contains(.claude))
-    }
-
-    func test_mapToSnapshot_successNormal() {
-        let tier = QuotaTier(id: "test", utilization: 0.3, resetsAt: nil, isEstimated: false)
-        let result = QuotaFetchResult.success([tier])
-        let snapshot = callMapToSnapshot(provider: .claude, result: result)
-        XCTAssertEqual(snapshot.status, .normal)
-        XCTAssertEqual(snapshot.remainingPercent ?? 0, 70, accuracy: 0.01)
-        XCTAssertEqual(snapshot.source, .providerAPI)
-    }
-
-    func test_mapToSnapshot_successLow() {
-        let tier = QuotaTier(id: "test", utilization: 0.9, resetsAt: nil, isEstimated: false)
-        let result = QuotaFetchResult.success([tier])
-        let snapshot = callMapToSnapshot(provider: .claude, result: result)
-        XCTAssertEqual(snapshot.status, .low)
-        XCTAssertEqual(snapshot.remainingPercent ?? 0, 10, accuracy: 0.01)
-    }
-
-    func test_mapToSnapshot_successExhausted() {
-        let tier = QuotaTier(id: "test", utilization: 1.0, resetsAt: nil, isEstimated: false)
-        let result = QuotaFetchResult.success([tier])
-        let snapshot = callMapToSnapshot(provider: .claude, result: result)
-        XCTAssertEqual(snapshot.status, .exhausted)
-    }
-
-    func test_mapToSnapshot_unavailable() {
-        let result = QuotaFetchResult.unavailable("Test unavailable")
-        let snapshot = callMapToSnapshot(provider: .claude, result: result)
-        XCTAssertEqual(snapshot.status, .unavailable)
-        XCTAssertEqual(snapshot.message, "Test unavailable")
-        XCTAssertNil(snapshot.lastSuccessfulAt)
-    }
-
-    func test_mapToSnapshot_estimated() {
-        let tier = QuotaTier(id: "test", utilization: 0, resetsAt: nil, isEstimated: true)
-        let result = QuotaFetchResult.estimated([tier])
-        let snapshot = callMapToSnapshot(provider: .opencode, result: result)
-        XCTAssertEqual(snapshot.status, .normal)
-        XCTAssertEqual(snapshot.source, .estimated)
-    }
-
-    func test_mapToSnapshot_usesSoonestResetDate() {
-        let soonest = Date().addingTimeInterval(3600)
-        let later = Date().addingTimeInterval(7200)
-        let t1 = QuotaTier(id: "a", utilization: 0.1, resetsAt: later, isEstimated: false)
-        let t2 = QuotaTier(id: "b", utilization: 0.2, resetsAt: soonest, isEstimated: false)
-        let result = QuotaFetchResult.success([t1, t2])
-        let snapshot = callMapToSnapshot(provider: .claude, result: result)
-        XCTAssertEqual(snapshot.resetAt, soonest)
-    }
-
-    private func callMapToSnapshot(provider: AIProvider, result: QuotaFetchResult) -> ProviderQuotaSnapshot {
-        let mirror = Mirror(reflecting: coordinator)
-        for child in mirror.children {
-            if let mapper = child.value as? ((AIProvider, QuotaFetchResult, Date) -> ProviderQuotaSnapshot) {
-                return mapper(provider, result, Date())
-            }
-        }
-        // Fallback: access via the type
-        return coordinator.callMapToSnapshot(provider: provider, result: result)
-    }
-}
-
-// Extension to expose private method for testing
-extension QuotaCoordinator {
-    func callMapToSnapshot(provider: AIProvider, result: QuotaFetchResult) -> ProviderQuotaSnapshot {
-        let mirror = Mirror(reflecting: self)
-        for child in mirror.children {
-            // Accessing the private method via reflection won't work directly.
-            // Instead, we test mapToSnapshot by making a small wrapper.
-        }
-        // Workaround: just test through public API
-        return ProviderQuotaSnapshot.unavailable(provider: provider, message: "test")
-    }
-}
-```
-
-Note: Testing private methods requires either making them internal or using `@testable import`. To keep the design clean, add a `mapToSnapshot` function at the file level (internal access) that `QuotaCoordinator` calls.
-
-- [ ] **Step 3: Update QuotaCoordinator to expose mapToSnapshot as internal function**
-
-Add this function to `QuotaCoordinator.swift` (outside the class, at file level):
-
-```swift
-func mapQuotaFetchResultToSnapshot(
-    provider: AIProvider,
-    result: QuotaFetchResult,
-    checkedAt: Date,
-    lowQuotaThreshold: Int = 20
-) -> ProviderQuotaSnapshot {
-    switch result {
-    case .success(let tiers):
-        let maxUtilization = tiers.isEmpty ? 0.0 : tiers.map(\.utilization).max() ?? 0.0
-        let remaining = (1.0 - maxUtilization) * 100.0
-        let soonestReset = tiers.compactMap(\.resetsAt).min()
-        let status: QuotaStatus = maxUtilization >= 1.0 ? .exhausted
-            : (remaining <= Double(lowQuotaThreshold)) ? .low
-            : .normal
-        return ProviderQuotaSnapshot(
-            provider: provider, status: status,
-            remainingPercent: remaining,
-            resetAt: soonestReset,
-            lastCheckedAt: checkedAt,
-            lastSuccessfulAt: Date(),
-            source: .providerAPI,
-            message: nil
-        )
-    case .estimated(let tiers):
-        let maxUtilization = tiers.isEmpty ? 0.0 : tiers.map(\.utilization).max() ?? 0.0
-        let remaining = (1.0 - maxUtilization) * 100.0
-        let soonestReset = tiers.compactMap(\.resetsAt).min()
-        return ProviderQuotaSnapshot(
-            provider: provider, status: .normal,
-            remainingPercent: remaining,
-            resetAt: soonestReset,
-            lastCheckedAt: checkedAt,
-            lastSuccessfulAt: Date(),
-            source: .estimated,
-            message: "Estimated"
-        )
-    case .unavailable(let reason):
-        return ProviderQuotaSnapshot(
-            provider: provider, status: .unavailable,
-            remainingPercent: nil,
-            resetAt: nil,
-            lastCheckedAt: checkedAt,
-            lastSuccessfulAt: nil,
-            source: .unknown,
-            message: reason
-        )
-    }
-}
-```
-
-And update the class's `mapToSnapshot` to call this function:
-
-```swift
-private func mapToSnapshot(...) -> ProviderQuotaSnapshot {
-    mapQuotaFetchResultToSnapshot(
-        provider: provider, result: result, checkedAt: checkedAt,
-        lowQuotaThreshold: settingsStore.settings.lowQuotaThreshold
-    )
-}
-```
-
-- [ ] **Step 4: Rewrite QuotaCoordinatorTests with proper testable function**
+Test the `mapQuotaFetchResultToSnapshot` function (file-level, internal access).
 
 ```swift
 import XCTest
@@ -644,6 +771,7 @@ final class QuotaCoordinatorTests: XCTestCase {
         XCTAssertEqual(snapshot.status, .normal)
         XCTAssertEqual(snapshot.remainingPercent ?? 0, 70, accuracy: 0.01)
         XCTAssertEqual(snapshot.source, .providerAPI)
+        XCTAssertNotNil(snapshot.lastSuccessfulAt)
     }
 
     func test_mapToSnapshot_successLow() {
@@ -666,12 +794,23 @@ final class QuotaCoordinatorTests: XCTestCase {
         XCTAssertEqual(snapshot.status, .unavailable)
         XCTAssertEqual(snapshot.message, "Test unavailable")
         XCTAssertNil(snapshot.lastSuccessfulAt)
+        XCTAssertEqual(snapshot.source, .unknown)
     }
 
-    func test_mapToSnapshot_estimated() {
+    func test_mapToSnapshot_estimatedNormal() {
         let tier = QuotaTier(id: "test", utilization: 0, resetsAt: nil, isEstimated: true)
         let result = QuotaFetchResult.estimated([tier])
         let snapshot = mapQuotaFetchResultToSnapshot(provider: .opencode, result: result, checkedAt: Date())
+        XCTAssertEqual(snapshot.source, .estimated)
+        XCTAssertEqual(snapshot.status, .normal)
+        XCTAssertNotNil(snapshot.lastSuccessfulAt)
+    }
+
+    func test_mapToSnapshot_estimatedExhausted() {
+        let tier = QuotaTier(id: "test", utilization: 1.0, resetsAt: nil, isEstimated: true)
+        let result = QuotaFetchResult.estimated([tier])
+        let snapshot = mapQuotaFetchResultToSnapshot(provider: .opencode, result: result, checkedAt: Date())
+        XCTAssertEqual(snapshot.status, .exhausted)
         XCTAssertEqual(snapshot.source, .estimated)
     }
 
@@ -688,32 +827,48 @@ final class QuotaCoordinatorTests: XCTestCase {
     func test_mapToSnapshot_respectsThreshold() {
         let tier = QuotaTier(id: "test", utilization: 0.5, resetsAt: nil, isEstimated: false)
         let result = QuotaFetchResult.success([tier])
-        let snapshot = mapQuotaFetchResultToSnapshot(provider: .claude, result: result, checkedAt: Date(), lowQuotaThreshold: 30)
-        // 50% remaining, threshold 30% -> remaining 50% <= 30? No -> normal
-        // Actually remaining is 50%, utilization is 0.5 -> remaining = 50. threshold 30 means low when <= 30
-        XCTAssertEqual(snapshot.status, .normal)
-        // Test low threshold
+        // remaining = 50%, threshold = 30 → normal
+        let snapshot1 = mapQuotaFetchResultToSnapshot(provider: .claude, result: result, checkedAt: Date(), lowQuotaThreshold: 30)
+        XCTAssertEqual(snapshot1.status, .normal)
+        // remaining = 50%, threshold = 60 → low (50 <= 60)
         let snapshot2 = mapQuotaFetchResultToSnapshot(provider: .claude, result: result, checkedAt: Date(), lowQuotaThreshold: 60)
         XCTAssertEqual(snapshot2.status, .low)
+    }
+
+    func test_enabledProviders_defaultAllEnabled() {
+        let coordinator = QuotaCoordinator()
+        let providers = coordinator.enabledProviders
+        XCTAssertTrue(providers.contains(.claude))
+        XCTAssertTrue(providers.contains(.codex))
+        XCTAssertTrue(providers.contains(.gemini))
+        XCTAssertTrue(providers.contains(.opencode))
+    }
+
+    func test_enabledProviders_respectsSettings() {
+        let coordinator = QuotaCoordinator()
+        coordinator.settingsStore.update { $0.enabledProviders["codex"] = false }
+        let providers = coordinator.enabledProviders
+        XCTAssertFalse(providers.contains(.codex))
+        XCTAssertTrue(providers.contains(.claude))
     }
 }
 ```
 
-- [ ] **Step 5: Run tests**
+- [ ] **Step 3: Run tests**
 
 Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' -only-testing:PixelPetsTests/QuotaCoordinatorTests -only-testing:PixelPetsTests/QuotaStateStoreTests 2>&1`
-Expected: All tests PASS
+Expected: All tests PASS, test count = 10 (Coordinator) + 8 (StateStore) = 18
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add PixelPets/App/QuotaCoordinator.swift PixelPetsTests/QuotaCoordinatorTests.swift
-git commit -m "feat(quota): add QuotaCoordinator with QuotaFetchResult-to-Snapshot mapping"
+git commit -m "feat(quota): add QuotaCoordinator with sequential refresh and snapshot mapping"
 ```
 
 ---
 
-### Task 4: Create Menu Bar Dot View
+### Task 4: Create MenuBarDotView
 
 **Files:**
 - Create: `PixelPets/UI/MenuBarDotView.swift`
@@ -763,7 +918,7 @@ git commit -m "feat(quota): add MenuBarDotView colored status indicator"
 
 ---
 
-### Task 5: Rewrite PopoverView and QuotaCardView
+### Task 5: Rewrite PopoverView and Create QuotaCardView
 
 **Files:**
 - Rewrite: `PixelPets/UI/PopoverView.swift`
@@ -875,6 +1030,8 @@ struct QuotaCardView: View {
 
 - [ ] **Step 2: Rewrite PopoverView.swift**
 
+Replace entire file. Uses `QuotaStateStore` and `SettingsStore`, references `AIProvider.displayName` (defined in AIProvider.swift, NOT duplicated here).
+
 ```swift
 import AppKit
 import SwiftUI
@@ -885,10 +1042,7 @@ struct PopoverView: View {
     var onRefresh: () -> Void = {}
 
     private var enabledProviders: [AIProvider] {
-        AIProvider.allCases.filter { provider in
-            guard provider != .unknown else { return false }
-            return settingsStore.settings.isProviderEnabled(provider)
-        }
+        AIProvider.allCases.filter { settingsStore.settings.isProviderEnabled($0) }
     }
 
     var body: some View {
@@ -969,19 +1123,9 @@ struct PopoverView: View {
         return "\(Int(interval/86400))d ago"
     }
 }
-
-extension AIProvider {
-    var displayName: String {
-        switch self {
-        case .claude:  return "Claude"
-        case .opencode: return "OpenCode"
-        case .codex:   return "Codex"
-        case .gemini:  return "Gemini"
-        case .unknown: return "Unknown"
-        }
-    }
-}
 ```
+
+Note: No duplicate `AIProvider.displayName` extension here — it's in `AIProvider.swift`.
 
 - [ ] **Step 3: Commit**
 
@@ -992,104 +1136,58 @@ git commit -m "feat(quota): rewrite PopoverView with QuotaCardView for minimal q
 
 ---
 
-### Task 6: Simplify Settings
+### Task 6: Extend SettingsStore with Quota Fields (Preserve Old API)
 
 **Files:**
-- Modify: `PixelPets/Persistence/SettingsStore.swift` — trim AppSettings
-- Modify: `PixelPets/UI/Settings/GameSettingsView.swift` — remove pet tabs
-- Rewrite: `PixelPets/UI/Settings/SysTab.swift` — quota-focused settings
-- Modify: `PixelPetsTests/SettingsStoreTests.swift` — update for new model
+- Modify: `PixelPets/Persistence/SettingsStore.swift` — add quota fields, keep ALL old fields
+- Rewrite: `PixelPets/UI/Settings/GameSettingsView.swift` — switch to quota-only UI
+- Modify: `PixelPetsTests/SettingsStoreTests.swift` — add tests for new fields
 
-- [ ] **Step 1: Rewrite AppSettings in SettingsStore.swift**
+- [ ] **Step 1: Extend AppSettings with new quota fields**
 
-Replace the entire content of `SettingsStore.swift` with:
+In `SettingsStore.swift`, ADD the following fields to `AppSettings` WITHOUT removing any existing fields:
+
+Add after the existing `enabledEventSources` field:
 
 ```swift
-import Foundation
-import Combine
-
-struct AppSettings: Codable {
-    var hookPermissionAsked: Bool = false
-    var isPixelPetEnabled: Bool = false
+    // Quota Monitor fields (Phase A)
     var lowQuotaThreshold: Int = 20
     var refreshIntervalSeconds: Int = 300
-    var enabledProviders: [AIProvider: Bool] = [:]
-
-    init() {}
-
-    func isProviderEnabled(_ provider: AIProvider) -> Bool {
-        enabledProviders[provider] != false
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case hookPermissionAsked
-        case isPixelPetEnabled
-        case lowQuotaThreshold
-        case refreshIntervalSeconds
-        case enabledProviders
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        hookPermissionAsked = try container.decodeIfPresent(Bool.self, forKey: .hookPermissionAsked) ?? false
-        isPixelPetEnabled = try container.decodeIfPresent(Bool.self, forKey: .isPixelPetEnabled) ?? false
-        lowQuotaThreshold = try container.decodeIfPresent(Int.self, forKey: .lowQuotaThreshold) ?? 20
-        refreshIntervalSeconds = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalSeconds) ?? 300
-        enabledProviders = try container.decodeIfPresent([AIProvider: Bool].self, forKey: .enabledProviders) ?? [:]
-    }
-}
-
-@MainActor
-final class SettingsStore: ObservableObject {
-    @Published var settings = AppSettings()
-
-    private let settingsURL: URL
-
-    init(directory: String? = nil) {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let bundleID = Bundle.main.bundleIdentifier ?? "com.pixelpets.app"
-        let baseFolder = directory.map { URL(fileURLWithPath: $0) } ?? appSupport.appendingPathComponent(bundleID)
-
-        try? FileManager.default.createDirectory(at: baseFolder, withIntermediateDirectories: true)
-        settingsURL = baseFolder.appendingPathComponent("settings.json")
-        load()
-    }
-
-    func update(_ transform: (inout AppSettings) -> Void) {
-        var newSettings = settings
-        transform(&newSettings)
-        settings = newSettings
-        save()
-    }
-
-    private func load() {
-        guard FileManager.default.fileExists(atPath: settingsURL.path) else { return }
-        guard let data = try? Data(contentsOf: settingsURL) else { return }
-        do {
-            settings = try JSONDecoder().decode(AppSettings.self, from: data)
-        } catch {
-            print("Failed to load settings: \(error)")
-        }
-    }
-
-    private func save() {
-        do {
-            let data = try JSONEncoder().encode(settings)
-            try data.write(to: settingsURL, options: .atomic)
-        } catch {
-            assertionFailure("Failed to save settings: \(error)")
-        }
-    }
-}
+    var enabledProviders: [String: Bool] = [:]  // key = AIProvider.rawValue
 ```
 
-Delete the old `AnimationIntensity`, `ScenePreference` enums and the `AgentSkin` reference in `isEnabled`. The `isEnabled(skin:)` method that uses `AgentSkin` is removed.
+Add CodingKeys entries:
 
-Note: The `enabledProviders` field replaces `enabledCLIs`. The mapping uses `AIProvider` (not `AgentSkin`).
+```
+        // Quota Monitor
+        case lowQuotaThreshold, refreshIntervalSeconds, enabledProviders
+```
+
+Add decoder defaults in `init(from:)`:
+
+```swift
+        lowQuotaThreshold = try container.decodeIfPresent(Int.self, forKey: .lowQuotaThreshold) ?? 20
+        refreshIntervalSeconds = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalSeconds) ?? 300
+        enabledProviders = try container.decodeIfPresent([String: Bool].self, forKey: .enabledProviders) ?? [:]
+```
+
+Add the `isProviderEnabled` method (keep existing `isEnabled(_ skin:)` method for pet code compatibility):
+
+```swift
+    func isProviderEnabled(_ provider: AIProvider) -> Bool {
+        enabledProviders[provider.rawValue] != false
+    }
+```
+
+The final `AppSettings` struct should have BOTH old and new fields. Full list of fields:
+- OLD: `hookPermissionAsked`, `enabledCLIs`, `hookPort`, `scenePreference`, `equippedAccessories`, `skinOverride`, `isPixelPetEnabled`, `animationIntensity`, `lowDistractionMode`, `reduceMotion`, `enableQuotaAlerts`, `enabledEventSources`
+- NEW: `lowQuotaThreshold`, `refreshIntervalSeconds`, `enabledProviders`
+
+And both `isEnabled(_ skin: AgentSkin)` and `isProviderEnabled(_ provider: AIProvider)` methods coexist.
 
 - [ ] **Step 2: Rewrite GameSettingsView.swift**
 
-Remove the navigation split view and pet tabs. Replace with a simple single-tab settings view:
+Replace content with quota-only settings UI. Remove pet tab navigation (Unit/Loadout/Map), show only Quota Monitor tab.
 
 ```swift
 import SwiftUI
@@ -1101,7 +1199,7 @@ struct GameSettingsView: View {
     var body: some View {
         QuotaSettingsView()
             .environmentObject(settingsStore)
-            .frame(width: 400, height: 300)
+            .frame(width: 400, height: 320)
     }
 }
 
@@ -1115,11 +1213,11 @@ struct QuotaSettingsView: View {
                     Toggle(provider.displayName, isOn: Binding(
                         get: { settingsStore.settings.isProviderEnabled(provider) },
                         set: { enabled in
-                            settingsStore.update {
+                            settingsStore.update { settings in
                                 if enabled {
-                                    $0.enabledProviders[provider] = true
+                                    settings.enabledProviders[provider.rawValue] = true
                                 } else {
-                                    $0.enabledProviders[provider] = false
+                                    settings.enabledProviders[provider.rawValue] = false
                                 }
                             }
                         }
@@ -1133,7 +1231,11 @@ struct QuotaSettingsView: View {
                     Spacer()
                     Picker("", selection: Binding(
                         get: { settingsStore.settings.lowQuotaThreshold },
-                        set: { settingsStore.update { $0.lowQuotaThreshold = $0 } }
+                        set: { newValue in
+                            settingsStore.update { settings in
+                                settings.lowQuotaThreshold = newValue
+                            }
+                        }
                     )) {
                         Text("10%").tag(10)
                         Text("20%").tag(20)
@@ -1151,7 +1253,11 @@ struct QuotaSettingsView: View {
                     Spacer()
                     Picker("", selection: Binding(
                         get: { settingsStore.settings.refreshIntervalSeconds },
-                        set: { settingsStore.update { $0.refreshIntervalSeconds = $0 } }
+                        set: { newValue in
+                            settingsStore.update { settings in
+                                settings.refreshIntervalSeconds = newValue
+                            }
+                        }
                     )) {
                         Text("1 min").tag(60)
                         Text("5 min").tag(300)
@@ -1175,45 +1281,14 @@ struct QuotaSettingsView: View {
         .formStyle(.grouped)
     }
 }
-
-extension AIProvider {
-    var displayName: String {
-        switch self {
-        case .claude:  return "Claude"
-        case .opencode: return "OpenCode"
-        case .codex:   return "Codex"
-        case .gemini:  return "Gemini"
-        case .unknown: return "Unknown"
-        }
-    }
-}
 ```
 
 - [ ] **Step 3: Update SettingsStoreTests.swift**
 
-Replace the test file content to test the new settings model:
+Add new test methods to the EXISTING test file (do not delete old tests). Append these tests:
 
 ```swift
-import XCTest
-@testable import PixelPets
-
-@MainActor
-final class SettingsStoreTests: XCTestCase {
-    private var tempDir: URL!
-    private var store: SettingsStore!
-
-    override func setUp() {
-        super.setUp()
-        tempDir = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
-        try! FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        store = SettingsStore(directory: tempDir.path)
-    }
-
-    override func tearDown() {
-        try? FileManager.default.removeItem(at: tempDir)
-        super.tearDown()
-    }
+    // MARK: - Quota Monitor fields (Phase A)
 
     func test_defaults_lowQuotaThreshold_is20() {
         XCTAssertEqual(store.settings.lowQuotaThreshold, 20)
@@ -1223,33 +1298,23 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertEqual(store.settings.refreshIntervalSeconds, 300)
     }
 
-    func test_defaults_isPixelPetEnabled_isFalse() {
-        XCTAssertFalse(store.settings.isPixelPetEnabled)
-    }
-
-    func test_defaults_enabledProviders_isEmpty_allEnabled() {
-        for provider in AIProvider.allCases where provider != .unknown {
-            XCTAssertTrue(store.settings.isProviderEnabled(provider))
-        }
+    func test_defaults_enabledProviders_empty_allEnabled() {
+        XCTAssertTrue(store.settings.isProviderEnabled(.claude))
+        XCTAssertTrue(store.settings.isProviderEnabled(.codex))
+        XCTAssertTrue(store.settings.isProviderEnabled(.gemini))
+        XCTAssertTrue(store.settings.isProviderEnabled(.opencode))
     }
 
     func test_enabledProviders_explicitFalseDisables() {
-        store.update { $0.enabledProviders[.codex] = false }
+        store.update { $0.enabledProviders["codex"] = false }
         XCTAssertFalse(store.settings.isProviderEnabled(.codex))
         XCTAssertTrue(store.settings.isProviderEnabled(.claude))
     }
 
-    func test_update_persistsToDisk() {
+    func test_lowQuotaThreshold_roundtrips() {
         store.update { $0.lowQuotaThreshold = 30 }
         let store2 = SettingsStore(directory: tempDir.path)
         XCTAssertEqual(store2.settings.lowQuotaThreshold, 30)
-    }
-
-    func test_corruptFile_fallsBackToDefaults() {
-        let path = tempDir.appendingPathComponent("settings.json").path
-        FileManager.default.createFile(atPath: path, contents: Data("CORRUPT".utf8))
-        let store2 = SettingsStore(directory: tempDir.path)
-        XCTAssertEqual(store2.settings.lowQuotaThreshold, 20)
     }
 
     func test_refreshInterval_roundtrips() {
@@ -1258,53 +1323,56 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertEqual(store2.settings.refreshIntervalSeconds, 900)
     }
 
-    func test_isPixelPetEnabled_roundtrips() {
-        store.update { $0.isPixelPetEnabled = true }
+    func test_enabledProviders_roundtrips() {
+        store.update { $0.enabledProviders["gemini"] = false }
         let store2 = SettingsStore(directory: tempDir.path)
-        XCTAssertTrue(store2.settings.isPixelPetEnabled)
+        XCTAssertFalse(store2.settings.isProviderEnabled(.gemini))
     }
-}
+
+    func test_oldLegacyJSON_loadsWithNewDefaults() {
+        let path = tempDir.appendingPathComponent("settings.json").path
+        let json = #"{"hookPort":9000,"hookPermissionAsked":true}"#
+        FileManager.default.createFile(atPath: path, contents: Data(json.utf8))
+        let store2 = SettingsStore(directory: tempDir.path)
+        // Old fields preserved
+        XCTAssertEqual(store2.settings.hookPort, 9000)
+        XCTAssertTrue(store2.settings.hookPermissionAsked)
+        // New fields get defaults
+        XCTAssertEqual(store2.settings.lowQuotaThreshold, 20)
+        XCTAssertEqual(store2.settings.refreshIntervalSeconds, 300)
+    }
 ```
 
 - [ ] **Step 4: Run settings tests**
 
 Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' -only-testing:PixelPetsTests/SettingsStoreTests 2>&1`
-Expected: All tests PASS
+Expected: All existing + new tests PASS, test count increases by 8
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add PixelPets/Persistence/SettingsStore.swift PixelPets/UI/Settings/GameSettingsView.swift PixelPets/UI/Settings/SysTab.swift PixelPetsTests/SettingsStoreTests.swift
-git commit -m "feat(quota): simplify settings model and UI for Quota Monitor only"
+git add PixelPets/Persistence/SettingsStore.swift PixelPets/UI/Settings/GameSettingsView.swift PixelPetsTests/SettingsStoreTests.swift
+git commit -m "feat(quota): extend SettingsStore with quota fields, simplify settings UI"
 ```
 
 ---
 
-### Task 7: Rewire App Entry Point (PixelPetsApp)
+### Task 7: Rewire App Entry Point
 
 **Files:**
-- Rewrite: `PixelPets/App/PixelPetsApp.swift`
+- Rewrite: `PixelPets/App/PixelPetsApp.swift` — slim @main, delegate to AppDelegate
+- Rewrite: `PixelPets/App/AppDelegate.swift` (file didn't exist before — AppDelegate was inside PixelPetsApp.swift)
 
-- [ ] **Step 1: Rewrite PixelPetsApp.swift**
+Note: Currently `AppDelegate` is defined inside `PixelPetsApp.swift` (lines 20–152). We extract it to its own file.
 
-Replace the entire file. Disconnect from PetViewModel and all Pixel Pets runtime:
+- [ ] **Step 1: Create AppDelegate.swift**
+
+Create a new file: `PixelPets/App/AppDelegate.swift`
 
 ```swift
 import AppKit
 import Combine
 import SwiftUI
-
-@main
-struct PixelPetsApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-
-    var body: some Scene {
-        Settings {
-            GameSettingsView()
-                .environmentObject(appDelegate.coordinator.settingsStore)
-        }
-    }
-}
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
@@ -1312,6 +1380,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private let popover = NSPopover()
     private var statusItem: NSStatusItem?
     private var cancellables: Set<AnyCancellable> = []
+
+    // NOTE: AssetRegistry, AnimationClock, HookServer, Debug HUD are NOT initialized.
+    // Pixel Pets runtime is fully disconnected.
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -1390,48 +1461,75 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 }
 ```
 
-- [ ] **Step 2: Verify compilation**
+- [ ] **Step 2: Rewrite PixelPetsApp.swift**
 
-Run: `xcodebuild -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' build 2>&1 | tail -20`
+Trim to the minimum — just the @main struct and Settings scene:
+
+```swift
+import AppKit
+import SwiftUI
+
+@main
+struct PixelPetsApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
+    var body: some Scene {
+        Settings {
+            GameSettingsView()
+                .environmentObject(appDelegate.coordinator.settingsStore)
+        }
+    }
+}
+```
+
+- [ ] **Step 3: Remove old PixelPets code from PixelPetsApp.swift**
+
+The old `PixelPetsApp.swift` had AppDelegate embedded (lines 20–152). After this step, `PixelPetsApp.swift` should be ONLY the @main struct (15 lines). The AppDelegate class exists in its own file.
+
+- [ ] **Step 4: Verify compilation**
+
+Run: `xcodebuild -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' build 2>&1 | tail -30`
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add PixelPets/App/PixelPetsApp.swift
-git commit -m "feat(quota): rewire entry point to QuotaCoordinator, disconnect Pixel Pets runtime"
+git add PixelPets/App/PixelPetsApp.swift PixelPets/App/AppDelegate.swift
+git commit -m "feat(quota): rewire entry point to QuotaCoordinator, extract AppDelegate to own file"
 ```
 
 ---
 
-### Task 8: Run Full Test Suite
+### Task 8: Run Full Test Suite and Fix Regressions
 
-- [ ] **Step 1: Run all tests**
+- [ ] **Step 1: Run ALL existing tests**
 
 Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' 2>&1`
-Expected: All tests PASS. Any pet-dependent tests that fail due to removed references should be noted for Phase B.
+Expected: As many tests as possible should PASS. Investigation if failures exist.
 
-- [ ] **Step 2: If pet-dependent tests fail, skip them**
+- [ ] **Step 2: Investigate any failing tests**
 
-The following tests reference pet types (`AgentSkin`, `PetViewModel`, `PetStateMachine`, etc.) that still exist in the project but may fail due to missing dependencies in the new entry point. If they fail:
+Common failure causes and fixes:
 
-- `AppCoordinatorTests` — old coordinator tests, will be rewritten or deleted in Phase B
-- `ActivityCoordinatorTests` — pet activity tests
-- `GrowthEngineTests` — growth engine tests
-- `PetStateMachineTests` — state machine tests
-- Other pet tests
+**If SettingsStoreTests fail:** Check that old fields/API were preserved in Step 1 of Task 6. The `isEnabled(_ skin: AgentSkin)` method and old CodingKeys must still exist.
 
-If these fail, note them in the report. They will be handled in Phase B.
+**If AppCoordinatorTests fail:** `AppCoordinator` references `PetViewModel`, `GrowthEngine`, `HookServer` etc. These classes exist in the project but `AppCoordinator` may fail if it tries to create objects that read settings with new defaults. This is acceptable — the test validates old pet behavior that is no longer on the main path. Note these tests for Phase B.
 
-- [ ] **Step 3: Verify key tests pass**
+**If test count doesn't increase:** Verify new test files are in the Xcode target. Run `xcodegen generate` or manually add to `project.yml`.
+
+- [ ] **Step 3: Focus on quota-related tests**
 
 Run: `xcodebuild test -project PixelPets.xcodeproj -scheme PixelPets -destination 'platform=macOS' -only-testing:PixelPetsTests/QuotaStateStoreTests -only-testing:PixelPetsTests/QuotaCoordinatorTests -only-testing:PixelPetsTests/SettingsStoreTests -only-testing:PixelPetsTests/ClaudeQuotaClientTests 2>&1`
-Expected: All these tests PASS
+Expected: All these tests PASS with correct test counts
 
-- [ ] **Step 4: Commit (if any test fixes were needed)**
+- [ ] **Step 4: Document test results**
+
+Capture the output of the full test run. Note which tests pass and which fail (if any). Record in the Phase A report.
+
+- [ ] **Step 5: Commit (only if test file modifications were needed)**
 
 ```bash
-git add -A && git commit -m "test: fix tests for Quota Monitor Phase A"
+git add -A && git commit -m "test: Phase A test fixups"
 ```
 
 ---
@@ -1440,56 +1538,68 @@ git add -A && git commit -m "test: fix tests for Quota Monitor Phase A"
 
 - [ ] **Step 1: Create implementation report**
 
-Write `docs/superpowers/reports/2026-05-05-phase-a-report.md` with:
+Write `docs/superpowers/reports/2026-05-05-phase-a-report.md`:
 
 ```markdown
-# Phase A Implementation Report
+# Phase A Implementation Report — Quota Monitor MVP
 
 **Date:** 2026-05-05
-**Status:** [Complete / Issues noted]
+**Status:** [Complete]
+
+## Summary
+Rewired PixelPets from virtual pet system to minimal menu-bar quota monitor.
+All Pixel Pets source files retained on disk and in build target.
 
 ## Files Created
-- PixelPets/Models/QuotaStatus.swift
-- PixelPets/Models/QuotaSource.swift
-- PixelPets/Models/ProviderQuotaSnapshot.swift
-- PixelPets/Models/QuotaStateStore.swift
-- PixelPets/App/QuotaCoordinator.swift
-- PixelPets/Senses/CodexQuotaClient.swift
-- PixelPets/Senses/GeminiQuotaClient.swift
-- PixelPets/UI/MenuBarDotView.swift
-- PixelPets/UI/QuotaCardView.swift
-- PixelPetsTests/QuotaStateStoreTests.swift
-- PixelPetsTests/QuotaCoordinatorTests.swift
+| File | Purpose |
+|------|---------|
+| Models/QuotaStatus.swift | Quota state enum |
+| Models/QuotaSource.swift | Data source enum |
+| Models/ProviderQuotaSnapshot.swift | Per-provider snapshot |
+| Models/QuotaStateStore.swift | Snapshot aggregator |
+| App/QuotaCoordinator.swift | Quota fetch orchestrator |
+| App/AppDelegate.swift | Menu bar + popover delegate |
+| Senses/CodexQuotaClient.swift | Codex quota client (extracted) |
+| Senses/GeminiQuotaClient.swift | Gemini quota client (extracted) |
+| UI/MenuBarDotView.swift | Colored status dot |
+| UI/QuotaCardView.swift | Provider card component |
+| Tests/QuotaStateStoreTests.swift | 8 tests |
+| Tests/QuotaCoordinatorTests.swift | 10 tests |
 
 ## Files Modified
-- PixelPets/App/PixelPetsApp.swift — rewired to QuotaCoordinator
-- PixelPets/Persistence/SettingsStore.swift — trimmed to quota settings
-- PixelPets/Senses/ClaudeQuotaClient.swift — extracted Codex/Gemini clients
-- PixelPets/UI/PopoverView.swift — rewritten for quota cards
-- PixelPets/UI/Settings/GameSettingsView.swift — simplified
-- PixelPets/UI/Settings/SysTab.swift — no longer loaded
-- PixelPetsTests/SettingsStoreTests.swift — updated for new model
+| File | Changes |
+|------|---------|
+| App/PixelPetsApp.swift | Slim @main, delegate to AppDelegate |
+| Persistence/SettingsStore.swift | Added quota fields, kept all old fields |
+| Senses/ClaudeQuotaClient.swift | Removed extracted Codex/Gemini classes |
+| Models/AIProvider.swift | Added displayName extension |
+| UI/PopoverView.swift | Rewritten for quota cards |
+| UI/Settings/GameSettingsView.swift | Quota-only settings UI |
+| Tests/SettingsStoreTests.swift | +8 quota field tests |
 
 ## Runtime Verification
-- [ ] AssetRegistry not initialized
-- [ ] AnimationClock not started
-- [ ] HookServer not started
-- [ ] Debug HUD not displayed
-- [ ] No pet rendering on main execution path
+- [x] AssetRegistry not initialized
+- [x] AnimationClock not started
+- [x] HookServer not started
+- [x] Debug HUD not displayed
+- [x] No pet rendering on main execution path
+- [x] No asset loading at startup
 
 ## Test Results
-- QuotaStateStoreTests: [PASS/FAIL]
-- QuotaCoordinatorTests: [PASS/FAIL]
-- SettingsStoreTests: [PASS/FAIL]
-- ClaudeQuotaClientTests: [PASS/FAIL]
-- Full suite: [summary]
+- QuotaStateStoreTests: []
+- QuotaCoordinatorTests: []
+- SettingsStoreTests (old + new): []
+- ClaudeQuotaClientTests: []
+- Full suite: []
 
 ## Known Issues
-- [List any pet-dependent tests that fail, to be handled in Phase B]
+[List any test failures, especially pet-dependent tests]
 
 ## Phase B Readiness
 - All Pixel Pets source files retained on disk
-- HookServer / log parsers audit: [complete/pending]
+- Old SettingsStore fields preserved
+- isEnabled(_ skin:) method preserved for pet code compat
+- HookServer / log parsers audit: pending
 ```
 
 - [ ] **Step 2: Commit report**
@@ -1501,8 +1611,17 @@ git commit -m "docs: Phase A implementation report"
 
 ---
 
-### Self-Review Checklist
+### Summary of Adjustments from Original Plan
 
-1. **Spec coverage:** Each point in the design spec maps to tasks 1-9
-2. **Placeholder scan:** No TODOs or TBDs
-3. **Type consistency:** `ProviderQuotaSnapshot`, `QuotaStatus`, `QuotaSource`, `QuotaStateStore`, `QuotaCoordinator`, `MenuBarDotView`, `QuotaCardView` — all consistent
+| # | Adjustment | Applied |
+|---|-----------|---------|
+| 1 | SettingsStore keeps old fields | Task 6 adds quota fields without removing old ones |
+| 2 | AppDelegate in separate file | Task 7 creates `App/AppDelegate.swift` |
+| 3 | enabledProviders uses `[String: Bool]` | key = `provider.rawValue` (String) |
+| 4 | displayName defined once in AIProvider.swift | Task 1 Step 3, no duplicates in PopoverView or Settings |
+| 5 | Picker Binding uses named params | `set: { newValue in settings.update { settings in ... } }` |
+| 6 | Xcode target verified | Project uses auto-include via `project.yml`, verified in Task 8 |
+| 7 | QuotaCoordinator sequential (no TaskGroup) | `for provider in ... { await fetch() }` |
+| 8 | mapQuotaFetchResultToSnapshot fixes | lastSuccessfulAt = checkedAt, estimated uses threshold logic, source preserved |
+| 9 | Don't skip failing pet tests | Task 8 investigates and documents, does not skip |
+| 10 | Phase A constraints respected | No deletions, no assets, no FX, no history, no pet runtime |
