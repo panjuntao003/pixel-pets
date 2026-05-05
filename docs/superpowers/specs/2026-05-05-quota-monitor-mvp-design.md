@@ -61,8 +61,7 @@ struct ProviderQuotaSnapshot: Codable, Equatable {
     var status: QuotaStatus
     var remainingPercent: Double?       // 0.0–100.0, nil if unknown
     var resetAt: Date?                  // when quota resets
-    let lastUpdatedAt: Date             // updated on every query attempt
-    let lastCheckedAt: Date             // most recent attempt time
+    let lastCheckedAt: Date             // most recent query attempt
     let lastSuccessfulAt: Date?         // most recent successful fetch
     let source: QuotaSource
     var message: String?                // extra status info
@@ -87,9 +86,11 @@ class QuotaStateStore: ObservableObject {
 
 Priority: `exhausted > low > normal > unknown`
 
-- Iterate all **enabled** providers' snapshots, take the worst status.
-- `unavailable` only returned when ALL enabled providers are unavailable, or no provider is enabled.
+- `overallStatus` and `primarySnapshot` MUST be calculated based on `enabledProviders` (Set<AIProvider>), passed in as a parameter or managed by `QuotaCoordinator`.
+- `QuotaStateStore` does NOT guess which providers are enabled — it only stores snapshots.
+- The caller (QuotaCoordinator) is responsible for filtering by enabled providers.
 - Disabled provider snapshots are excluded from calculation.
+- `unavailable` only returned when ALL enabled providers are unavailable, or no provider is enabled.
 
 ### 3.5 What is NOT stored
 
@@ -288,11 +289,19 @@ Each client:
 1. Menu bar shows colored status dot reflecting overall quota health
 2. Clicking dot opens popover with Claude / Codex / Gemini / OpenCode cards
 3. Each card shows: provider name, status, remaining %, reset countdown, last update time
+   - Success: shows "Updated X ago" using `lastSuccessfulAt`
+   - Failure: shows "Last checked X ago" using `lastCheckedAt`
 4. Manual refresh button works
 5. Timer-based auto-refresh works
 6. Unavailable providers degrade silently (gray dot, card label)
-7. No Pixel Pets runtime loaded (rendering, scenes, assets, FX, HUD)
+7. **No Pixel Pets runtime verification:**
+   - `AssetRegistry` not initialized
+   - `AnimationClock` not started
+   - `HookServer` not started
+   - Debug HUD not displayed
+   - Rendering / Scenes / FX not on main execution path
 8. Settings window works with only Quota Monitor tab
+   - "Enable Pixel Pet" field kept in model but hidden in UI (or shown as "Coming later")
 9. `xcodebuild test` passes (existing tests that don't depend on pet code)
 10. All existing source files remain on disk (Phase B will clean up)
 
