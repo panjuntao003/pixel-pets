@@ -51,7 +51,7 @@ struct PopoverView: View {
                 .help("Refresh quotas")
                 Button {
                     NSApp.activate(ignoringOtherApps: true)
-                    NSApp.sendAction(#selector(NSApplication.showSettingsWindow(_:)), to: nil, from: nil)
+                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
                 } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 13))
@@ -87,7 +87,7 @@ struct PopoverView: View {
                 .foregroundStyle(.secondary)
             Button {
                 NSApp.activate(ignoringOtherApps: true)
-                NSApp.sendAction(#selector(NSApplication.showSettingsWindow(_:)), to: nil, from: nil)
+                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
             } label: {
                 Text("Open Settings")
             }

@@ -22,6 +22,11 @@ jobs:
       NOTARIZE_ZIP: build/Quota-notarize.zip
       DMG_PATH: build/Quota.dmg
       APPCAST_PATH: build/appcast.xml
+      CERTIFICATE_P12_BASE64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
+      CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
     steps:
       - name: Checkout
@@ -36,9 +41,7 @@ jobs:
         run: xcodegen generate
 
       - name: Import Developer ID certificate
-        env:
-          CERTIFICATE_P12_BASE64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
-          CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
+        if: env.CERTIFICATE_P12_BASE64 != '' && env.CERTIFICATE_PASSWORD != ''
         run: |
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           CERTIFICATE_PATH="$RUNNER_TEMP/developer-id.p12"
@@ -51,6 +54,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN_PATH"
 
       - name: Archive
+        if: env.CERTIFICATE_P12_BASE64 != '' && env.CERTIFICATE_PASSWORD != ''
         run: |
           xcodebuild archive \
             -project "$PROJECT" \
@@ -62,6 +66,7 @@ jobs:
             ENABLE_HARDENED_RUNTIME=YES
 
       - name: Export app
+        if: env.CERTIFICATE_P12_BASE64 != '' && env.CERTIFICATE_PASSWORD != ''
         run: |
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<'PLIST'
           <?xml version="1.0" encoding="UTF-8"?>
@@ -83,11 +88,21 @@ jobs:
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
             DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
 
+      - name: Build unsigned app
+        if: env.CERTIFICATE_P12_BASE64 == '' || env.CERTIFICATE_PASSWORD == ''
+        run: |
+          xcodebuild build \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -derivedDataPath build/DerivedData \
+            -destination "platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO
+          mkdir -p "$EXPORT_PATH"
+          cp -R "build/DerivedData/Build/Products/Release/$APP_NAME.app" "$EXPORT_PATH/$APP_NAME.app"
+
       - name: Notarize app
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        if: env.CERTIFICATE_P12_BASE64 != '' && env.CERTIFICATE_PASSWORD != '' && env.APPLE_ID != '' && env.APPLE_APP_PASSWORD != '' && env.APPLE_TEAM_ID != ''
         run: |
           ditto -c -k --keepParent "$EXPORT_PATH/$APP_NAME.app" "$NOTARIZE_ZIP"
           xcrun notarytool submit "$NOTARIZE_ZIP" \
@@ -112,10 +127,7 @@ jobs:
             "$EXPORT_PATH/$APP_NAME.app"
 
       - name: Notarize DMG
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        if: env.CERTIFICATE_P12_BASE64 != '' && env.CERTIFICATE_PASSWORD != '' && env.APPLE_ID != '' && env.APPLE_APP_PASSWORD != '' && env.APPLE_TEAM_ID != ''
         run: |
           xcrun notarytool submit "$DMG_PATH" \
             --apple-id "$APPLE_ID" \
