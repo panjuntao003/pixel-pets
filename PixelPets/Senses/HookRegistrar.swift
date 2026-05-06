@@ -37,12 +37,6 @@ final class HookRegistrar {
                 cli: .codex,
                 configPath: "\(home)/.codex/hooks.json",
                 detected: fm.fileExists(atPath: "\(home)/.codex") || fm.fileExists(atPath: "\(home)/.codex/hooks.json")
-            ),
-            HookRegistration(
-                cli: .opencode,
-                configPath: "\(home)/.config/opencode/opencode.json",
-                detected: fm.fileExists(atPath: "\(home)/.config/opencode/opencode.json"),
-                canRegister: false
             )
         ]
     }
@@ -55,8 +49,6 @@ final class HookRegistrar {
             registerGemini()
         case .codex:
             registerCodex()
-        case .opencode:
-            break
         }
     }
 

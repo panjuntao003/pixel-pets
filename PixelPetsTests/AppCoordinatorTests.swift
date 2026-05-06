@@ -12,10 +12,10 @@ final class AppCoordinatorTests: XCTestCase {
         XCTAssertEqual(reason, "正在读取配额")
     }
 
-    func test_detectedOpenCodePlaceholderWaitsForRealQuota() {
-        let result = AppCoordinator.detectedPlaceholderFetchResult(for: .opencode)
+    func test_detectedCodexPlaceholderWaitsForRealQuota() {
+        let result = AppCoordinator.detectedPlaceholderFetchResult(for: .codex)
         guard case .unavailable(let reason) = result else {
-            return XCTFail("OpenCode detected placeholder should not expose estimated quota")
+            return XCTFail("Codex detected placeholder should not expose estimated quota")
         }
         XCTAssertEqual(reason, "正在读取配额")
     }

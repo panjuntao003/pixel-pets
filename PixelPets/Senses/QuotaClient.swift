@@ -113,17 +113,4 @@ struct GeminiQuotaAdapter: QuotaClient {
     }
 }
 
-struct OpenCodeQuotaAdapter: QuotaClient {
-    let provider: AIProvider = .opencode
-    private let client = OpenCodeGoQuotaClient()
 
-    func fetchQuota(lowQuotaThreshold: Int) async -> ProviderQuotaSnapshot {
-        let result = await client.fetch()
-        return mapQuotaResultToSnapshot(
-            provider: provider,
-            result: result,
-            checkedAt: Date(),
-            lowQuotaThreshold: lowQuotaThreshold
-        )
-    }
-}

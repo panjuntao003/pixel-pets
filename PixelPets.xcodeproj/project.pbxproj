@@ -50,7 +50,7 @@
 		5DFE2F47D97EE0040E8C21F1 /* AIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF54C05B204A39748015EC7 /* AIProvider.swift */; };
 		6086C0743523B0F6A28BC8C0 /* GrowthStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */; };
 		6282A0F6F53185CFA49024DA /* AssetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5475DBC3F985DB329E0CDE70 /* AssetModels.swift */; };
-		66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9394436749431BF36A637FED /* OpenCodeLogParser.swift */; };
+		
 		67408F393CF1F241A056E447 /* GameSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C77F49A948472204AEFDF7E /* GameSettingsView.swift */; };
 		67D808CA0F9D6FCF63F9E80E /* ClaudeLogEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827658726169B40B6773122A /* ClaudeLogEventSource.swift */; };
 		691FB3703F9C6417D79C4C16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F37A095CE41C582C8A5692 /* AppDelegate.swift */; };
@@ -59,11 +59,11 @@
 		6CC01ED719BB437556975E0E /* ProceduralSpriteCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA993F56CB91DA7B601CED7 /* ProceduralSpriteCache.swift */; };
 		72F5C76DE1DE17492E35CB2D /* AssetRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80433406A56850A438A47CCF /* AssetRegistry.swift */; };
 		776B90A5D7870C311722EFF8 /* CodexLogParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360DBA3F345693F7CCBFB7AA /* CodexLogParser.swift */; };
-		78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F506134FD22F7BB13B9BE497 /* OpenCodeGoQuotaClient.swift */; };
+		
 		7A412B0B6FA947DCFF9560A8 /* DebugStateHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD46176C63EAC09DC514CE49 /* DebugStateHUD.swift */; };
 		7EC3EBE2B508352497F79092 /* gemini-hook.js in Resources */ = {isa = PBXBuildFile; fileRef = CB85949D9BAB777DA9C22692 /* gemini-hook.js */; };
 		8103C05BDDDCA7E14979FFD7 /* HookRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */; };
-		815AB25BBCEC047850E59460 /* opencode_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 62179BA01062955FB70F71FA /* opencode_sample.json */; };
+		
 		88BAB168E89E08DCBED3B6DB /* EnabledCLIsFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A6FA8C940C21A855BDD013 /* EnabledCLIsFilterTests.swift */; };
 		8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683C1BB6357F9C9CD9E0C516 /* PetState.swift */; };
 		8AA227BCB4EAB6ABB811B135 /* HookRegistrarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7F6A06364FC86944504B15 /* HookRegistrarTests.swift */; };
@@ -72,7 +72,7 @@
 		9419CFCA499879A2BCBC4644 /* HabitatRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6792A26FF1FD88F706F0388 /* HabitatRenderer.swift */; };
 		9529F0562B69CF5D49F8D038 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */; };
 		96BC6DEF1CBD42BED6FDBB31 /* AnimationClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BEA6AC09DEED79DC7523 /* AnimationClock.swift */; };
-		A351F81C6F07F218BB137B28 /* OpenCodeLogEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76589C7D3DA0B52C1B99F72D /* OpenCodeLogEventSource.swift */; };
+		
 		A443C8EABAA30435A1BE59CE /* ProviderQuotaSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DDE8D74AE96C2163CA1472C /* ProviderQuotaSnapshot.swift */; };
 		AD0872A911ED8766A7492B29 /* ClaudeQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C7006C828E56636FAA552E /* ClaudeQuotaClient.swift */; };
 		ADC8897DACA43ED914459479 /* AssetGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7A19CCB78FB872575CB2D4 /* AssetGalleryView.swift */; };
@@ -90,7 +90,7 @@
 		C29BF54B3853312815EA2616 /* AccessorySlotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524322FEDC96502C39BC210C /* AccessorySlotTests.swift */; };
 		C57516B8AF4E3C9438DA9264 /* SpaceStationScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ADD1FCEA57D688F94D5126B /* SpaceStationScene.swift */; };
 		C74BC198CDC94ACA6DB7191E /* AppCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9AFFE26EB9D5A1BFB00978 /* AppCoordinatorTests.swift */; };
-		C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */; };
+		
 		CA601687B85D06D3CAC8556A /* ManualDebugEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DCC5712DCEE71AB0BCCF24 /* ManualDebugEventSource.swift */; };
 		CAB8B886E33493A8717256B0 /* UnitTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93816F676209A8B72617BD27 /* UnitTab.swift */; };
 		CC88A2B37E5D3E472CFB7DA5 /* BitBotV2Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF70E01263FF371F30DD0F5 /* BitBotV2Renderer.swift */; };
@@ -149,7 +149,7 @@
 		5E565548CDE4528D76590E57 /* PixelPetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PixelPetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		60297808408A5939E6D93BD2 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
 		61EBFE7714D1C3320134755B /* SettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
-		62179BA01062955FB70F71FA /* opencode_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = opencode_sample.json; sourceTree = "<group>"; };
+		
 		6230AD37BAFDF6009C84B66D /* ClaudeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeLogParser.swift; sourceTree = "<group>"; };
 		67889CBDC4B02CE0B02BF984 /* MenuBarDotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarDotView.swift; sourceTree = "<group>"; };
 		683C1BB6357F9C9CD9E0C516 /* PetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetState.swift; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 		701CFBEE39E0AA969F180AAF /* FXModules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FXModules.swift; sourceTree = "<group>"; };
 		72F329E8400ED3A3292B9567 /* QuotaStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaStateStore.swift; sourceTree = "<group>"; };
 		75B17D2BEBB46E8651F7C8A8 /* QuotaBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaBarView.swift; sourceTree = "<group>"; };
-		76589C7D3DA0B52C1B99F72D /* OpenCodeLogEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogEventSource.swift; sourceTree = "<group>"; };
+		
 		7BA993F56CB91DA7B601CED7 /* ProceduralSpriteCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProceduralSpriteCache.swift; sourceTree = "<group>"; };
 		7C77F49A948472204AEFDF7E /* GameSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettingsView.swift; sourceTree = "<group>"; };
 		80433406A56850A438A47CCF /* AssetRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetRegistry.swift; sourceTree = "<group>"; };
@@ -174,7 +174,7 @@
 		9276B97C5781060F8B436E4A /* PixelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelColor.swift; sourceTree = "<group>"; };
 		92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookRegistrar.swift; sourceTree = "<group>"; };
 		93816F676209A8B72617BD27 /* UnitTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitTab.swift; sourceTree = "<group>"; };
-		9394436749431BF36A637FED /* OpenCodeLogParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParser.swift; sourceTree = "<group>"; };
+		
 		95A47238E0C0DA4C054623C9 /* SceneRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRegistryTests.swift; sourceTree = "<group>"; };
 		96BE9AA57599BC6F957652D9 /* QuotaCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaCoordinatorTests.swift; sourceTree = "<group>"; };
 		98807665A58BEA4C42DE86D6 /* ActivityCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCoordinator.swift; sourceTree = "<group>"; };
@@ -212,9 +212,9 @@
 		E9A9DF6725902A5ECAB8C21C /* GrowthStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowthStoreTests.swift; sourceTree = "<group>"; };
 		E9B02CE8A603C370080E1C56 /* HookPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookPermissionView.swift; sourceTree = "<group>"; };
 		E9B4482F5071602C678D496E /* pixelpets-hook.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "pixelpets-hook.js"; sourceTree = "<group>"; };
-		ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeLogParserTests.swift; sourceTree = "<group>"; };
+		
 		EFCD7BA48B79CE99162BB7A5 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
-		F506134FD22F7BB13B9BE497 /* OpenCodeGoQuotaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenCodeGoQuotaClient.swift; sourceTree = "<group>"; };
+		
 		F5B7C7ACDA1D8E6F97737825 /* CyberpunkLabScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CyberpunkLabScene.swift; sourceTree = "<group>"; };
 		F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetStateMachineTests.swift; sourceTree = "<group>"; };
 		F8D24223BCBA7E351F2CB768 /* ClaudeQuotaClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClientTests.swift; sourceTree = "<group>"; };
@@ -265,7 +265,7 @@
 				A10E6FAA1C3925F9A4BC9786 /* claude_sample.jsonl */,
 				AD9B07519F06EA0EA1CC1404 /* codex_sample.jsonl */,
 				E4A296FB2AA0F63C2F9E73C7 /* gemini_sample.json */,
-				62179BA01062955FB70F71FA /* opencode_sample.json */,
+				
 			);
 			name = Fixtures;
 			path = PixelPets/Resources/Fixtures;
@@ -298,8 +298,7 @@
 				92E3D65629E78F17CFEAC1B5 /* HookRegistrar.swift */,
 				215E338061E37977B5F19E4C /* HookServer.swift */,
 				C5DFC862F77574208340D87A /* NodeGate.swift */,
-				F506134FD22F7BB13B9BE497 /* OpenCodeGoQuotaClient.swift */,
-				9394436749431BF36A637FED /* OpenCodeLogParser.swift */,
+				
 				6D28DE38E4544AD3B2E73B6F /* QuotaClient.swift */,
 				68CCCED7D669E8EA0A57A4B7 /* TokenBatch.swift */,
 			);
@@ -325,7 +324,7 @@
 				902053947864E8D75FE02CFB /* HookServerTests.swift */,
 				060A3183952B60F765A9AD7F /* IntSizeCodableTests.swift */,
 				3D41AA1ACC9646A8906B937F /* NodeGateTests.swift */,
-				ED453D5895F1388444DDFB44 /* OpenCodeLogParserTests.swift */,
+				
 				F79B9631F3A2B78910DA9348 /* PetStateMachineTests.swift */,
 				96BE9AA57599BC6F957652D9 /* QuotaCoordinatorTests.swift */,
 				45C0170FBAB6F692D7137536 /* QuotaStateStoreTests.swift */,
@@ -417,7 +416,7 @@
 				52E02B09537952D8CA58865A /* GrowthEngine.swift */,
 				ACD1A54A87B02EF9A0AB0E6A /* ManifestValidator.swift */,
 				C9DCC5712DCEE71AB0BCCF24 /* ManualDebugEventSource.swift */,
-				76589C7D3DA0B52C1B99F72D /* OpenCodeLogEventSource.swift */,
+				
 				0A72F4F208D51F2DA034981F /* PetStateMachine.swift */,
 				CDE73FE16262AA24DA4C5785 /* SystemEventSource.swift */,
 				0FA935237CE55FF76E87CDA2 /* VisualStateReducer.swift */,
@@ -541,7 +540,7 @@
 				DBBDCC3C29C0F910925DB1D5 /* claude_sample.jsonl in Resources */,
 				F03613BCA52E81A640812751 /* codex_sample.jsonl in Resources */,
 				5B00F603A4EF6BB8782A607B /* gemini_sample.json in Resources */,
-				815AB25BBCEC047850E59460 /* opencode_sample.json in Resources */,
+				
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,9 +623,7 @@
 				6AF577D1EAB17321BFBA522E /* MenuBarDotView.swift in Sources */,
 				D8B01589C118BB45803F5FA3 /* MenuBarIconRenderer.swift in Sources */,
 				BDB688527872D702C345F81D /* NodeGate.swift in Sources */,
-				78D6B796229BC8CE9CCE25B1 /* OpenCodeGoQuotaClient.swift in Sources */,
-				A351F81C6F07F218BB137B28 /* OpenCodeLogEventSource.swift in Sources */,
-				66039CAF4D24E45AFAD241F6 /* OpenCodeLogParser.swift in Sources */,
+				
 				0EB2C3E20871C4452463D9B7 /* PetRenderer.swift in Sources */,
 				8A6F7E9249AB47A9B37BB11C /* PetState.swift in Sources */,
 				461BB31732DAD92254531F33 /* PetStateMachine.swift in Sources */,
@@ -678,7 +675,7 @@
 				F2C2C632A8CF32BF61019AC8 /* HookServerTests.swift in Sources */,
 				044500BADDC478AA05029209 /* IntSizeCodableTests.swift in Sources */,
 				3E374B35CE5998C2B889B8D0 /* NodeGateTests.swift in Sources */,
-				C7F6F0B14EA6901E2E50E89B /* OpenCodeLogParserTests.swift in Sources */,
+				
 				6C3E6C0F0A27962E3D82489C /* PetStateMachineTests.swift in Sources */,
 				03D64F9FE1BD9AB6457046E9 /* QuotaCoordinatorTests.swift in Sources */,
 				26CB75FAD7B1B7D52EFA3EC3 /* QuotaStateStoreTests.swift in Sources */,

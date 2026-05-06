@@ -11,11 +11,9 @@ final class AppCoordinator: ObservableObject {
     private let hookServer = HookServer()
     private let hookRegistrar = HookRegistrar()
     private let claudeLogEventSource = ClaudeLogEventSource()
-    private let openCodeLogEventSource = OpenCodeLogEventSource()
     private let claudeQuotaClient = ClaudeQuotaClient()
     private let codexQuotaClient = CodexQuotaClient()
     private let geminiQuotaClient = GeminiQuotaClient()
-    private let openCodeGoQuotaClient = OpenCodeGoQuotaClient()
     let settingsStore = SettingsStore()
     private lazy var logPoller = LogPoller(growthStore: growthStore)
 
@@ -66,7 +64,6 @@ final class AppCoordinator: ObservableObject {
         startHookServer()
         ActivityCoordinator.shared.start(sources: [
             claudeLogEventSource,
-            openCodeLogEventSource,
             ManualDebugEventSource.shared
         ])
         refreshTokenUsage()
@@ -306,17 +303,10 @@ final class AppCoordinator: ObservableObject {
         updateCLIInfo(skin: .codex, fetchResult: codexResult, planBadge: "ChatGPT")
         let geminiResult = await geminiQuotaClient.fetch()
         updateCLIInfo(skin: .gemini, fetchResult: geminiResult, planBadge: "Gemini")
-        let openCodeGoResult = await openCodeGoQuotaClient.fetch()
-        updateCLIInfo(skin: .opencode, fetchResult: openCodeGoResult, planBadge: "Go")
     }
 
     private func estimatedFetchResultIfNeeded(skin: AgentSkin, usage: UsageWindow) -> QuotaFetchResult? {
-        switch skin {
-        case .claude, .codex, .gemini:
-            return nil
-        case .opencode:
-            return nil
-        }
+        return nil
     }
 
     private func applyQuotaRecommendation() {
@@ -372,12 +362,7 @@ final class AppCoordinator: ObservableObject {
     }
 
     static func detectedPlaceholderFetchResult(for skin: AgentSkin) -> QuotaFetchResult {
-        switch skin {
-        case .claude, .codex, .gemini:
-            return .unavailable("正在读取配额")
-        case .opencode:
-            return .unavailable("正在读取配额")
-        }
+        return .unavailable("正在读取配额")
     }
 
     static func claudeRateLimitFetchResult(from payload: [String: Any]) -> QuotaFetchResult? {
@@ -493,8 +478,6 @@ final class LogPoller {
 
     private func lifetimeTotal(for skin: AgentSkin, installedAt: Date) -> Int {
         switch skin {
-        case .opencode:
-            return lifetimeTotalForSingleStore(path: openCodeDBPath(), skin: skin, installedAt: installedAt)
         case .claude, .gemini, .codex:
             return logFilePaths(for: skin).reduce(0) { total, path in
                 total + lifetimeTotalForSingleStore(path: path, skin: skin, installedAt: installedAt)
@@ -520,8 +503,6 @@ final class LogPoller {
 
     private func parseAll(for skin: AgentSkin, since date: Date) -> TokenBatch {
         switch skin {
-        case .opencode:
-            return OpenCodeLogParser(installedAt: date).parseAll()
         case .claude, .gemini, .codex:
             let paths = logFilePaths(for: skin)
             var batch = TokenBatch()
@@ -543,8 +524,6 @@ final class LogPoller {
             return GeminiLogParser(installedAt: date).parse(filePath: path)
         case .codex:
             return CodexLogParser(installedAt: date).parse(filePath: path)
-        case .opencode:
-            return OpenCodeLogParser(dbPath: path, installedAt: date).parseAll()
         }
     }
 
@@ -558,8 +537,6 @@ final class LogPoller {
         case .codex:
             basePath = ProcessInfo.processInfo.environment["CODEX_HOME"].map { $0 + "/sessions" }
                 ?? (fileManager.homeDirectoryForCurrentUser.path + "/.codex/sessions")
-        case .opencode:
-            return [openCodeDBPath()]
         }
 
         guard let enumerator = fileManager.enumerator(atPath: basePath) else {
@@ -577,33 +554,10 @@ final class LogPoller {
                 guard searchablePath.hasSuffix(".jsonl") else { return nil }
             case .gemini:
                 guard searchablePath.hasSuffix(".json"), searchablePath.contains("chat") else { return nil }
-            case .opencode:
-                return nil
             }
 
             return URL(fileURLWithPath: basePath).appendingPathComponent(relativePath).path
         }
-    }
-
-    private func openCodeDBPath() -> String {
-        if let dataHome = ProcessInfo.processInfo.environment["XDG_DATA_HOME"], !dataHome.isEmpty {
-            return URL(fileURLWithPath: dataHome)
-                .appendingPathComponent("opencode")
-                .appendingPathComponent("opencode.db")
-                .path
-        }
-
-        let home = fileManager.homeDirectoryForCurrentUser
-        let macOSPath = home
-            .appendingPathComponent("Library/Application Support/opencode/opencode.db")
-            .path
-        if fileManager.fileExists(atPath: macOSPath) {
-            return macOSPath
-        }
-
-        return home
-            .appendingPathComponent(".local/share/opencode/opencode.db")
-            .path
     }
 
     private func modificationTime(path: String) -> Double {

@@ -15,8 +15,7 @@ final class QuotaCoordinator: ObservableObject {
         let defaultClients: [QuotaClient] = [
             ClaudeQuotaAdapter(),
             CodexQuotaAdapter(),
-            GeminiQuotaAdapter(),
-            OpenCodeQuotaAdapter()
+            GeminiQuotaAdapter()
         ]
         self.clients = clients ?? defaultClients
     }
@@ -24,7 +23,7 @@ final class QuotaCoordinator: ObservableObject {
     var enabledProviders: Set<AIProvider> {
         let settings = settingsStore.settings
         var providers = Set<AIProvider>()
-        for provider in [AIProvider.claude, AIProvider.codex, AIProvider.gemini, AIProvider.opencode] {
+        for provider in [AIProvider.claude, AIProvider.codex, AIProvider.gemini] {
             if settings.isProviderEnabled(provider) {
                 providers.insert(provider)
             }

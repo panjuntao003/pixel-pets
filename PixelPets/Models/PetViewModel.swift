@@ -103,19 +103,6 @@ final class PetViewModel: ObservableObject {
                 ]),
                 todayTokens: 2_300_000, weekTokens: 8_100_000,
                 planBadge: "Pro", isDetected: true
-            ),
-            CliQuotaInfo(
-                id: .opencode,
-                fetchResult: .estimated([
-                    QuotaTier(id: "rolling", utilization: 0.0,
-                              resetsAt: Date().addingTimeInterval(18000), isEstimated: true),
-                    QuotaTier(id: "weekly", utilization: 0.0,
-                              resetsAt: Date().addingTimeInterval(403200), isEstimated: true),
-                    QuotaTier(id: "monthly", utilization: 0.83,
-                              resetsAt: Date().addingTimeInterval(1405800), isEstimated: true)
-                ]),
-                todayTokens: 1_100_000, weekTokens: 4_200_000,
-                planBadge: "Go", isDetected: true
             )
         ]
         vm.totalLifetimeTokens = 42_100_000

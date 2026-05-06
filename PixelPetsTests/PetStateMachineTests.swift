@@ -25,8 +25,8 @@ final class PetStateMachineTests: XCTestCase {
 
     func test_lastActiveAgent_tracksAgentFromPayload() {
         let sm = PetStateMachine()
-        sm.handle("UserPromptSubmit", ["agent": "opencode"])
-        XCTAssertEqual(sm.lastActiveAgent, .opencode)
+        sm.handle("UserPromptSubmit", ["agent": "gemini"])
+        XCTAssertEqual(sm.lastActiveAgent, .gemini)
         sm.handle("Stop", ["agent": "claude"])
         XCTAssertEqual(sm.lastActiveAgent, .claude)
     }

@@ -16,20 +16,21 @@ struct AppSettings: Codable {
     var reduceMotion: Bool = false
     var enableQuotaAlerts: Bool = true
     var enabledEventSources: [AIProvider: Bool] = [
-        .claude: true, .opencode: true, .codex: true, .gemini: true
+        .claude: true, .codex: true, .gemini: true
     ]
 
     // Quota Monitor fields (Phase A)
     var lowQuotaThreshold: Int = 20
     var refreshIntervalSeconds: Int = 300
     var enabledProviders: [String: Bool] = [:]
+    var providerOrder: [String] = AIProvider.allCases.filter { $0 != .unknown }.map(\.rawValue)
 
     init() {}
 
     enum CodingKeys: String, CodingKey {
         case hookPermissionAsked, enabledCLIs, hookPort, scenePreference, equippedAccessories, skinOverride
         case isPixelPetEnabled, animationIntensity, lowDistractionMode, reduceMotion, enableQuotaAlerts, enabledEventSources
-        case lowQuotaThreshold, refreshIntervalSeconds, enabledProviders
+        case lowQuotaThreshold, refreshIntervalSeconds, enabledProviders, providerOrder
     }
 
     init(from decoder: Decoder) throws {
@@ -48,13 +49,15 @@ struct AppSettings: Codable {
         reduceMotion = try container.decodeIfPresent(Bool.self, forKey: .reduceMotion) ?? false
         enableQuotaAlerts = try container.decodeIfPresent(Bool.self, forKey: .enableQuotaAlerts) ?? true
         enabledEventSources = try container.decodeIfPresent([AIProvider: Bool].self, forKey: .enabledEventSources) ?? [
-            .claude: true, .opencode: true, .codex: true, .gemini: true
+            .claude: true, .codex: true, .gemini: true
         ]
 
         // Quota Monitor fields
         lowQuotaThreshold = try container.decodeIfPresent(Int.self, forKey: .lowQuotaThreshold) ?? 20
         refreshIntervalSeconds = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalSeconds) ?? 300
         enabledProviders = try container.decodeIfPresent([String: Bool].self, forKey: .enabledProviders) ?? [:]
+        providerOrder = try container.decodeIfPresent([String].self, forKey: .providerOrder)
+            ?? AIProvider.allCases.filter { $0 != .unknown }.map(\.rawValue)
     }
 
     func isEnabled(_ skin: AgentSkin) -> Bool {

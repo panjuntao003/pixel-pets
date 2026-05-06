@@ -6,24 +6,12 @@ struct QuotaCardView: View {
 
     private var displayedTiers: [QuotaTier] {
         guard let tiers = snapshot?.tiers, !tiers.isEmpty else { return [] }
-        let hasMonthly = tiers.contains { $0.id == "monthly" }
-
-        if hasMonthly {
-            let priority = [
-                tiers.first { $0.id == "rolling" },
-                tiers.first { $0.id == "weekly" },
-                tiers.first { $0.id == "monthly" }
-            ].compactMap { $0 }
-            if !priority.isEmpty { return priority }
-        }
-
         let priority = [
             tiers.first { ["five_hour", "rolling", "daily"].contains($0.id) },
-            tiers.first { ["seven_day", "weekly"].contains($0.id) }
+            tiers.first { ["seven_day", "weekly"].contains($0.id) },
+            tiers.first { $0.id == "monthly" }
         ].compactMap { $0 }
-
-        if !priority.isEmpty { return priority }
-        return Array(tiers.prefix(hasMonthly ? 3 : 2))
+        return priority.isEmpty ? Array(tiers.prefix(2)) : priority
     }
 
     private var barColor: Color {

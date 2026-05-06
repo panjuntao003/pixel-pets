@@ -20,18 +20,14 @@ final class HookRegistrarTests: XCTestCase {
     func test_detectAllUsesConfiguredHomeAndReportsExistingConfigs() throws {
         try createFile(".claude/settings.json", contents: "{}")
         try createDirectory(".codex")
-        try createFile(".config/opencode/opencode.json", contents: "{}")
 
         let detections = HookRegistrar(home: tempHome.path).detectAll()
 
-        XCTAssertEqual(detections.map(\.cli), [.claude, .gemini, .codex, .opencode])
+        XCTAssertEqual(detections.map(\.cli), [.claude, .gemini, .codex])
         XCTAssertEqual(detections.first { $0.cli == .claude }?.configPath, tempHome.appendingPathComponent(".claude/settings.json").path)
-        XCTAssertEqual(detections.first { $0.cli == .opencode }?.configPath, tempHome.appendingPathComponent(".config/opencode/opencode.json").path)
         XCTAssertEqual(detections.first { $0.cli == .claude }?.detected, true)
         XCTAssertEqual(detections.first { $0.cli == .gemini }?.detected, false)
         XCTAssertEqual(detections.first { $0.cli == .codex }?.detected, true)
-        XCTAssertEqual(detections.first { $0.cli == .opencode }?.detected, true)
-        XCTAssertEqual(detections.first { $0.cli == .opencode }?.canRegister, false)
     }
 
     func test_registerClaudePreservesNestedHooksAddsAllEventsIdempotentlyAndBacksUpOnce() throws {

@@ -7,7 +7,9 @@ struct PopoverView: View {
     var onRefresh: () -> Void = {}
 
     private var enabledProviders: [AIProvider] {
-        AIProvider.allCases.filter { $0 != .unknown && settingsStore.settings.isProviderEnabled($0) }
+        settingsStore.settings.providerOrder
+            .compactMap(AIProvider.init(rawValue:))
+            .filter { $0 != .unknown && settingsStore.settings.isProviderEnabled($0) }
     }
 
     var body: some View {

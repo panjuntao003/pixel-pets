@@ -12,11 +12,12 @@ struct GameSettingsView: View {
 
 struct QuotaSettingsView: View {
     @EnvironmentObject private var settingsStore: SettingsStore
+    @State private var orderedProviders: [AIProvider] = []
 
     var body: some View {
         Form {
             Section("Providers") {
-                ForEach(AIProvider.allCases.filter { $0 != .unknown }, id: \.self) { provider in
+                ForEach(orderedProviders, id: \.self) { provider in
                     Toggle(provider.displayName, isOn: Binding(
                         get: { settingsStore.settings.isProviderEnabled(provider) },
                         set: { enabled in
@@ -29,6 +30,12 @@ struct QuotaSettingsView: View {
                             }
                         }
                     ))
+                }
+                .onMove { indices, newOffset in
+                    orderedProviders.move(fromOffsets: indices, toOffset: newOffset)
+                    settingsStore.update { settings in
+                        settings.providerOrder = orderedProviders.map(\.rawValue)
+                    }
                 }
             }
 
@@ -86,5 +93,10 @@ struct QuotaSettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .onAppear {
+            orderedProviders = settingsStore.settings.providerOrder
+                .compactMap(AIProvider.init(rawValue:))
+                .filter { $0 != .unknown }
+        }
     }
 }

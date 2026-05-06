@@ -79,9 +79,9 @@ final class SettingsStoreTests: XCTestCase {
     }
 
     func test_skinOverride_roundtrips() {
-        store.update { $0.skinOverride = "opencode" }
+        store.update { $0.skinOverride = "claude" }
         let store2 = SettingsStore(directory: tempDir.path)
-        XCTAssertEqual(store2.settings.skinOverride, "opencode")
+        XCTAssertEqual(store2.settings.skinOverride, "claude")
     }
 
     func test_skinOverride_nilByDefault_inLegacyJSON() {
@@ -118,7 +118,7 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertTrue(store.settings.isProviderEnabled(.claude))
         XCTAssertTrue(store.settings.isProviderEnabled(.codex))
         XCTAssertTrue(store.settings.isProviderEnabled(.gemini))
-        XCTAssertTrue(store.settings.isProviderEnabled(.opencode))
+        XCTAssertTrue(store.settings.isProviderEnabled(.gemini))
     }
 
     func test_enabledProviders_explicitFalseDisables() {

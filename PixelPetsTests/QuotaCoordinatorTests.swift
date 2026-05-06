@@ -92,7 +92,7 @@ final class QuotaSnapshotMappingTests: XCTestCase {
 
     func test_mapUnavailable() {
         let result = QuotaFetchResult.unavailable("Test unavailable")
-        let snapshot = mapQuotaResultToSnapshot(provider: .opencode, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
+        let snapshot = mapQuotaResultToSnapshot(provider: .gemini, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
         XCTAssertEqual(snapshot.status, .unavailable)
         XCTAssertEqual(snapshot.message, "Test unavailable")
         XCTAssertNil(snapshot.lastSuccessfulAt)
@@ -102,7 +102,7 @@ final class QuotaSnapshotMappingTests: XCTestCase {
     func test_mapEstimated_normal() {
         let tier = QuotaTier(id: "test", utilization: 0, resetsAt: nil, isEstimated: true)
         let result = QuotaFetchResult.estimated([tier])
-        let snapshot = mapQuotaResultToSnapshot(provider: .opencode, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
+        let snapshot = mapQuotaResultToSnapshot(provider: .gemini, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
         XCTAssertEqual(snapshot.source, .estimated)
         XCTAssertEqual(snapshot.status, .normal)
         XCTAssertNotNil(snapshot.lastSuccessfulAt)
@@ -111,7 +111,7 @@ final class QuotaSnapshotMappingTests: XCTestCase {
     func test_mapEstimated_exhausted() {
         let tier = QuotaTier(id: "test", utilization: 1.0, resetsAt: nil, isEstimated: true)
         let result = QuotaFetchResult.estimated([tier])
-        let snapshot = mapQuotaResultToSnapshot(provider: .opencode, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
+        let snapshot = mapQuotaResultToSnapshot(provider: .gemini, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
         XCTAssertEqual(snapshot.status, .exhausted)
         XCTAssertEqual(snapshot.source, .estimated)
     }
@@ -119,7 +119,7 @@ final class QuotaSnapshotMappingTests: XCTestCase {
     func test_mapEstimated_low() {
         let tier = QuotaTier(id: "test", utilization: 0.9, resetsAt: nil, isEstimated: true)
         let result = QuotaFetchResult.estimated([tier])
-        let snapshot = mapQuotaResultToSnapshot(provider: .opencode, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
+        let snapshot = mapQuotaResultToSnapshot(provider: .gemini, result: result, checkedAt: Date(), lowQuotaThreshold: 20)
         XCTAssertEqual(snapshot.status, .low)
         XCTAssertEqual(snapshot.source, .estimated)
     }
@@ -139,7 +139,6 @@ final class QuotaCoordinatorTests: XCTestCase {
         }
         let enabled = coordinator.enabledProviders
         XCTAssertTrue(enabled.contains(.claude))
-        XCTAssertTrue(enabled.contains(.opencode))
         XCTAssertFalse(enabled.contains(.codex))
         XCTAssertFalse(enabled.contains(.gemini))
     }
@@ -247,16 +246,16 @@ final class QuotaCoordinatorTests: XCTestCase {
         XCTAssertEqual(snapshot?.status, .low)
     }
 
-    func test_refreshAll_opencodeUnavailableNoErrorState() async {
+    func test_refreshAll_geminiUnavailableNoErrorState() async {
         let store = makeTempStore()
-        let mockClient = MockQuotaClient(provider: .opencode) { _ in
-            ProviderQuotaSnapshot.unavailable(provider: .opencode, message: "No API key")
+        let mockClient = MockQuotaClient(provider: .gemini) { _ in
+            ProviderQuotaSnapshot.unavailable(provider: .gemini, message: "No API key")
         }
         let coordinator = QuotaCoordinator(settingsStore: store, clients: [mockClient])
 
         await coordinator.refreshAll()
 
-        let snapshot = coordinator.stateStore.snapshot(for: .opencode)
+        let snapshot = coordinator.stateStore.snapshot(for: .gemini)
         XCTAssertEqual(snapshot?.status, .unavailable)
         XCTAssertEqual(snapshot?.message, "No API key")
         let overall = coordinator.overallStatus
@@ -288,7 +287,7 @@ final class QuotaCoordinatorTests: XCTestCase {
             $0.enabledProviders["claude"] = false
             $0.enabledProviders["codex"] = false
             $0.enabledProviders["gemini"] = false
-            $0.enabledProviders["opencode"] = false
+            $0.enabledProviders["gemini"] = false
         }
         await coordinator.refreshAll()
         XCTAssertEqual(coordinator.overallStatus, .unavailable)
@@ -326,15 +325,15 @@ final class QuotaCoordinatorTests: XCTestCase {
 
     func test_refreshAll_estimatedSourcePreserved() async {
         let store = makeTempStore()
-        let mockClient = MockQuotaClient(provider: .opencode) { threshold in
+        let mockClient = MockQuotaClient(provider: .gemini) { threshold in
             let tier = QuotaTier(id: "test", utilization: 0.3, resetsAt: nil, isEstimated: true)
             let result = QuotaFetchResult.estimated([tier])
-            return mapQuotaResultToSnapshot(provider: .opencode, result: result, checkedAt: Date(), lowQuotaThreshold: threshold)
+            return mapQuotaResultToSnapshot(provider: .gemini, result: result, checkedAt: Date(), lowQuotaThreshold: threshold)
         }
         let coordinator = QuotaCoordinator(settingsStore: store, clients: [mockClient])
         await coordinator.refreshAll()
 
-        let snapshot = coordinator.stateStore.snapshot(for: .opencode)
+        let snapshot = coordinator.stateStore.snapshot(for: .gemini)
         XCTAssertEqual(snapshot?.source, .estimated)
         XCTAssertEqual(snapshot?.status, .normal)
     }
