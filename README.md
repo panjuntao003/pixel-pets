@@ -1,4 +1,4 @@
-# PixelPets — AI Quota Monitor
+# Quota — AI Quota Monitor
 
 A lightweight macOS menu-bar app that shows remaining quota for your AI CLI tools at a glance.
 
@@ -34,11 +34,11 @@ A lightweight macOS menu-bar app that shows remaining quota for your AI CLI tool
 xcodegen generate
 
 # Build
-xcodebuild -project PixelPets.xcodeproj -scheme PixelPets \
+xcodebuild -project Quota.xcodeproj -scheme Quota \
   -destination "platform=macOS" build
 
 # Run tests
-xcodebuild -project PixelPets.xcodeproj -scheme PixelPetsTests \
+xcodebuild -project Quota.xcodeproj -scheme QuotaTests \
   -destination "platform=macOS" test
 ```
 
@@ -54,7 +54,7 @@ AppDelegate
                     └── PopoverView / MenuBarDotView
 ```
 
-Settings are persisted to `~/Library/Application Support/com.pixelpets.app/settings.json`.
+Settings are persisted to `~/Library/Application Support/com.quota.app/settings.json`.
 
 ## Privacy
 

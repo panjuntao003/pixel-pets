@@ -35,7 +35,7 @@ final class SettingsStore: ObservableObject {
 
     init(directory: String? = nil) {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let bundleID = Bundle.main.bundleIdentifier ?? "com.google.pixelpets"
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.quota.app"
         let baseFolder = directory.map { URL(fileURLWithPath: $0) } ?? appSupport.appendingPathComponent(bundleID)
         try? FileManager.default.createDirectory(at: baseFolder, withIntermediateDirectories: true)
         settingsURL = baseFolder.appendingPathComponent("settings.json")

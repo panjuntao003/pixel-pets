@@ -1,5 +1,5 @@
 import XCTest
-@testable import PixelPets
+@testable import Quota
 
 final class ClaudeQuotaClientTests: XCTestCase {
     func test_extractAccessTokenReadsClaudeAiOauthCredential() throws {

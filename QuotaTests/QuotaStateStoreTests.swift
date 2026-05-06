@@ -1,5 +1,5 @@
 import XCTest
-@testable import PixelPets
+@testable import Quota
 
 @MainActor
 final class QuotaStateStoreTests: XCTestCase {

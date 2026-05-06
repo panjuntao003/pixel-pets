@@ -1,24 +1,24 @@
-name: PixelPets
+name: Quota
 targets:
-  PixelPets:
+  Quota:
     type: application
     platform: macOS
     deploymentTarget: "26.0"
     sources:
-      - path: PixelPets
+      - path: Quota
     settings:
-      INFOPLIST_FILE: PixelPets/Info.plist
-      PRODUCT_BUNDLE_IDENTIFIER: com.pixelpets.app
+      INFOPLIST_FILE: Quota/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: com.quota.app
       SWIFT_VERSION: "5.9"
-  PixelPetsTests:
+  QuotaTests:
     type: bundle.unit-test
     platform: macOS
     deploymentTarget: "26.0"
     sources:
-      - PixelPetsTests
+      - QuotaTests
     dependencies:
-      - target: PixelPets
+      - target: Quota
     settings:
       GENERATE_INFOPLIST_FILE: YES
-      PRODUCT_BUNDLE_IDENTIFIER: com.pixelpets.app.tests
+      PRODUCT_BUNDLE_IDENTIFIER: com.quota.app.tests
       SWIFT_VERSION: "5.9"
