@@ -4,15 +4,16 @@ struct QuotaBarView: View {
     let tier: QuotaTier
 
     private static let green  = Color(hex: "34C759")
-    private static let orange = Color(hex: "FF9500")
+    private static let yellow = Color(hex: "FFCC00")
     private static let red    = Color(hex: "FF3B30")
     private static let track  = Color(hex: "E5E5EA")
 
     private var barColor: Color {
-        let used = tier.utilization
-        if used < 0.5 { return Self.green }
-        if used < 0.8 { return Self.orange }
-        return Self.red
+        switch QuotaUsageLevel(usedFraction: tier.utilization) {
+        case .normal: return Self.green
+        case .low: return Self.yellow
+        case .exhausted: return Self.red
+        }
     }
 
     var body: some View {

@@ -16,9 +16,7 @@ struct QuotaCardView: View {
 
     private var barColor: Color {
         let used = snapshot?.tiers?.map(\.utilization).max() ?? (1.0 - (snapshot?.remainingPercent ?? 100) / 100.0)
-        if used < 0.5 { return .green }
-        if used < 0.8 { return .orange }
-        return .red
+        return QuotaUsageLevel(usedFraction: used).barColor
     }
 
     var body: some View {
