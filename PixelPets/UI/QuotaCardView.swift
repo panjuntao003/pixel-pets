@@ -4,6 +4,35 @@ struct QuotaCardView: View {
     let provider: AIProvider
     let snapshot: ProviderQuotaSnapshot?
 
+    private var displayedTiers: [QuotaTier] {
+        guard let tiers = snapshot?.tiers, !tiers.isEmpty else { return [] }
+        let hasMonthly = tiers.contains { $0.id == "monthly" }
+
+        if hasMonthly {
+            let priority = [
+                tiers.first { $0.id == "rolling" },
+                tiers.first { $0.id == "weekly" },
+                tiers.first { $0.id == "monthly" }
+            ].compactMap { $0 }
+            if !priority.isEmpty { return priority }
+        }
+
+        let priority = [
+            tiers.first { ["five_hour", "rolling", "daily"].contains($0.id) },
+            tiers.first { ["seven_day", "weekly"].contains($0.id) }
+        ].compactMap { $0 }
+
+        if !priority.isEmpty { return priority }
+        return Array(tiers.prefix(hasMonthly ? 3 : 2))
+    }
+
+    private var barColor: Color {
+        let used = snapshot?.tiers?.map(\.utilization).max() ?? (1.0 - (snapshot?.remainingPercent ?? 100) / 100.0)
+        if used < 0.5 { return .green }
+        if used < 0.8 { return .orange }
+        return .red
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
@@ -16,18 +45,18 @@ struct QuotaCardView: View {
             }
 
             if let snapshot {
-                if let percent = snapshot.remainingPercent, snapshot.status != .unavailable {
+                if !displayedTiers.isEmpty {
+                    HStack(alignment: .top, spacing: 10) {
+                        ForEach(displayedTiers) { tier in
+                            QuotaBarView(tier: tier).frame(maxWidth: .infinity)
+                        }
+                    }
+                } else if let percent = snapshot.remainingPercent, snapshot.status != .unavailable {
                     Text("\(Int(percent))% remaining")
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)
-                }
 
-                statusLabel(for: snapshot)
-
-                if let resetAt = snapshot.resetAt, snapshot.status != .unavailable {
-                    Text(resetAtDisplay(resetAt))
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
+                    statusLabel(for: snapshot)
                 }
 
                 Text(timeDisplay(for: snapshot))
@@ -69,16 +98,6 @@ struct QuotaCardView: View {
         case .unavailable: return .gray
         case .unknown, .none: return .gray.opacity(0.5)
         }
-    }
-
-    private func resetAtDisplay(_ date: Date) -> String {
-        let interval = date.timeIntervalSinceNow
-        guard interval > 0 else { return "Resetting..." }
-        let h = Int(interval) / 3600
-        let m = (Int(interval) % 3600) / 60
-        if h >= 24 { return "Resets in \(h/24)d \(h%24)h" }
-        if h > 0 { return "Resets in \(h)h \(m)m" }
-        return "Resets in \(m)m"
     }
 
     private func timeDisplay(for snapshot: ProviderQuotaSnapshot) -> String {

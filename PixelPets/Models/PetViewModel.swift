@@ -107,10 +107,12 @@ final class PetViewModel: ObservableObject {
             CliQuotaInfo(
                 id: .opencode,
                 fetchResult: .estimated([
-                    QuotaTier(id: "rolling", utilization: 0.07,
-                              resetsAt: Date().addingTimeInterval(8520), isEstimated: true),
-                    QuotaTier(id: "weekly", utilization: 0.50,
-                              resetsAt: Date().addingTimeInterval(504000), isEstimated: true)
+                    QuotaTier(id: "rolling", utilization: 0.0,
+                              resetsAt: Date().addingTimeInterval(18000), isEstimated: true),
+                    QuotaTier(id: "weekly", utilization: 0.0,
+                              resetsAt: Date().addingTimeInterval(403200), isEstimated: true),
+                    QuotaTier(id: "monthly", utilization: 0.83,
+                              resetsAt: Date().addingTimeInterval(1405800), isEstimated: true)
                 ]),
                 todayTokens: 1_100_000, weekTokens: 4_200_000,
                 planBadge: "Go", isDetected: true

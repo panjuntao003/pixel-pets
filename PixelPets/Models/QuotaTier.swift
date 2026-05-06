@@ -6,7 +6,7 @@ enum QuotaFetchResult {
     case estimated([QuotaTier])
 }
 
-struct QuotaTier: Identifiable {
+struct QuotaTier: Identifiable, Codable, Equatable {
     let id: String           // "five_hour", "seven_day", "rolling", "weekly"
     var utilization: Double  // fraction used (0.0–1.0)
     var resetsAt: Date?
@@ -17,8 +17,9 @@ struct QuotaTier: Identifiable {
     var displayLabel: String {
         switch id {
         case "five_hour":            return "Current session"
-        case "rolling":              return "Rolling"
-        case "seven_day", "weekly":  return "Weekly"
+        case "rolling":              return "滚动"
+        case "seven_day", "weekly":  return "每周"
+        case "monthly":              return "每月"
         case "daily":                return "Daily"
         case "pro":                  return "Pro"
         case "flash":                return "Flash"

@@ -61,7 +61,8 @@ private func mapTiersToSnapshot(
         lastCheckedAt: checkedAt,
         lastSuccessfulAt: checkedAt,
         source: source,
-        message: nil
+        message: nil,
+        tiers: tiers
     )
 }
 

@@ -4,12 +4,23 @@ struct CliCardView: View {
     let info: CliQuotaInfo
 
     private var displayedTiers: [QuotaTier] {
+        let isGo = info.id == .opencode
+        if isGo {
+            let goPriority = [
+                info.tiers.first { $0.id == "rolling" },
+                info.tiers.first { $0.id == "weekly" },
+                info.tiers.first { $0.id == "monthly" }
+            ].compactMap { $0 }
+            if !goPriority.isEmpty { return goPriority }
+        }
+
         let priority = [
             info.tiers.first { ["five_hour", "rolling", "daily"].contains($0.id) },
-            info.tiers.first { ["seven_day", "weekly"].contains($0.id) }
+            info.tiers.first { ["seven_day", "weekly"].contains($0.id) },
+            info.tiers.first { $0.id == "monthly" }
         ].compactMap { $0 }
 
-        return priority.isEmpty ? Array(info.tiers.prefix(2)) : priority
+        return priority.isEmpty ? Array(info.tiers.prefix(isGo ? 3 : 2)) : priority
     }
 
     var body: some View {

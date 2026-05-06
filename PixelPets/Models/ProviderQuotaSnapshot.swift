@@ -9,6 +9,7 @@ struct ProviderQuotaSnapshot: Codable, Equatable {
     let lastSuccessfulAt: Date?
     let source: QuotaSource
     var message: String?
+    var tiers: [QuotaTier]? = nil
 
     static func unavailable(provider: AIProvider, message: String) -> ProviderQuotaSnapshot {
         let now = Date()
