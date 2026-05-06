@@ -58,6 +58,16 @@ struct PopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Settings")
+
+                Button {
+                    NSApplication.shared.terminate(nil)
+                } label: {
+                    Image(systemName: "power")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.red.opacity(0.8))
+                }
+                .buttonStyle(.plain)
+                .help("Quit Quota")
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
