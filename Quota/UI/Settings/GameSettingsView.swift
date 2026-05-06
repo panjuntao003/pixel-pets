@@ -83,14 +83,6 @@ struct QuotaSettingsView: View {
                 }
             }
 
-            Section {
-                HStack {
-                    Text("Enable Pixel Pet")
-                    Spacer()
-                    Text("Coming later")
-                        .foregroundStyle(.secondary)
-                }
-            }
         }
         .formStyle(.grouped)
         .onAppear {

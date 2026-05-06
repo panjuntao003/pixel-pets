@@ -1,6 +1,6 @@
 # Privacy Note
 
-PixelPets reads only what it needs to display quota status. Nothing is stored or transmitted beyond your machine.
+Quota reads only what it needs to display quota status. Nothing is stored or transmitted beyond your machine.
 
 ## What the app reads
 
@@ -19,7 +19,7 @@ PixelPets reads only what it needs to display quota status. Nothing is stored or
 Settings (enabled providers, refresh interval, low-quota threshold) are written to:
 
 ```
-~/Library/Application Support/com.pixelpets.app/settings.json
+~/Library/Application Support/com.quota.app/settings.json
 ```
 
 No quota data is persisted to disk. Each launch starts with a fresh fetch.
