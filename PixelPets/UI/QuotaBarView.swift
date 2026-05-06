@@ -3,11 +3,16 @@ import SwiftUI
 struct QuotaBarView: View {
     let tier: QuotaTier
 
+    private static let green  = Color(hex: "34C759")
+    private static let orange = Color(hex: "FF9500")
+    private static let red    = Color(hex: "FF3B30")
+    private static let track  = Color(hex: "E5E5EA")
+
     private var barColor: Color {
         let used = tier.utilization
-        if used < 0.5 { return AgentPalette.quotaGreen }
-        if used < 0.8 { return AgentPalette.quotaOrange }
-        return AgentPalette.quotaRed
+        if used < 0.5 { return Self.green }
+        if used < 0.8 { return Self.orange }
+        return Self.red
     }
 
     var body: some View {
@@ -24,7 +29,7 @@ struct QuotaBarView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(AgentPalette.quotaTrack)
+                        .fill(Self.track)
                         .frame(height: 4)
                     Capsule()
                         .fill(barColor)

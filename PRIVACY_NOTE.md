@@ -1,28 +1,29 @@
-# Pixel Pets Privacy Note
+# Privacy Note
 
-PixelPets is designed as a low-impact, secure companion. Your data and privacy are paramount.
+PixelPets reads only what it needs to display quota status. Nothing is stored or transmitted beyond your machine.
 
-## 1. Minimal Data Access (Metadata Only)
-- The system only reads **activity metadata** from AI tool logs (e.g., "Claude started a request", "OpenCode received a response").
-- We **NEVER** read or save:
-    - User Prompt content.
-    - AI Response text.
-    - Code fragments or file contents.
-    - File paths or project names.
-    - API Keys, credentials, or session tokens.
+## What the app reads
 
-## 2. No Active Monitoring
-- PixelPets does **NOT** listen to keyboard inputs.
-- PixelPets does **NOT** record screen activity.
-- Events are derived from existing tool logs or local TCP hooks provided by the AI tools themselves.
+- **Quota APIs** — each provider's usage endpoint, using the credentials already stored by the CLI tool you installed. The app makes the same API call you would make manually.
+- **Local credential files / Keychain** — read-only. The app never writes to these files.
 
-## 3. Local-Only Processing
-- All event aggregation and visual rendering happen **locally on your machine**.
-- No diagnostics or usage statistics are sent to any remote server.
-- Debug information is used exclusively for local development and is only visible when the Debug HUD is manually enabled.
+## What the app does NOT do
 
-## 4. Open Architecture
-- The system uses standard JSON manifests for assets, allowing users to inspect and verify exactly what resources the app is loading.
+- Does not read prompt text, response text, code, or file contents.
+- Does not record keystrokes or screen activity.
+- Does not send analytics, crash reports, or telemetry anywhere.
+- Does not modify any credential file or Keychain entry.
 
----
-*Pixel Pets: A companion that cares about your flow, not your data.*
+## Where data is stored
+
+Settings (enabled providers, refresh interval, low-quota threshold) are written to:
+
+```
+~/Library/Application Support/com.pixelpets.app/settings.json
+```
+
+No quota data is persisted to disk. Each launch starts with a fresh fetch.
+
+## Network
+
+The only outbound connections are the provider quota API calls listed in the README. There are no background services, no update checks, and no third-party SDKs.
