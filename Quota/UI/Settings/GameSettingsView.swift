@@ -1,3 +1,4 @@
+import Sparkle
 import SwiftUI
 
 struct GameSettingsView: View {
@@ -6,7 +7,7 @@ struct GameSettingsView: View {
     var body: some View {
         QuotaSettingsView()
             .environmentObject(settingsStore)
-            .frame(width: 400, height: 320)
+            .frame(width: 400, height: 400)
     }
 }
 
@@ -80,6 +81,24 @@ struct QuotaSettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .frame(width: 100)
+                }
+            }
+
+            Section("Updates") {
+                HStack {
+                    Text("Automatically check for updates")
+                    Spacer()
+                    Toggle("", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "SUEnableAutomaticChecks") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "SUEnableAutomaticChecks") }
+                    ))
+                }
+                HStack {
+                    Button("Check for Updates...") {
+                        SUUpdater.shared()?.checkForUpdates(nil)
+                    }
+                    .controlSize(.small)
+                    Spacer()
                 }
             }
 

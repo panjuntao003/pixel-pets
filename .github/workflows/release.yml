@@ -19,11 +19,15 @@ jobs:
       PROJECT: Quota.xcodeproj
       ARCHIVE_PATH: build/Quota.xcarchive
       EXPORT_PATH: build/export
-      ZIP_PATH: build/Quota.zip
+      NOTARIZE_ZIP: build/Quota-notarize.zip
+      DMG_PATH: build/Quota.dmg
+      APPCAST_PATH: build/appcast.xml
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -33,18 +37,11 @@ jobs:
 
       - name: Import Developer ID certificate
         env:
-          # Required repository secrets:
-          # APPLE_ID: Apple ID email address
-          # APPLE_APP_PASSWORD: App-specific password from appleid.apple.com
-          # APPLE_TEAM_ID: Apple Developer Team ID
-          # CERTIFICATE_P12_BASE64: Base64-encoded exported Developer ID certificate
-          # CERTIFICATE_PASSWORD: Password for the exported certificate
           CERTIFICATE_P12_BASE64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
           CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
         run: |
           KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
           CERTIFICATE_PATH="$RUNNER_TEMP/developer-id.p12"
-
           echo "$CERTIFICATE_P12_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
           security create-keychain -p "" "$KEYCHAIN_PATH"
           security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
@@ -79,34 +76,99 @@ jobs:
           </dict>
           </plist>
           PLIST
-
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
             DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
 
-      - name: Zip app
-        run: ditto -c -k --keepParent "$EXPORT_PATH/$APP_NAME.app" "$ZIP_PATH"
-
-      - name: Notarize
+      - name: Notarize app
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          xcrun notarytool submit "$ZIP_PATH" \
+          ditto -c -k --keepParent "$EXPORT_PATH/$APP_NAME.app" "$NOTARIZE_ZIP"
+          xcrun notarytool submit "$NOTARIZE_ZIP" \
             --apple-id "$APPLE_ID" \
             --password "$APPLE_APP_PASSWORD" \
             --team-id "$APPLE_TEAM_ID" \
             --wait
-
-      - name: Staple notarization ticket
-        run: |
           xcrun stapler staple "$EXPORT_PATH/$APP_NAME.app"
-          ditto -c -k --keepParent "$EXPORT_PATH/$APP_NAME.app" "$ZIP_PATH"
+
+      - name: Create DMG
+        run: |
+          brew install create-dmg
+          create-dmg \
+            --volname "$APP_NAME" \
+            --window-pos 200 120 \
+            --window-size 500 320 \
+            --icon-size 80 \
+            --icon "$APP_NAME.app" 125 120 \
+            --hide-extension "$APP_NAME.app" \
+            --app-drop-link 375 120 \
+            "$DMG_PATH" \
+            "$EXPORT_PATH/$APP_NAME.app"
+
+      - name: Notarize DMG
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool submit "$DMG_PATH" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_APP_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+          xcrun stapler staple "$DMG_PATH"
+
+      - name: Generate appcast
+        run: |
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+          BUILD_NUMBER="$(date +%s)"
+          FILE_SIZE=$(stat -f%z "$DMG_PATH")
+          PUB_DATE=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
+          RELEASE_TAG="${{ github.ref_name }}"
+          DMG_FILENAME="$APP_NAME-${VERSION}.dmg"
+          DMG_URL="https://github.com/${{ github.repository }}/releases/download/${RELEASE_TAG}/${DMG_FILENAME}"
+
+          cat > "$APPCAST_PATH" <<XML
+          <?xml version="1.0" encoding="utf-8"?>
+          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+              <title>Quota</title>
+              <language>en</language>
+              <item>
+                <title>Version ${VERSION}</title>
+                <pubDate>${PUB_DATE}</pubDate>
+                <sparkle:version>${BUILD_NUMBER}</sparkle:version>
+                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+                <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+                <enclosure
+                  url="${DMG_URL}"
+                  sparkle:version="${BUILD_NUMBER}"
+                  sparkle:shortVersionString="${VERSION}"
+                  length="${FILE_SIZE}"
+                  type="application/octet-stream"
+                />
+              </item>
+            </channel>
+          </rss>
+          XML
+
+      - name: Rename DMG for release
+        run: |
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+          DMG_RELEASE="build/$APP_NAME-${VERSION}.dmg"
+          mv "$DMG_PATH" "$DMG_RELEASE"
+          echo "DMG_RELEASE=$DMG_RELEASE" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.ZIP_PATH }}
+          files: |
+            ${{ env.DMG_RELEASE }}
+            ${{ env.APPCAST_PATH }}

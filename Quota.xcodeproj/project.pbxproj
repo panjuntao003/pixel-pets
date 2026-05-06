@@ -29,6 +29,7 @@
 		BEAC0C4B1811C4557A4C67ED /* QuotaStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27A610ACBADD1DAA530E084 /* QuotaStatus.swift */; };
 		C037DAD269E135644E059EDB /* ProviderQuotaSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B975910C7938989C5DB4632 /* ProviderQuotaSnapshot.swift */; };
 		DB645EE233819531C16E1C34 /* QuotaCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B67BFC44D2311FACE2A964 /* QuotaCoordinator.swift */; };
+		DDE6A6D1075A876C9DF0DA11 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 5608B1857259E20401F6AF84 /* Sparkle */; };
 		DEDC8A2A4445CAD405C2A4DE /* ClaudeQuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE24BAEC42326CF2470F5C01 /* ClaudeQuotaClient.swift */; };
 		E1AB9E1D0C8F43CFA25B5783 /* MenuBarDotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB62EC18203C5D9142F390C8 /* MenuBarDotView.swift */; };
 		F84EBCCECA873E9DADCB86B0 /* QuotaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30CE6A429A0D3149B3249EAD /* QuotaClient.swift */; };
@@ -75,6 +76,17 @@
 		EC0644627906BA1059A71460 /* ClaudeQuotaClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeQuotaClientTests.swift; sourceTree = "<group>"; };
 		F1C10B47268F4D3337A0EC83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		867193B63274FCA7580D7F9F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DDE6A6D1075A876C9DF0DA11 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		01CAA3A71AF93768B1C9CAF2 /* Persistence */ = {
@@ -184,7 +196,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		"TEMP_2AB1A9B1-CC02-477E-BE6D-1BD5426D572F" /* Resources */ = {
+		"TEMP_FB4CA8CE-AE14-4322-BC59-1589D36A5258" /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -200,6 +212,7 @@
 			buildPhases = (
 				3554AC2C73BC457CEAD7619D /* Sources */,
 				4734567EFBD0B7F3ADFABEDD /* Resources */,
+				867193B63274FCA7580D7F9F /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -207,6 +220,7 @@
 			);
 			name = Quota;
 			packageProductDependencies = (
+				5608B1857259E20401F6AF84 /* Sparkle */,
 			);
 			productName = Quota;
 			productReference = DBD50F87A92F84B0E86A5FEF /* Quota.app */;
@@ -250,6 +264,9 @@
 			);
 			mainGroup = 6FE6CC62390F194ADFDC54B7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C05352A9918A5E959D64C930 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D00F7BE72EDBA6DB4D1E42ED /* Products */;
 			projectDirPath = "";
@@ -548,6 +565,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C05352A9918A5E959D64C930 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5608B1857259E20401F6AF84 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C05352A9918A5E959D64C930 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 24FB92C63FDB195B2C7535B7 /* Project object */;
 }

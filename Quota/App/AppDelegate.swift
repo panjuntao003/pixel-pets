@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import Sparkle
 import SwiftUI
 
 @MainActor
@@ -8,8 +9,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private let popover = NSPopover()
     private var statusItem: NSStatusItem?
     private var cancellables: Set<AnyCancellable> = []
+    private var updaterController: SPUStandardUpdaterController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
         NSApp.setActivationPolicy(.accessory)
         setupStatusItem()
         setupPopover()

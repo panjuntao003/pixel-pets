@@ -1,4 +1,8 @@
 name: Quota
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: "2.6.0"
 targets:
   Quota:
     type: application
@@ -6,6 +10,8 @@ targets:
     deploymentTarget: "26.0"
     sources:
       - path: Quota
+    dependencies:
+      - package: Sparkle
     settings:
       INFOPLIST_FILE: Quota/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: com.quota.app
