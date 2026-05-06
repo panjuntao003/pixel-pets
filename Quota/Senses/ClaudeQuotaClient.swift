@@ -16,7 +16,7 @@ final class ClaudeQuotaClient {
 
     func fetch() async -> QuotaFetchResult {
         guard let token = Self.readAccessToken() else {
-            return .unavailable("未找到 Claude Code 凭据")
+            return .unavailable("Claude credentials not found")
         }
 
         var request = URLRequest(url: Self.usageURL, timeoutInterval: 10)
@@ -31,17 +31,17 @@ final class ClaudeQuotaClient {
                 httpResponse.statusCode == 200,
                 (try? JSONSerialization.jsonObject(with: data)) is [String: Any]
             else {
-                return .unavailable("配额 API 请求失败")
+                return .unavailable("Quota API request failed")
             }
 
             let tiers = Self.parseQuotaTiers(from: data)
             guard !tiers.isEmpty else {
-                return .unavailable("响应中无配额数据")
+                return .unavailable("No quota data in response")
             }
 
             return .success(tiers)
         } catch {
-            return .unavailable("配额 API 请求失败")
+            return .unavailable("Quota API request failed")
         }
     }
 
@@ -164,7 +164,7 @@ final class CodexQuotaClient {
 
     func fetch() async -> QuotaFetchResult {
         guard let token = Self.readAccessToken() else {
-            return .unavailable("未找到 Codex ChatGPT 凭据")
+            return .unavailable("Codex credentials not found")
         }
 
         var request = URLRequest(url: Self.usageURL, timeoutInterval: 10)
@@ -175,17 +175,17 @@ final class CodexQuotaClient {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse,
                   httpResponse.statusCode == 200 else {
-                return .unavailable("Codex 配额 API 请求失败")
+                return .unavailable("Codex quota API request failed")
             }
 
             let tiers = Self.parseQuotaTiers(from: data)
             guard !tiers.isEmpty else {
-                return .unavailable("Codex 响应中无配额数据")
+                return .unavailable("No Codex quota data")
             }
 
             return .success(tiers)
         } catch {
-            return .unavailable("Codex 配额 API 请求失败")
+            return .unavailable("Codex quota API request failed")
         }
     }
 
@@ -273,7 +273,7 @@ final class GeminiQuotaClient {
 
     func fetch() async -> QuotaFetchResult {
         guard let token = await Self.readAccessToken() else {
-            return .unavailable("未找到 Gemini CLI 凭据")
+            return .unavailable("Gemini CLI credentials not found")
         }
 
         do {
@@ -289,7 +289,7 @@ final class GeminiQuotaClient {
                 ]
             )
             guard let project = Self.parseProject(from: loadData) else {
-                return .unavailable("Gemini 响应中无项目数据")
+                return .unavailable("No project data in Gemini response")
             }
 
             let quotaData = try await Self.postJSON(
@@ -299,11 +299,11 @@ final class GeminiQuotaClient {
             )
             let tiers = Self.parseQuotaTiers(from: quotaData)
             guard !tiers.isEmpty else {
-                return .unavailable("Gemini 响应中无配额数据")
+                return .unavailable("No quota data in Gemini response")
             }
             return .success(tiers)
         } catch {
-            return .unavailable("Gemini 配额 API 请求失败")
+            return .unavailable("Gemini quota API request failed")
         }
     }
 

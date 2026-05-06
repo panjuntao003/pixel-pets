@@ -8,6 +8,9 @@ struct GameSettingsView: View {
         QuotaSettingsView()
             .environmentObject(settingsStore)
             .frame(width: 400, height: 400)
+            .onAppear {
+                NSApp.activate(ignoringOtherApps: true)
+            }
     }
 }
 

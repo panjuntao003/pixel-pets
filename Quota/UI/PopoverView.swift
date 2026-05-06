@@ -49,7 +49,10 @@ struct PopoverView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Refresh quotas")
-                SettingsLink {
+                Button {
+                    NSApp.activate(ignoringOtherApps: true)
+                    NSApp.sendAction(#selector(NSApplication.showSettingsWindow(_:)), to: nil, from: nil)
+                } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 13))
                 }
@@ -72,7 +75,10 @@ struct PopoverView: View {
             Text("Enable at least one provider in Settings")
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
-            SettingsLink {
+            Button {
+                NSApp.activate(ignoringOtherApps: true)
+                NSApp.sendAction(#selector(NSApplication.showSettingsWindow(_:)), to: nil, from: nil)
+            } label: {
                 Text("Open Settings")
             }
             .buttonStyle(.borderedProminent)

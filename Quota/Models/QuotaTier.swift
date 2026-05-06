@@ -17,9 +17,9 @@ struct QuotaTier: Identifiable, Codable, Equatable {
     var displayLabel: String {
         switch id {
         case "five_hour":            return "Current session"
-        case "rolling":              return "滚动"
-        case "seven_day", "weekly":  return "每周"
-        case "monthly":              return "每月"
+        case "rolling":              return "Rolling"
+        case "seven_day", "weekly":  return "Weekly"
+        case "monthly":              return "Monthly"
         case "daily":                return "Daily"
         case "pro":                  return "Pro"
         case "flash":                return "Flash"
