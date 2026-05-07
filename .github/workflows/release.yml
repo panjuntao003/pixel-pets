@@ -140,7 +140,7 @@ jobs:
         run: |
           VERSION="${{ github.ref_name }}"
           VERSION="${VERSION#v}"
-          BUILD_NUMBER="$(date +%s)"
+          BUILD_NUMBER="$(defaults read "$(pwd)/Quota/Info.plist" CFBundleVersion)"
           FILE_SIZE=$(stat -f%z "$DMG_PATH")
           PUB_DATE=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
           RELEASE_TAG="${{ github.ref_name }}"

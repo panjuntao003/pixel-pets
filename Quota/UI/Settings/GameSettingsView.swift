@@ -64,7 +64,7 @@ struct QuotaSettingsView: View {
                         Text("50%").tag(50)
                     }
                     .pickerStyle(.menu)
-                    .frame(width: 80)
+                    .frame(width: 100)
                 }
             }
 
@@ -105,6 +105,11 @@ struct QuotaSettingsView: View {
                     }
                     .controlSize(.small)
                     Spacer()
+                    if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                        Text("v\(version)")
+                            .foregroundStyle(.secondary)
+                            .font(.system(size: 12))
+                    }
                 }
             }
 

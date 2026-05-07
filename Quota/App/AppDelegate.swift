@@ -10,6 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var statusItem: NSStatusItem?
     private var cancellables: Set<AnyCancellable> = []
     private var updaterController: SPUStandardUpdaterController?
+    private var settingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         updaterController = SPUStandardUpdaterController(
@@ -79,14 +80,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                 onOpenSettings: { [weak self] in
                     self?.popover.performClose(nil)
                     DispatchQueue.main.async {
-                        NSApp.setActivationPolicy(.regular)
-                        NSApp.activate(ignoringOtherApps: true)
-                        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                        self?.showSettingsWindow()
                     }
                 }
             )
             .environmentObject(coordinator.settingsStore)
         )
+    }
+
+    private func showSettingsWindow() {
+        if settingsWindow == nil {
+            let view = GameSettingsView()
+                .environmentObject(coordinator.settingsStore)
+            let window = NSWindow(contentViewController: NSHostingController(rootView: view))
+            window.title = "Settings"
+            window.styleMask = [.titled, .closable, .miniaturizable]
+            window.center()
+            settingsWindow = window
+        }
+
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
     @objc private func togglePopover() {

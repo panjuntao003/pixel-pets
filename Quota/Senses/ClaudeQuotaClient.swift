@@ -8,7 +8,6 @@ final class ClaudeQuotaClient {
     private static let usageURL = URL(string: "https://api.anthropic.com/api/oauth/usage")!
     private static let quotaWindowIDs = ["five_hour", "seven_day", "seven_day_opus", "seven_day_sonnet"]
     static var copyKeychainCredential: ([String: Any]) -> (Data?, OSStatus) = defaultCopyKeychainCredential
-    static var updateKeychainAccess: (String) -> OSStatus = defaultUpdateKeychainAccess
 
     private static let iso8601Formatter = ISO8601DateFormatter()
     private static let fractionalISO8601Formatter: ISO8601DateFormatter = {
@@ -125,8 +124,6 @@ final class ClaudeQuotaClient {
             return (nil, status)
         }
 
-        removeKeychainAppRestriction()
-
         return (data, status)
     }
 
@@ -134,28 +131,6 @@ final class ClaudeQuotaClient {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         return (item as? Data, status)
-    }
-
-    static func defaultUpdateKeychainAccess(service: String) -> OSStatus {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service
-        ]
-
-        var access: SecAccess?
-        let status = SecAccessCreate(service as CFString, nil, &access)
-        guard status == errSecSuccess, let access else {
-            return status
-        }
-
-        let update: [String: Any] = [
-            kSecAttrAccess as String: access
-        ]
-        return SecItemUpdate(query as CFDictionary, update as CFDictionary)
-    }
-
-    private static func removeKeychainAppRestriction() {
-        _ = updateKeychainAccess(credentialService)
     }
 
     private static func doubleValue(_ value: Any?) -> Double? {

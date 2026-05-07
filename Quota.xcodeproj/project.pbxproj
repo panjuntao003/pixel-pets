@@ -196,7 +196,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		"TEMP_A5F7C40D-DDF4-4E84-858E-F488F1F8B075" /* Resources */ = {
+		"TEMP_60AE42FD-A535-4066-8275-B0F6F58B2E23" /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -213,6 +213,7 @@
 				3554AC2C73BC457CEAD7619D /* Sources */,
 				4734567EFBD0B7F3ADFABEDD /* Resources */,
 				867193B63274FCA7580D7F9F /* Frameworks */,
+				77D4859A9CEE0F931DCA18C3 /* Disable Spotlight indexing for build products */,
 			);
 			buildRules = (
 			);
@@ -288,6 +289,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		77D4859A9CEE0F931DCA18C3 /* Disable Spotlight indexing for build products */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Disable Spotlight indexing for build products";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "touch \"${BUILT_PRODUCTS_DIR}/.metadata_never_index\"\ntouch \"${BUILD_DIR}/.metadata_never_index\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		351DBDDF5AEB224C213AAE3D /* Sources */ = {

@@ -3,6 +3,70 @@ packages:
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
     from: "2.6.0"
+schemes:
+  Quota:
+    build:
+      targets:
+        Quota: all
+      postActions:
+        - name: Hide build products from system app search
+          settingsTarget: Quota
+          script: |
+            LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
+            APP_NAME="${FULL_PRODUCT_NAME:-Quota.app}"
+
+            for ROOT in "${BUILT_PRODUCTS_DIR}" "${BUILD_DIR}" "${SRCROOT}/build" "${SRCROOT}/.build"; do
+              if [ -d "${ROOT}" ]; then
+                /usr/bin/touch "${ROOT}/.metadata_never_index"
+              fi
+            done
+
+            if [ -x "${LSREGISTER}" ]; then
+              for ROOT in "${BUILD_DIR}" "${SRCROOT}/build" "${SRCROOT}/.build"; do
+                if [ -d "${ROOT}" ]; then
+                  /usr/bin/find "${ROOT}" -name "${APP_NAME}" -type d -prune -exec "${LSREGISTER}" -u {} \; 2>/dev/null || true
+                fi
+              done
+            fi
+    run:
+      config: Debug
+      executable: Quota
+    profile:
+      config: Release
+      executable: Quota
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+  QuotaTests:
+    build:
+      targets:
+        Quota: all
+        QuotaTests: all
+      postActions:
+        - name: Hide build products from system app search
+          settingsTarget: Quota
+          script: |
+            LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister"
+            APP_NAME="${FULL_PRODUCT_NAME:-Quota.app}"
+
+            for ROOT in "${BUILT_PRODUCTS_DIR}" "${BUILD_DIR}" "${SRCROOT}/build" "${SRCROOT}/.build"; do
+              if [ -d "${ROOT}" ]; then
+                /usr/bin/touch "${ROOT}/.metadata_never_index"
+              fi
+            done
+
+            if [ -x "${LSREGISTER}" ]; then
+              for ROOT in "${BUILD_DIR}" "${SRCROOT}/build" "${SRCROOT}/.build"; do
+                if [ -d "${ROOT}" ]; then
+                  /usr/bin/find "${ROOT}" -name "${APP_NAME}" -type d -prune -exec "${LSREGISTER}" -u {} \; 2>/dev/null || true
+                fi
+              done
+            fi
+    test:
+      config: Debug
+      targets:
+        - QuotaTests
 targets:
   Quota:
     type: application
@@ -12,6 +76,12 @@ targets:
       - path: Quota
     dependencies:
       - package: Sparkle
+    postBuildScripts:
+      - name: Disable Spotlight indexing for build products
+        basedOnDependencyAnalysis: false
+        script: |
+          touch "${BUILT_PRODUCTS_DIR}/.metadata_never_index"
+          touch "${BUILD_DIR}/.metadata_never_index"
     settings:
       INFOPLIST_FILE: Quota/Info.plist
       PRODUCT_BUNDLE_IDENTIFIER: com.quota.app
