@@ -5,6 +5,7 @@ struct PopoverView: View {
     @EnvironmentObject var settingsStore: SettingsStore
     @ObservedObject var stateStore: QuotaStateStore
     var onRefresh: () -> Void = {}
+    var onOpenSettings: () -> Void = {}
 
     private var enabledProviders: [AIProvider] {
         settingsStore.settings.providerOrder
@@ -50,8 +51,7 @@ struct PopoverView: View {
                 .buttonStyle(.plain)
                 .help("Refresh quotas")
                 Button {
-                    NSApp.activate(ignoringOtherApps: true)
-                    NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                    onOpenSettings()
                 } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 13))
@@ -86,8 +86,7 @@ struct PopoverView: View {
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
             Button {
-                NSApp.activate(ignoringOtherApps: true)
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                onOpenSettings()
             } label: {
                 Text("Open Settings")
             }

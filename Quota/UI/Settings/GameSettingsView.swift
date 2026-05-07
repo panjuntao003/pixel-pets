@@ -11,6 +11,9 @@ struct GameSettingsView: View {
             .onAppear {
                 NSApp.activate(ignoringOtherApps: true)
             }
+            .onDisappear {
+                NSApp.setActivationPolicy(.accessory)
+            }
     }
 }
 

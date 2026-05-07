@@ -75,6 +75,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                 stateStore: coordinator.stateStore,
                 onRefresh: { [weak self] in
                     self?.coordinator.refresh()
+                },
+                onOpenSettings: { [weak self] in
+                    self?.popover.performClose(nil)
+                    DispatchQueue.main.async {
+                        NSApp.setActivationPolicy(.regular)
+                        NSApp.activate(ignoringOtherApps: true)
+                        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                    }
                 }
             )
             .environmentObject(coordinator.settingsStore)
