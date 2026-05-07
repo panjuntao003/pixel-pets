@@ -4,6 +4,7 @@ import Security
 final class ClaudeQuotaClient {
     private static let credentialService = "Claude Code-credentials"
     private static let credentialFilePath = ".claude/.credentials.json"
+    private static let keychainAccessDeniedMessage = "Keychain access denied - open Keychain Access, find \"Claude Code-credentials\", and re-add Quota.app under Access Control"
     private static let usageURL = URL(string: "https://api.anthropic.com/api/oauth/usage")!
     private static let quotaWindowIDs = ["five_hour", "seven_day", "seven_day_opus", "seven_day_sonnet"]
 
@@ -15,8 +16,9 @@ final class ClaudeQuotaClient {
     }()
 
     func fetch() async -> QuotaFetchResult {
-        guard let token = Self.readAccessToken() else {
-            return .unavailable("Claude credentials not found")
+        let credentials = Self.readAccessToken()
+        guard let token = credentials.token else {
+            return .unavailable(credentials.deniedByKeychain ? Self.keychainAccessDeniedMessage : "Claude credentials not found")
         }
 
         var request = URLRequest(url: Self.usageURL, timeoutInterval: 10)
@@ -87,25 +89,28 @@ final class ClaudeQuotaClient {
         }
     }
 
-    private static func readAccessToken() -> String? {
-        if let keychainData = readKeychainCredentialData(),
+    private static func readAccessToken() -> (token: String?, deniedByKeychain: Bool) {
+        let (keychainData, keychainStatus) = readKeychainCredentialData()
+        if let keychainData,
            let token = extractAccessToken(from: keychainData) {
-            return token
+            return (token, false)
         }
 
         let credentialURL = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent(credentialFilePath)
-        guard
-            let fileData = try? Data(contentsOf: credentialURL),
-            let token = extractAccessToken(from: fileData)
-        else {
-            return nil
+        if let fileData = try? Data(contentsOf: credentialURL),
+           let token = extractAccessToken(from: fileData) {
+            return (token, false)
         }
 
-        return token
+        return (nil, keychainAccessDenied(status: keychainStatus))
     }
 
-    private static func readKeychainCredentialData() -> Data? {
+    static func keychainAccessDenied(status: OSStatus) -> Bool {
+        status != errSecItemNotFound && status != errSecSuccess
+    }
+
+    private static func readKeychainCredentialData() -> (Data?, OSStatus) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: credentialService,
@@ -116,10 +121,10 @@ final class ClaudeQuotaClient {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         guard status == errSecSuccess else {
-            return nil
+            return (nil, status)
         }
 
-        return item as? Data
+        return (item as? Data, status)
     }
 
     private static func doubleValue(_ value: Any?) -> Double? {

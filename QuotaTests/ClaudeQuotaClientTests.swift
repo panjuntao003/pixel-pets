@@ -2,6 +2,12 @@ import XCTest
 @testable import Quota
 
 final class ClaudeQuotaClientTests: XCTestCase {
+    func test_keychainAccessDeniedDistinguishesMissingItemFromDeniedAccess() throws {
+        XCTAssertFalse(ClaudeQuotaClient.keychainAccessDenied(status: errSecSuccess))
+        XCTAssertFalse(ClaudeQuotaClient.keychainAccessDenied(status: errSecItemNotFound))
+        XCTAssertTrue(ClaudeQuotaClient.keychainAccessDenied(status: errSecAuthFailed))
+    }
+
     func test_extractAccessTokenReadsClaudeAiOauthCredential() throws {
         let json = """
         {
