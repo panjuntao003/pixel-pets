@@ -7,6 +7,8 @@ final class ClaudeQuotaClient {
     private static let keychainAccessDeniedMessage = "Keychain access denied - open Keychain Access, find \"Claude Code-credentials\", and re-add Quota.app under Access Control"
     private static let usageURL = URL(string: "https://api.anthropic.com/api/oauth/usage")!
     private static let quotaWindowIDs = ["five_hour", "seven_day", "seven_day_opus", "seven_day_sonnet"]
+    static var copyKeychainCredential: ([String: Any]) -> (Data?, OSStatus) = defaultCopyKeychainCredential
+    static var updateKeychainAccess: (String) -> OSStatus = defaultUpdateKeychainAccess
 
     private static let iso8601Formatter = ISO8601DateFormatter()
     private static let fractionalISO8601Formatter: ISO8601DateFormatter = {
@@ -110,7 +112,7 @@ final class ClaudeQuotaClient {
         status != errSecItemNotFound && status != errSecSuccess
     }
 
-    private static func readKeychainCredentialData() -> (Data?, OSStatus) {
+    static func readKeychainCredentialData() -> (Data?, OSStatus) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: credentialService,
@@ -118,13 +120,42 @@ final class ClaudeQuotaClient {
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
 
-        var item: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        let (data, status) = copyKeychainCredential(query)
         guard status == errSecSuccess else {
             return (nil, status)
         }
 
+        removeKeychainAppRestriction()
+
+        return (data, status)
+    }
+
+    static func defaultCopyKeychainCredential(query: [String: Any]) -> (Data?, OSStatus) {
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
         return (item as? Data, status)
+    }
+
+    static func defaultUpdateKeychainAccess(service: String) -> OSStatus {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service
+        ]
+
+        var access: SecAccess?
+        let status = SecAccessCreate(service as CFString, nil, &access)
+        guard status == errSecSuccess, let access else {
+            return status
+        }
+
+        let update: [String: Any] = [
+            kSecAttrAccess as String: access
+        ]
+        return SecItemUpdate(query as CFDictionary, update as CFDictionary)
+    }
+
+    private static func removeKeychainAppRestriction() {
+        _ = updateKeychainAccess(credentialService)
     }
 
     private static func doubleValue(_ value: Any?) -> Double? {

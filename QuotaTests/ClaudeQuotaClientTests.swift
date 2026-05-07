@@ -2,6 +2,47 @@ import XCTest
 @testable import Quota
 
 final class ClaudeQuotaClientTests: XCTestCase {
+    override func tearDown() {
+        ClaudeQuotaClient.copyKeychainCredential = ClaudeQuotaClient.defaultCopyKeychainCredential
+        ClaudeQuotaClient.updateKeychainAccess = ClaudeQuotaClient.defaultUpdateKeychainAccess
+        super.tearDown()
+    }
+
+    func test_readKeychainCredentialDataRemovesAppRestrictionAfterSuccessfulRead() throws {
+        let credentialData = Data("{}".utf8)
+        var didUpdateAccess = false
+        ClaudeQuotaClient.copyKeychainCredential = { _ in
+            (credentialData, errSecSuccess)
+        }
+        ClaudeQuotaClient.updateKeychainAccess = { service in
+            didUpdateAccess = service == "Claude Code-credentials"
+            return errSecSuccess
+        }
+
+        let (data, status) = ClaudeQuotaClient.readKeychainCredentialData()
+
+        XCTAssertEqual(data, credentialData)
+        XCTAssertEqual(status, errSecSuccess)
+        XCTAssertTrue(didUpdateAccess)
+    }
+
+    func test_readKeychainCredentialDataDoesNotUpdateAccessAfterFailedRead() throws {
+        var didUpdateAccess = false
+        ClaudeQuotaClient.copyKeychainCredential = { _ in
+            (nil, errSecAuthFailed)
+        }
+        ClaudeQuotaClient.updateKeychainAccess = { _ in
+            didUpdateAccess = true
+            return errSecSuccess
+        }
+
+        let (data, status) = ClaudeQuotaClient.readKeychainCredentialData()
+
+        XCTAssertNil(data)
+        XCTAssertEqual(status, errSecAuthFailed)
+        XCTAssertFalse(didUpdateAccess)
+    }
+
     func test_keychainAccessDeniedDistinguishesMissingItemFromDeniedAccess() throws {
         XCTAssertFalse(ClaudeQuotaClient.keychainAccessDenied(status: errSecSuccess))
         XCTAssertFalse(ClaudeQuotaClient.keychainAccessDenied(status: errSecItemNotFound))
