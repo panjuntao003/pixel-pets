@@ -9,6 +9,7 @@ final class QuotaCoordinator: ObservableObject {
     private var clients: [QuotaClient]
     private var timer: Timer?
     private var isRefreshing = false
+    private var settingsCancellable: AnyCancellable?
 
     init(settingsStore: SettingsStore? = nil, clients: [QuotaClient]? = nil) {
         self.settingsStore = settingsStore ?? SettingsStore()
@@ -18,6 +19,17 @@ final class QuotaCoordinator: ObservableObject {
             GeminiQuotaAdapter()
         ]
         self.clients = clients ?? defaultClients
+        self.settingsCancellable = self.settingsStore.$settings
+            .map(\.refreshIntervalSeconds)
+            .removeDuplicates()
+            .dropFirst()
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    guard let self, self.timer != nil else { return }
+                    self.stop()
+                    self.start()
+                }
+            }
     }
 
     var enabledProviders: Set<AIProvider> {

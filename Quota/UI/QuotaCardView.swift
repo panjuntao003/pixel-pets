@@ -3,6 +3,7 @@ import SwiftUI
 struct QuotaCardView: View {
     let provider: AIProvider
     let snapshot: ProviderQuotaSnapshot?
+    let lowQuotaThreshold: Int
 
     private var displayedTiers: [QuotaTier] {
         guard let tiers = snapshot?.tiers, !tiers.isEmpty else { return [] }
@@ -12,11 +13,6 @@ struct QuotaCardView: View {
             tiers.first { $0.id == "monthly" }
         ].compactMap { $0 }
         return priority.isEmpty ? Array(tiers.prefix(2)) : priority
-    }
-
-    private var barColor: Color {
-        let used = snapshot?.tiers?.map(\.utilization).max() ?? (1.0 - (snapshot?.remainingPercent ?? 100) / 100.0)
-        return QuotaUsageLevel(usedFraction: used).barColor
     }
 
     var body: some View {
@@ -34,7 +30,7 @@ struct QuotaCardView: View {
                 if !displayedTiers.isEmpty {
                     HStack(alignment: .top, spacing: 10) {
                         ForEach(displayedTiers) { tier in
-                            QuotaBarView(tier: tier).frame(maxWidth: .infinity)
+                            QuotaBarView(tier: tier, lowQuotaThreshold: lowQuotaThreshold).frame(maxWidth: .infinity)
                         }
                     }
                 } else if let percent = snapshot.remainingPercent, snapshot.status != .unavailable {

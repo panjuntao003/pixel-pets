@@ -5,13 +5,15 @@ enum QuotaUsageLevel: Equatable {
     case low
     case exhausted
 
-    init(usedFraction: Double) {
-        if usedFraction < 0.6 {
-            self = .normal
-        } else if usedFraction < 0.9 {
+    init(usedFraction: Double, lowQuotaThreshold: Int) {
+        let usedPercent = min(max(usedFraction, 0), 1) * 100.0
+        let lowUsagePercent = 100.0 - Double(lowQuotaThreshold)
+        if usedPercent >= 100.0 {
+            self = .exhausted
+        } else if usedPercent + 0.0001 >= lowUsagePercent {
             self = .low
         } else {
-            self = .exhausted
+            self = .normal
         }
     }
 

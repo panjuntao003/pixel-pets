@@ -62,6 +62,12 @@ final class QuotaStateStoreTests: XCTestCase {
         XCTAssertEqual(store.overallStatus(among: [.claude, .codex]), .normal)
     }
 
+    func test_overallStatus_missingEnabledProviderSnapshot_showsUnknown() {
+        store.update(provider: .claude, snapshot: makeSnapshot(.claude, .normal))
+
+        XCTAssertEqual(store.overallStatus(among: [.claude, .codex, .gemini]), .unknown)
+    }
+
     func test_primarySnapshot_prefersNormal() {
         store.update(provider: .claude, snapshot: makeSnapshot(.claude, .low))
         store.update(provider: .codex, snapshot: makeSnapshot(.codex, .normal))

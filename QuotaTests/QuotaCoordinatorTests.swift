@@ -248,6 +248,10 @@ final class QuotaCoordinatorTests: XCTestCase {
 
     func test_refreshAll_geminiUnavailableNoErrorState() async {
         let store = makeTempStore()
+        store.update {
+            $0.enabledProviders["claude"] = false
+            $0.enabledProviders["codex"] = false
+        }
         let mockClient = MockQuotaClient(provider: .gemini) { _ in
             ProviderQuotaSnapshot.unavailable(provider: .gemini, message: "No API key")
         }
@@ -264,6 +268,7 @@ final class QuotaCoordinatorTests: XCTestCase {
 
     func test_overallStatus_aggregatesProviders() async {
         let store = makeTempStore()
+        store.update { $0.enabledProviders["gemini"] = false }
         let mockClaude = MockQuotaClient(provider: .claude) { threshold in
             let tier = QuotaTier(id: "test", utilization: 0.1, resetsAt: nil, isEstimated: false)
             let result = QuotaFetchResult.success([tier])
@@ -309,6 +314,33 @@ final class QuotaCoordinatorTests: XCTestCase {
         coordinator.stop()
     }
 
+    func test_start_refreshIntervalChangeUsesNewInterval() async {
+        let store = makeTempStore()
+        store.update {
+            $0.enabledProviders["codex"] = false
+            $0.enabledProviders["gemini"] = false
+            $0.refreshIntervalSeconds = 60
+        }
+
+        var refreshCount = 0
+        let mockClient = MockQuotaClient(provider: .claude) { _ in
+            refreshCount += 1
+            return ProviderQuotaSnapshot.unknown(provider: .claude)
+        }
+        let coordinator = QuotaCoordinator(settingsStore: store, clients: [mockClient])
+
+        coordinator.start()
+        defer { coordinator.stop() }
+
+        let didRunInitialRefresh = await waitUntil { refreshCount >= 1 }
+        XCTAssertTrue(didRunInitialRefresh, "Initial refresh should run")
+
+        store.update { $0.refreshIntervalSeconds = 1 }
+
+        let didUseNewInterval = await waitUntil(timeout: 2.5) { refreshCount >= 3 }
+        XCTAssertTrue(didUseNewInterval, "Timer should be recreated with the new interval")
+    }
+
     func test_refreshAll_unknownProvider_skipped() async {
         let store = makeTempStore()
         let coordinator = QuotaCoordinator(settingsStore: store, clients: [])
@@ -351,5 +383,18 @@ final class QuotaCoordinatorTests: XCTestCase {
         let primary = coordinator.primarySnapshot
         XCTAssertNotNil(primary)
         XCTAssertEqual(primary?.provider, .claude)
+    }
+
+    private func waitUntil(
+        timeout: TimeInterval = 1.0,
+        pollInterval: TimeInterval = 0.05,
+        condition: @escaping () -> Bool
+    ) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if condition() { return true }
+            try? await Task.sleep(nanoseconds: UInt64(pollInterval * 1_000_000_000))
+        }
+        return condition()
     }
 }

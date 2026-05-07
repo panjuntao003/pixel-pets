@@ -29,6 +29,7 @@ final class QuotaStateStore: ObservableObject {
 
         let candidates = enabledProviders.compactMap { snapshots[$0] }
         guard !candidates.isEmpty else { return .unknown }
+        if candidates.count < enabledProviders.count { return .unknown }
 
         if candidates.contains(where: { $0.status == .exhausted }) { return .exhausted }
         if candidates.contains(where: { $0.status == .low }) { return .low }
