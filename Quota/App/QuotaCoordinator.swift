@@ -75,7 +75,6 @@ final class QuotaCoordinator: ObservableObject {
         defer { isRefreshing = false }
 
         let enabled = enabledProviders
-        let threshold = settingsStore.settings.lowQuotaThreshold
         let map = clientMap
 
         for provider in AIProvider.allCases {
@@ -83,7 +82,7 @@ final class QuotaCoordinator: ObservableObject {
             guard enabled.contains(provider) else { continue }
             guard let client = map[provider] else { continue }
 
-            let snapshot = await client.fetchQuota(lowQuotaThreshold: threshold)
+            let snapshot = await client.fetchQuota()
             stateStore.update(provider: provider, snapshot: snapshot)
         }
     }

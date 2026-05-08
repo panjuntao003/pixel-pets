@@ -27,8 +27,7 @@ struct PopoverView: View {
                     ForEach(enabledProviders, id: \.self) { provider in
                         QuotaCardView(
                             provider: provider,
-                            snapshot: stateStore.snapshot(for: provider),
-                            lowQuotaThreshold: settingsStore.settings.lowQuotaThreshold
+                            snapshot: stateStore.snapshot(for: provider)
                         )
                     }
                 }

@@ -2,14 +2,13 @@ import Foundation
 
 protocol QuotaClient {
     var provider: AIProvider { get }
-    func fetchQuota(lowQuotaThreshold: Int) async -> ProviderQuotaSnapshot
+    func fetchQuota() async -> ProviderQuotaSnapshot
 }
 
 func mapQuotaResultToSnapshot(
     provider: AIProvider,
     result: QuotaFetchResult,
-    checkedAt: Date,
-    lowQuotaThreshold: Int
+    checkedAt: Date
 ) -> ProviderQuotaSnapshot {
     switch result {
     case .success(let tiers):
@@ -17,7 +16,6 @@ func mapQuotaResultToSnapshot(
             provider: provider,
             tiers: tiers,
             checkedAt: checkedAt,
-            lowQuotaThreshold: lowQuotaThreshold,
             source: .providerAPI
         )
     case .estimated(let tiers):
@@ -25,7 +23,6 @@ func mapQuotaResultToSnapshot(
             provider: provider,
             tiers: tiers,
             checkedAt: checkedAt,
-            lowQuotaThreshold: lowQuotaThreshold,
             source: .estimated
         )
     case .unavailable(let reason):
@@ -37,20 +34,18 @@ private func mapTiersToSnapshot(
     provider: AIProvider,
     tiers: [QuotaTier],
     checkedAt: Date,
-    lowQuotaThreshold: Int,
     source: QuotaSource
 ) -> ProviderQuotaSnapshot {
     let maxUtilization = tiers.isEmpty ? 0.0 : (tiers.map(\.utilization).max() ?? 0.0)
-    let remaining = (1.0 - maxUtilization) * 100.0
+    let remainingFraction = max(0, 1 - maxUtilization)
+    let remaining = remainingFraction * 100.0
     let soonestReset = tiers.compactMap(\.resetsAt).min()
 
     let status: QuotaStatus
-    if maxUtilization >= 1.0 {
-        status = .exhausted
-    } else if remaining <= Double(lowQuotaThreshold) {
-        status = .low
-    } else {
-        status = .normal
+    switch QuotaUsageLevel(remainingFraction: remainingFraction) {
+    case .normal:    status = .normal
+    case .low:       status = .low
+    case .exhausted: status = .exhausted
     }
 
     return ProviderQuotaSnapshot(
@@ -72,13 +67,12 @@ struct ClaudeQuotaAdapter: QuotaClient {
     let provider: AIProvider = .claude
     private let client = ClaudeQuotaClient()
 
-    func fetchQuota(lowQuotaThreshold: Int) async -> ProviderQuotaSnapshot {
+    func fetchQuota() async -> ProviderQuotaSnapshot {
         let result = await client.fetch()
         return mapQuotaResultToSnapshot(
             provider: provider,
             result: result,
-            checkedAt: Date(),
-            lowQuotaThreshold: lowQuotaThreshold
+            checkedAt: Date()
         )
     }
 }
@@ -87,13 +81,12 @@ struct CodexQuotaAdapter: QuotaClient {
     let provider: AIProvider = .codex
     private let client = CodexQuotaClient()
 
-    func fetchQuota(lowQuotaThreshold: Int) async -> ProviderQuotaSnapshot {
+    func fetchQuota() async -> ProviderQuotaSnapshot {
         let result = await client.fetch()
         return mapQuotaResultToSnapshot(
             provider: provider,
             result: result,
-            checkedAt: Date(),
-            lowQuotaThreshold: lowQuotaThreshold
+            checkedAt: Date()
         )
     }
 }
@@ -102,15 +95,12 @@ struct GeminiQuotaAdapter: QuotaClient {
     let provider: AIProvider = .gemini
     private let client = GeminiQuotaClient()
 
-    func fetchQuota(lowQuotaThreshold: Int) async -> ProviderQuotaSnapshot {
+    func fetchQuota() async -> ProviderQuotaSnapshot {
         let result = await client.fetch()
         return mapQuotaResultToSnapshot(
             provider: provider,
             result: result,
-            checkedAt: Date(),
-            lowQuotaThreshold: lowQuotaThreshold
+            checkedAt: Date()
         )
     }
 }
-
-

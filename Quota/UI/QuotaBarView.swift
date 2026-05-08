@@ -2,7 +2,6 @@ import SwiftUI
 
 struct QuotaBarView: View {
     let tier: QuotaTier
-    let lowQuotaThreshold: Int
 
     private static let green  = Color(hex: "34C759")
     private static let yellow = Color(hex: "FFCC00")
@@ -10,7 +9,7 @@ struct QuotaBarView: View {
     private static let track  = Color(hex: "E5E5EA")
 
     private var barColor: Color {
-        switch QuotaUsageLevel(usedFraction: tier.utilization, lowQuotaThreshold: lowQuotaThreshold) {
+        switch QuotaUsageLevel(remainingFraction: tier.remaining) {
         case .normal: return Self.green
         case .low: return Self.yellow
         case .exhausted: return Self.red
@@ -35,13 +34,13 @@ struct QuotaBarView: View {
                         .frame(height: 4)
                     Capsule()
                         .fill(barColor)
-                        .frame(width: geo.size.width * min(tier.utilization, 1.0), height: 4)
+                        .frame(width: geo.size.width * min(tier.remaining, 1.0), height: 4)
                 }
             }
             .frame(height: 4)
 
             HStack {
-                Text("\(Int(tier.utilization * 100))%")
+                Text("\(Int(tier.remaining * 100))%")
                     .font(.system(size: 9, weight: .semibold))
                     .foregroundStyle(.secondary)
                 Spacer()

@@ -2,7 +2,6 @@ import Foundation
 import Combine
 
 struct AppSettings: Codable {
-    var lowQuotaThreshold: Int = 20
     var refreshIntervalSeconds: Int = 300
     var enabledProviders: [String: Bool] = [:]
     var providerOrder: [String] = AIProvider.allCases.filter { $0 != .unknown }.map(\.rawValue)
@@ -10,12 +9,11 @@ struct AppSettings: Codable {
     init() {}
 
     enum CodingKeys: String, CodingKey {
-        case lowQuotaThreshold, refreshIntervalSeconds, enabledProviders, providerOrder
+        case refreshIntervalSeconds, enabledProviders, providerOrder
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        lowQuotaThreshold = try container.decodeIfPresent(Int.self, forKey: .lowQuotaThreshold) ?? 20
         refreshIntervalSeconds = try container.decodeIfPresent(Int.self, forKey: .refreshIntervalSeconds) ?? 300
         enabledProviders = try container.decodeIfPresent([String: Bool].self, forKey: .enabledProviders) ?? [:]
         providerOrder = try container.decodeIfPresent([String].self, forKey: .providerOrder)

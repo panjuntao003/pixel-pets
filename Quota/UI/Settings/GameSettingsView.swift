@@ -46,28 +46,6 @@ struct QuotaSettingsView: View {
                 }
             }
 
-            Section("Thresholds") {
-                HStack {
-                    Text("Low quota threshold")
-                    Spacer()
-                    Picker("", selection: Binding(
-                        get: { settingsStore.settings.lowQuotaThreshold },
-                        set: { newValue in
-                            settingsStore.update { settings in
-                                settings.lowQuotaThreshold = newValue
-                            }
-                        }
-                    )) {
-                        Text("10%").tag(10)
-                        Text("20%").tag(20)
-                        Text("30%").tag(30)
-                        Text("50%").tag(50)
-                    }
-                    .pickerStyle(.menu)
-                    .frame(width: 100)
-                }
-            }
-
             Section("Refresh") {
                 HStack {
                     Text("Auto-refresh interval")
