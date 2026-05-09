@@ -86,6 +86,24 @@ final class ClaudeQuotaClientTests: XCTestCase {
         XCTAssertEqual(tiers[1].utilization, 0.85, accuracy: 0.0001)
     }
 
+    func test_unavailableMessageShowsClaudeRateLimitError() throws {
+        let json = """
+        {
+          "error": {
+            "type": "rate_limit_error",
+            "message": "Rate limited. Please try again later."
+          }
+        }
+        """
+
+        let message = ClaudeQuotaClient.unavailableMessage(
+            httpStatus: 429,
+            data: Data(json.utf8)
+        )
+
+        XCTAssertEqual(message, "Claude quota API rate limited: Rate limited. Please try again later.")
+    }
+
     func test_codexParseQuotaTiersReadsPrimaryAndSecondaryWindows() throws {
         let json = """
         {

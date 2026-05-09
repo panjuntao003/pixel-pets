@@ -30,8 +30,16 @@ final class ClaudeQuotaClient {
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard
-                let httpResponse = response as? HTTPURLResponse,
-                httpResponse.statusCode == 200,
+                let httpResponse = response as? HTTPURLResponse
+            else {
+                return .unavailable("Quota API request failed")
+            }
+
+            guard httpResponse.statusCode == 200 else {
+                return .unavailable(Self.unavailableMessage(httpStatus: httpResponse.statusCode, data: data))
+            }
+
+            guard
                 (try? JSONSerialization.jsonObject(with: data)) is [String: Any]
             else {
                 return .unavailable("Quota API request failed")
@@ -46,6 +54,19 @@ final class ClaudeQuotaClient {
         } catch {
             return .unavailable("Quota API request failed")
         }
+    }
+
+    static func unavailableMessage(httpStatus: Int, data: Data) -> String {
+        if httpStatus == 429,
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let error = json["error"] as? [String: Any],
+           error["type"] as? String == "rate_limit_error",
+           let message = error["message"] as? String,
+           !message.isEmpty {
+            return "Claude quota API rate limited: \(message)"
+        }
+
+        return "Quota API request failed"
     }
 
     static func extractAccessToken(from data: Data) -> String? {

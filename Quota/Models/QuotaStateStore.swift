@@ -7,7 +7,23 @@ final class QuotaStateStore: ObservableObject {
     @Published var lastRefreshAt: Date?
 
     func update(provider: AIProvider, snapshot: ProviderQuotaSnapshot) {
-        snapshots[provider] = snapshot
+        if snapshot.status == .unavailable,
+           let existing = snapshots[provider],
+           existing.lastSuccessfulAt != nil {
+            snapshots[provider] = ProviderQuotaSnapshot(
+                provider: existing.provider,
+                status: existing.status,
+                remainingPercent: existing.remainingPercent,
+                resetAt: existing.resetAt,
+                lastCheckedAt: snapshot.lastCheckedAt,
+                lastSuccessfulAt: existing.lastSuccessfulAt,
+                source: existing.source,
+                message: snapshot.message,
+                tiers: existing.tiers
+            )
+        } else {
+            snapshots[provider] = snapshot
+        }
         lastRefreshAt = Date()
     }
 

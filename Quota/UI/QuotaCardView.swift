@@ -40,6 +40,13 @@ struct QuotaCardView: View {
                     statusLabel(for: snapshot)
                 }
 
+                if let message = snapshot.message {
+                    Text(message)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+
                 Text(timeDisplay(for: snapshot))
                     .font(.system(size: 11))
                     .foregroundStyle(.tertiary)

@@ -27,6 +27,29 @@ final class QuotaStateStoreTests: XCTestCase {
         XCTAssertNotNil(store.lastRefreshAt)
     }
 
+    func test_update_unavailableAfterSuccessPreservesLastQuota() {
+        let tier = QuotaTier(id: "five_hour", utilization: 0.25, resetsAt: nil, isEstimated: false)
+        let success = ProviderQuotaSnapshot(
+            provider: .claude, status: .normal, remainingPercent: 75,
+            resetAt: nil, lastCheckedAt: Date(), lastSuccessfulAt: Date(),
+            source: .providerAPI, message: nil, tiers: [tier]
+        )
+        store.update(provider: .claude, snapshot: success)
+
+        let unavailable = ProviderQuotaSnapshot.unavailable(
+            provider: .claude,
+            message: "Claude quota API rate limited: Rate limited. Please try again later."
+        )
+        store.update(provider: .claude, snapshot: unavailable)
+
+        let snapshot = store.snapshots[.claude]
+        XCTAssertEqual(snapshot?.status, .normal)
+        XCTAssertEqual(snapshot?.remainingPercent, 75)
+        XCTAssertEqual(snapshot?.tiers, [tier])
+        XCTAssertEqual(snapshot?.message, "Claude quota API rate limited: Rate limited. Please try again later.")
+        XCTAssertNotNil(store.lastRefreshAt)
+    }
+
     func test_overallStatus_exhaustedWins() {
         store.update(provider: .claude, snapshot: makeSnapshot(.claude, .normal))
         store.update(provider: .codex, snapshot: makeSnapshot(.codex, .exhausted))
