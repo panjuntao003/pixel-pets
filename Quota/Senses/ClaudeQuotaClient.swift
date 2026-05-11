@@ -299,8 +299,8 @@ final class GeminiQuotaClient {
     private static let tokenURL = URL(string: "https://oauth2.googleapis.com/token")!
     private static let loadCodeAssistURL = URL(string: "https://cloudcode-pa.googleapis.com/v1internal:loadCodeAssist")!
     private static let retrieveQuotaURL = URL(string: "https://cloudcode-pa.googleapis.com/v1internal:retrieveUserQuota")!
-    private static let oauthClientID = "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com"
-    private static let oauthClientSecret = "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"
+    private static let oauthClientID = ProcessInfo.processInfo.environment["OAUTH_CLIENT_ID"] ?? ""
+    private static let oauthClientSecret = ProcessInfo.processInfo.environment["OAUTH_CLIENT_SECRET"] ?? ""
     private static let iso8601Formatter = ISO8601DateFormatter()
 
     func fetch() async -> QuotaFetchResult {
